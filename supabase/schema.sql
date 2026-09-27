@@ -1,5 +1,6 @@
 -- DATUM cloud schema for Supabase.
 -- Paste this whole file into Supabase > SQL Editor > New query, and Run. Safe to run again.
+-- If the editor offers to add "enable Row Level Security" lines, you can decline: every table below already turns it on.
 --
 -- Invite only: an account can only be created for an email on public.invites (admins add them from the
 -- app's Team screen). This applies to email/password and Google sign-in alike.
@@ -20,6 +21,7 @@ create table if not exists public.invites (
   invited_by uuid references auth.users(id) on delete set null,
   created_at timestamptz not null default now()
 );
+alter table public.invites enable row level security;
 
 -- The first admin. Change this email if the admin changes.
 insert into public.invites (email, role) values ('dane@vektorprojects.com', 'admin')
@@ -32,6 +34,7 @@ create table if not exists public.profiles (
   role       text not null default 'viewer',
   created_at timestamptz not null default now()
 );
+alter table public.profiles enable row level security;
 alter table public.profiles drop constraint if exists profiles_role_check;
 alter table public.profiles add constraint profiles_role_check check (role in ('viewer','editor','admin','disabled'));
 
@@ -97,7 +100,7 @@ $$;
 -- (people invited by email get an account straight away, but have not signed in until they accept)
 drop function if exists public.team();
 create function public.team() returns table (id uuid, email text, role text, signed_in boolean, invited_at timestamptz)
-language sql stable security definer set search_path = public, auth as $$
+language sql stable security definer set search_path = public as $$
   select p.id, p.email, p.role, (u.last_sign_in_at is not null), u.invited_at
   from public.profiles p join auth.users u on u.id = p.id
   where public.my_role() = 'admin'
@@ -116,6 +119,7 @@ create table if not exists public.projects (
   created_at  timestamptz not null default now(),
   updated_at  timestamptz not null default now()
 );
+alter table public.projects enable row level security;
 create index if not exists projects_owner_idx on public.projects(owner);
 
 create or replace function public.projects_touch() returns trigger
@@ -136,6 +140,7 @@ create table if not exists public.project_shares (
   created_at timestamptz not null default now(),
   primary key (project_id, email)
 );
+alter table public.project_shares enable row level security;
 create index if not exists project_shares_email_idx on public.project_shares(email);
 
 create or replace function public.owns_project(pid uuid) returns boolean
@@ -149,10 +154,7 @@ language sql stable security definer set search_path = public as $$
 $$;
 
 -- ---------------------------------------------------------------- row level security
-alter table public.invites        enable row level security;
-alter table public.profiles       enable row level security;
-alter table public.projects       enable row level security;
-alter table public.project_shares enable row level security;
+-- (row level security is switched on for each table right after it is created, above)
 
 drop policy if exists "invites: admins manage" on public.invites;
 create policy "invites: admins manage" on public.invites for all to authenticated
