@@ -224,7 +224,7 @@ table.dt tr.sel td{background:var(--accent-soft)}
 .mo-cnt{font-size:12px;font-weight:650;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.18)}
 .mo-cnt.ok{background:#22c55e}
 .mo-cl{display:flex;flex-direction:column;gap:8px;width:100%;margin-top:6px}
-.mo-cl .mo-card{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.35);color:#fff}
+.mo-cl .mo-card{background:rgba(255,255,255,.14);border-color:var(--sc,rgba(255,255,255,.35));color:#fff}
 .mo-card{position:relative;display:grid;grid-template-columns:1fr auto;gap:8px 10px;align-items:center;text-align:left;padding:12px 14px;border-radius:16px;border:1.5px solid var(--line3);background:var(--raised);color:var(--ink);cursor:pointer;min-height:86px;width:100%;transition:background .15s,border-color .15s,transform .1s;-webkit-tap-highlight-color:transparent}
 .mo-card:active{transform:scale(.985)}
 .mo-dim{font-size:clamp(17px,2.6vw,25px);font-weight:750;letter-spacing:-.015em}
@@ -234,6 +234,7 @@ table.dt tr.sel td{background:var(--accent-soft)}
 .mo-id{font-size:clamp(20px,3.2vw,30px);font-weight:750;letter-spacing:-.015em}
 .mo-kg{margin-left:auto;font-size:12px;color:var(--muted);white-space:nowrap}
 .mo-check{width:32px;height:32px;border-radius:50%;border:2px solid var(--line3);display:grid;place-items:center;color:transparent;transition:.15s;flex:none}
+.mo-card{border-width:2px;border-color:var(--sc,var(--line3))}   /* border takes the symbol colour (set per card) */
 .mo-card.done{background:rgba(34,197,94,.16);border-color:#22c55e}
 .mo-card.done .mo-check{background:#22c55e;border-color:#22c55e;color:#fff}
 .mo-card.done .mo-dim,.mo-card.done .mo-id{opacity:.75}
@@ -271,6 +272,7 @@ table.dt tr.sel td{background:var(--accent-soft)}
 .mo-row.cur .mo-c .ok{color:#b9f5cf}
 .mo-c .clids{font-size:10.5px;color:var(--muted);margin-top:2px}
 .mo-row.all .mo-ids{opacity:.7}
+.mo-row.hascl:not(.open){background:var(--raised2)}.mo-row.hascl:not(.open):hover{background:var(--line2)}
 .mo-empty{padding:40px 20px;text-align:center;color:var(--muted);font-size:15px}
 /* ---------- data editing ---------- */
 table.dt input[type=text],table.dt select{padding:5px 8px;font-size:12.5px;min-width:116px;border-radius:6px}
@@ -364,7 +366,7 @@ table.dt td.num{color:var(--muted)}
   :root{--midw:100px}
   .pillb,.tog,.mo-bar .btn{padding:7px 11px;font-size:12.5px}
   .mo-bar select{padding:7px 28px 7px 11px;font-size:13px}
-  .mo-dim{font-size:14.5px;white-space:nowrap;letter-spacing:-.02em}
+  .mo-dim{white-space:nowrap;letter-spacing:-.02em}
   .mo-check{width:26px;height:26px}
   .mo-card{padding:10px}
   .mo-mid b{font-size:20px}
@@ -384,8 +386,8 @@ table.dt td.num{color:var(--muted)}
 .pvinfo .w{color:var(--warn)}
 .pv-scroll{flex:1;overflow:auto;background:var(--bg);padding:20px}
 .pv-page{display:block;margin:0 auto 20px;background:#fff;box-shadow:0 8px 30px var(--shadow);border-radius:2px}
-.mo-auto{font-size:11px;font-weight:800;letter-spacing:.14em;padding:3px 9px;border-radius:7px;background:#38bdf8;color:#04202e}
-.mo-idw .inv.auto{background:#38bdf8;color:#04202e}
+.mo-auto{font-size:11px;font-weight:800;letter-spacing:.14em;padding:3px 9px;border-radius:7px;background:#f5b04a;color:#1a1204}
+.mo-idw .inv.auto{background:#f5b04a;color:#1a1204}
 @media (max-width:900px){
   .pdfpage{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
   .pdfset{max-height:34vh;border-right:0;border-bottom:1px solid var(--line2)}
@@ -415,11 +417,11 @@ table.dt td.num{color:var(--muted)}
 .mo-mid b{font-size:clamp(20px,3vw,27px)}
 .mo-cnt{font-size:11px;padding:2px 8px}
 .mo-card{padding:8px 11px;min-height:0;gap:3px 8px;border-radius:12px}
-.mo-dim{font-size:clamp(13px,1.6vw,16px)}
+.mo-dim{font-size:clamp(18px,2.3vw,23px);font-weight:800}
 .mo-line{gap:8px}
 .mo-sym{width:26px;height:26px}
-.mo-sym.au{min-height:26px;padding-bottom:10px}
-.mo-id{font-size:clamp(16px,2.1vw,20px)}
+.mo-sym.au{height:26px;min-height:0;padding-bottom:0;align-items:start;overflow:visible}   /* automation text hangs below without making the card taller */
+.mo-id{font-size:clamp(14px,1.6vw,16px);font-weight:700}
 .mo-check{width:24px;height:24px}
 .mo-check svg{width:14px;height:14px}
 .mo-kg{font-size:11px}
@@ -445,8 +447,8 @@ table.dt td.num{color:var(--muted)}
   .mo-h{font-size:8.5px;letter-spacing:.05em;padding:4px 2px}
   .mo-side{padding:6px 5px;gap:6px}
   .mo-card{padding:6px 8px}
-  .mo-dim{font-size:12.5px}
-  .mo-id{font-size:16px}
+  .mo-dim{font-size:17px}
+  .mo-id{font-size:13.5px}
   .mo-mid b{font-size:18px}
   .mo-mid{padding:8px 4px}
   .mo-row{min-height:40px}
@@ -826,7 +828,7 @@ const STORE_KEY = 'markoutTool.v1', DONE_KEY = 'markoutTool.done.v1', LOGO_KEY =
 /* ============================ state ============================ */
 const S = {
   raw:{headers:[],rows:[],name:''},
-  map:{type:-1,func:-1,id:-1,pos:-1,x:-1,y:-1,load:-1},
+  map:{type:-1,func:-1,id:-1,pos:-1,x:-1,y:-1,load:-1,hsym:-1},
   hoists:[], rows:[], warnings:0,
   typeMap:{}, funcMap:{}, funcRing:{},
   opt:{inUnit:'auto',disp:'ftin',den:1,tol:50,cth:1,rot:0,rowOrder:'top',sideNeg:'left',sideSort:'center',flipX:false,flipY:false,datX:0,datY:0,topL:'UPSTAGE',botL:'DOWNSTAGE',leftL:'SR',rightL:'SL',upStyle:'fill',alignTol:25.4,alignMode:'both',alignKeep:'first'},
@@ -908,6 +910,7 @@ function autoMap(headers){
     x:    find(['originx','x','xpos','xposition'],['originx']),
     y:    find(['originy','y','ypos','yposition'],['originy']),
     load: find(['load','loadkg','weight','weightkg','swl','loadingkg'],['load','weight']),
+    hsym: find(['hoistsymbol','symbol','hoistsymbology'],['hoistsymbol','symbol']),
   };
 }
 
@@ -1074,7 +1077,7 @@ function rebuild(){
     const h={row:i+2, skip:S.skip.has(i), id:g('id'), type:g('type')||'(none)', func:g('func')||'(none)', posRaw:g('pos'), xRaw:g('x'), yRaw:g('y'), loadRaw:g('load'), issues:[]};
     h.upRaw=/\bup\b/i.test(h.posRaw) && !/down/i.test(h.posRaw); h.up=h.upRaw;
     h.datum=/^datum$/i.test(h.id)||/^datum$/i.test(h.type);
-    h.auto=isAutoFunc(h.func);
+    h.hsym=g('hsym'); h.auto=map.hsym>=0 ? autoKind(h.hsym) : (isAutoFunc(h.func)?'AUTO':'');
     h.x=parseLen(h.xRaw,unit); h.y=parseLen(h.yRaw,unit);
     h.load = h.loadRaw!=='' && !isNaN(parseFloat(h.loadRaw)) ? parseFloat(h.loadRaw) : null;
     if(h.id==='') { h.issues.push('No ID'); h.id='?'+(i+1); }
@@ -1131,7 +1134,7 @@ function symParts(key,color,mods){
     else if(p[0]==='l') s+=`<line x1="${p[1]}" y1="${p[2]}" x2="${p[3]}" y2="${p[4]}"${fill?` stroke="${K}"`:''}/>`;
   });
   if(arrow) s+=`<polygon points="1.15,-1.62 1.62,-0.8 0.68,-0.8" fill="${color}" stroke="${K}" stroke-width=".1"/>`;
-  if(mods.auto){ const oy=mods.ring?1.62:1.12; s+=`<text x="0" y="${oy+.38}" text-anchor="middle" dominant-baseline="central" font-size=".72" font-weight="800" fill="${color}" stroke="none">AUTO</text>`; }
+  if(mods.auto){ const oy=mods.ring?1.62:1.12; s+=`<text x="0" y="${oy+.38}" text-anchor="middle" dominant-baseline="central" font-size=".72" font-weight="800" fill="${color}" stroke="none">${esc(autoLabel(mods.auto))}</text>`; }
   return s;
 }
 function symSVG(key,color,size,inner,mods){
@@ -1166,9 +1169,14 @@ function pdfRgb(c){ const [r,g,b]=hexToRgb(c); const L=(0.299*r+0.587*g+0.114*b)
 function scr(h){ return scrCol(itemColor(h)); }
 function ringCol(h){ const r=S.funcRing[h.func]; return r?scrCol(r):null; }
 function ringRgb(h){ const r=S.funcRing[h.func]; return r?hexToRgb(r):null; }
-// Automated hoists: 'vs' = VS (Varispeed) over the symbol, 'tag' = AUTO pill under the symbol, '' = badge only
-function autoMode(){ return 'tag'; }
-function autoOf(h){ return h&&h.auto?autoMode():''; }
+// Automated hoists: h.auto is a short label shown as a badge and as text under the symbol ('' = not automated).
+// It comes from the Hoist Symbol column; CSVs without that column fall back to "Auto" in the Hoist Function.
+const AUTO_KINDS=['AUTO','NAV','APEX','ELEV'], AUTO_NAMES={AUTO:'Automated',NAV:'TAIT Navigator',APEX:'Apex',ELEV:'Elevation'};
+function autoKind(v){ const t=String(v||'').toLowerCase(), w=re=>new RegExp('(^|[^a-z])(?:'+re+')([^a-z]|$)').test(t);
+  if(w('nav|navigator')) return 'NAV'; if(w('apex')) return 'APEX'; if(w('elevation')) return 'ELEV';
+  if(w('auto|automated|automation|varispeed|vari-speed')) return 'AUTO'; return ''; }
+function autoOf(h){ return h&&h.auto||''; }
+function autoLabel(a){ return (a===true||a==='tag')?'AUTO':String(a); }
 function hoistSVG(h,size){ return symSVG(itemSym(h),scr(h),size,false,{up:h.up,ring:ringCol(h),auto:autoOf(h)}); }
 function itemColor(h){ return S.funcMap[h.func]||'#1a1a1a'; }
 function itemSym(h){ return S.typeMap[h.type]||'circle'; }
@@ -1188,7 +1196,7 @@ function datumNote(){
 }
 
 /* ============================ rendering: data view ============================ */
-const COLKEYS=[['id','Hoist ID'],['type','Hoist Type'],['func','Hoist Function'],['pos','Hoist Position'],['x','Origin X'],['y','Origin Y'],['load','Load (kg)']];
+const COLKEYS=[['id','Hoist ID'],['type','Hoist Type'],['func','Hoist Function'],['pos','Hoist Position'],['x','Origin X'],['y','Origin Y'],['load','Load (kg)'],['hsym','Hoist Symbol']];
 function storedVal(i,key){ const ci=S.map[key], r=S.raw.rows[i]; return (ci>=0 && r && r[ci]!==undefined) ? String(r[ci]) : ''; }
 function rawVal(i,key){ const p=S.pending[i]; return (p && key in p) ? p[key] : storedVal(i,key); }
 function pendingCount(){ let n=0; for(const i in S.pending) n+=Object.keys(S.pending[i]).length; return n; }
@@ -1296,15 +1304,16 @@ function updateDataBar(){
 function renderData(){
   const hs=S.hoists; const types=[...new Set(hs.map(h=>h.type))], funcs=[...new Set(hs.map(h=>h.func))];
   const dl=(id,arr)=>`<datalist id="${id}">${arr.map(v=>`<option value="${esc(v)}">`).join('')}</datalist>`;
-  const inp=(i,k)=>{ const pend=S.pending[i]&&k in S.pending[i]; return `<td class="${pend?'pend':''}"><input type="text" data-ri="${i}" data-k="${k}" value="${esc(rawVal(i,k))}"${k==='type'?' list="dl-type"':k==='func'?' list="dl-func"':''} spellcheck="false" autocomplete="off"></td>`; };
+  const inp=(i,k)=>{ const pend=S.pending[i]&&k in S.pending[i]; return `<td class="${pend?'pend':''}"><input type="text" data-ri="${i}" data-k="${k}" value="${esc(rawVal(i,k))}"${k==='type'?' list="dl-type"':k==='func'?' list="dl-func"':k==='hsym'?' list="dl-hsym"':''} spellcheck="false" autocomplete="off"></td>`; };
   const pos=i=>{ const v=rawVal(i,'pos'), pend=S.pending[i]&&'pos' in S.pending[i]; const o=['','Hoist Down','Hoist Up']; if(v&&!o.includes(v)) o.push(v);
     return `<td class="${pend?'pend':''}"><select data-ri="${i}" data-k="pos">${o.map(x=>`<option value="${esc(x)}"${x===v?' selected':''}>${x||'(blank)'}</option>`).join('')}</select></td>`; };
-  let html=dl('dl-type',types)+dl('dl-func',funcs)+`<table class="dt"><thead><tr><th>#</th><th title="Skipped rows are left off the plot, markout rows and PDF">Skip</th><th></th><th>ID</th><th>Type</th><th>Function</th><th>Position</th><th>Origin X</th><th>Origin Y</th><th>Load</th><th>Side / X</th><th>Row Y</th><th>Status</th><th></th></tr></thead><tbody>`;
+  const syms=[...new Set(['Automated','Varispeed','TAIT Navigator','Apex','Elevation'].concat(hs.map(h=>h.hsym).filter(Boolean)))];
+  let html=dl('dl-type',types)+dl('dl-func',funcs)+dl('dl-hsym',syms)+`<table class="dt"><thead><tr><th>#</th><th title="Skipped rows are left off the plot, markout rows and PDF">Skip</th><th></th><th>ID</th><th>Type</th><th>Function</th><th title="Automation: Auto / Varispeed, NAV / Navigator, Apex or Elevation">Symbol</th><th>Position</th><th>Origin X</th><th>Origin Y</th><th>Load</th><th>Side / X</th><th>Row Y</th><th>Status</th><th></th></tr></thead><tbody>`;
   hs.forEach((h,i)=>{
     let sx='',sy='';
     if(h.ok){ const q=tf(h); const th=Math.max(0,S.opt.cth||0); sx=(Math.abs(q.xs)<=th?'CL':q.xs>0?S.opt.rightL:S.opt.leftL)+' '+fmtDist(q.xs); const yi=yInfo(q.yu); sy=yi.key==='datum'?'DATUM':abbr(yi.dir)+' '+yi.txt; }
     const st=h.skip?'<span class="pill">Skipped</span>':h.datum?'<span class="pill">Datum row</span>':(h.issues.length?h.issues.map(x=>`<span class="pill${/Bad/.test(x)?' err':''}">${esc(x)}</span>`).join(' '):'OK');
-    html+=`<tr class="${h.issues.length?'bad':''}${h.skip?' skip':''}${S.sel===h.id?' sel':''}" data-ri="${i}" data-id="${esc(h.id)}"><td class="num">${h.row}</td><td class="skc"><input type="checkbox" data-skip="${i}"${h.skip?' checked':''} title="Skip this row" aria-label="Skip row ${h.row}"></td><td>${hoistSVG(h,16)}</td>${inp(i,'id')}${inp(i,'type')}${inp(i,'func')}${pos(i)}${inp(i,'x')}${inp(i,'y')}${inp(i,'load')}<td>${sx}</td><td>${sy}</td><td>${st}</td>
+    html+=`<tr class="${h.issues.length?'bad':''}${h.skip?' skip':''}${S.sel===h.id?' sel':''}" data-ri="${i}" data-id="${esc(h.id)}"><td class="num">${h.row}</td><td class="skc"><input type="checkbox" data-skip="${i}"${h.skip?' checked':''} title="Skip this row" aria-label="Skip row ${h.row}"></td><td>${hoistSVG(h,16)}</td>${inp(i,'id')}${inp(i,'type')}${inp(i,'func')}${inp(i,'hsym')}${pos(i)}${inp(i,'x')}${inp(i,'y')}${inp(i,'load')}<td>${sx}</td><td>${sy}</td><td>${st}</td>
       <td><div class="act"><button class="iconb" data-act="dup" data-ri="${i}" title="Duplicate row"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button>
       <button class="iconb danger" data-act="del" data-ri="${i}" title="Delete row (tap twice)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg></button></div></td></tr>`;
   });
@@ -1334,9 +1343,9 @@ function toggleDone(id){
 }
 function moCard(it){
   const h=it.h, done=isDone(h.id), kg=loadTxt(h);
-  return `<button type="button" class="mo-card${done?' done':''}${h.up?' up':''}" data-id="${esc(h.id)}" aria-pressed="${done}" title="${esc(h.type)} / ${esc(h.func)}">
+  return `<button type="button" class="mo-card${done?' done':''}${h.up?' up':''}" style="--sc:${scr(h)}" data-id="${esc(h.id)}" aria-pressed="${done}" title="${esc(h.type)} / ${esc(h.func)}">
     <span class="mo-dim">${fmtDist(it.xs)}</span><span class="mo-check">${CHECK_SVG}</span>
-    <span class="mo-line"><span class="mo-sym${autoOf(h)==='tag'?' au':''}">${hoistSVG(h,24)}</span><span class="mo-id">${esc(h.id)}</span>${h.up?'<span class="mo-invert">INVERT</span>':''}${h.auto?'<span class="mo-auto">AUTO</span>':''}<span class="mo-kg">${esc(kg)}</span></span></button>`;
+    <span class="mo-line"><span class="mo-sym${autoOf(h)?' au':''}">${hoistSVG(h,24)}</span><span class="mo-id">${esc(h.id)}</span>${h.up?'<span class="mo-invert">INVERT</span>':''}${h.auto?`<span class="mo-auto">${esc(h.auto)}</span>`:''}<span class="mo-kg">${esc(kg)}</span></span></button>`;
 }
 function moUpdateBar(vis){
   const items=markItems(), total=items.length, done=items.filter(it=>isDone(it.h.id)).length, pct=total?Math.round(done/total*100):0;
@@ -1370,11 +1379,11 @@ function renderMoList(vis,scrollList){
   if(!vis.length){ list.innerHTML='<div class="mo-empty">'+(S.rows.length?'All marks complete.':'No hoists to mark out yet.')+'</div>'; return; }
   const ids=items=>{ const v=hide?items.filter(it=>!isDone(it.h.id)):items;
     if(!v.length) return `<span class="mo-none" style="padding:0">${items.length?'&#10003;':'&ndash;'}</span>`;
-    return v.map(it=>`<span class="mo-idw${isDone(it.h.id)?' d':''}">${esc(it.h.id)}${it.h.up?'<em class="inv">INV</em>':''}${it.h.auto?'<em class="inv auto">AUTO</em>':''}</span>`).join('<span class="sep">&middot;</span>'); };
+    return v.map(it=>`<span class="mo-idw${isDone(it.h.id)?' d':''}">${esc(it.h.id)}${it.h.up?'<em class="inv">INV</em>':''}${it.h.auto?`<em class="inv auto">${esc(it.h.auto)}</em>`:''}</span>`).join('<span class="sep">&middot;</span>'); };
   list.innerHTML=vis.map(({r,i})=>{ if(i===S.mo.cur) return `<div class="mo-row open cur" data-ri="${i}">${expandedHtml(r)}</div>`;
     const nd=r.items.filter(it=>isDone(it.h.id)).length, all=nd===r.items.length;
     const cl=r.centre.length?`<span class="clids">CL: ${r.centre.map(c=>esc(c.h.id)).join(', ')}</span>`:'';
-    return `<div class="mo-row${i===S.mo.cur?' cur':''}${all?' all':''}" data-ri="${i}">
+    return `<div class="mo-row${i===S.mo.cur?' cur':''}${all?' all':''}${r.centre.length?' hascl':''}" data-ri="${i}">
       <div class="mo-cell l"><div class="mo-ids l">${ids(r.right)}</div><span class="dl l"></span></div>
       <div class="mo-c"><small>${esc(r.yi.dir)}</small><b>${esc(r.yi.txt)}</b>${all?'<em class="ok">&#10003; done</em>':''}${cl}</div>
       <div class="mo-cell r"><span class="dl r"></span><div class="mo-ids">${ids(r.left)}</div></div></div>`; }).join('');
@@ -1442,7 +1451,7 @@ function renderPlot(){
     if(showLbl) out+=`<text x="${lx}" y="${y+ly}" text-anchor="${anc}" font-size="11" font-weight="650" fill="${T.lab}">${esc(h.id)}</text>`;
     if(showCo) out+=`<text x="${lx}" y="${y+ly+11}" text-anchor="${anc}" font-size="9" fill="${T.sub}">${fmtDist(it.xs)} ${sideOf(it)} / ${fmtDist(it.yu)} ${abbr(it.yu>0?S.opt.topL:S.opt.botL)}</text>`;
     if(isDone(h.id)) out+=`<g transform="translate(${x+R*1.05} ${y-R*1.05})"><circle r="5.5" fill="#22c55e" stroke="var(--knock)" stroke-width="1.2"/><path d="M-2.6 .2L-.8 2 2.8-2" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></g>`;
-    out+=`<title>${esc(h.id)} - ${esc(h.type)} / ${esc(h.func)}${h.up?' / Hoist Up':''}${h.auto?' / Automated':''}${isDone(h.id)?' / marked':''}</title></g>`;
+    out+=`<title>${esc(h.id)} - ${esc(h.type)} / ${esc(h.func)}${h.up?' / Hoist Up':''}${h.auto?' / '+esc(AUTO_NAMES[h.auto]||'Automated'):''}${isDone(h.id)?' / marked':''}</title></g>`;
   }
   svg.innerHTML=out;
   $('eT').textContent=S.opt.topL; $('eB').textContent=S.opt.botL; $('eL').textContent=edgeName(S.opt.leftL); $('eR').textContent=edgeName(S.opt.rightL);
@@ -1491,9 +1500,9 @@ function usedFuncs(){ return [...new Set(S.hoists.filter(h=>h.ok).map(h=>h.func)
 function renderLegend(){
   const L=$('legend'); if(!S.hoists.length){ L.style.display='none'; return; }
   L.style.display=(S.plot.legend||isCompact())?'block':'none'; const T=themeT();
-  const anyUp=S.hoists.some(h=>h.ok&&h.up), anyAuto=S.hoists.some(h=>h.ok&&h.auto&&autoMode());
+  const anyUp=S.hoists.some(h=>h.ok&&h.up), autos=AUTO_KINDS.filter(k=>S.hoists.some(h=>h.ok&&h.auto===k));
   const mods=(anyUp?`<div class="it">${symSVG('circle-cross',T.ink,16,false,{up:true})}Hoist Up (invert)</div><div class="it">${symSVG('circle-cross',T.ink,16)}Hoist Down</div>`:'')
-    +(anyAuto?`<div class="it">${symSVG('circle-cross',T.ink,16,false,{auto:autoMode()})}Automated</div>`:'');
+    +autos.map(k=>`<div class="it">${symSVG('circle-cross',T.ink,16,false,{auto:k})}${esc(AUTO_NAMES[k])}</div>`).join('');
   L.innerHTML='<button class="kx" type="button" aria-label="Close key">&times;</button><h4>HOIST TYPE</h4>'+legendTypes().map(e=>`<div class="it">${symSVG(e.sym,T.ink,16)}${esc(e.label)}</div>`).join('')
     +(mods?'<h4 style="margin-top:6px">MODIFIERS</h4>'+mods:'')
     +'<h4 style="margin-top:6px">FUNCTION</h4>'+legendGroups().map(g=>{ const f=g.f, r=S.funcRing[f]; return `<div class="it"><span class="sw" style="background:${scrCol(S.funcMap[f])}${r?`;box-shadow:0 0 0 2px var(--knock),0 0 0 3.5px ${scrCol(r)}`:''}"></span>${esc(g.label)}</div>`; }).join('');
@@ -1503,7 +1512,7 @@ function renderInfo(){
   const it=plotItems().find(i=>i.h.id===S.sel); if(!it){ box.style.display='none'; return; }
   const h=it.h; box.style.display='block';
   const yq=yInfo(it.yu), done=isDone(h.id);
-  box.innerHTML=`<button class="ix" type="button" aria-label="Close">&times;</button><b>${esc(h.id)}</b> &nbsp;${esc(h.type)} / ${esc(h.func)}${h.up?' / Hoist Up (invert)':''}${h.auto?' / Automated':''}<br>X: ${fmtDist(it.xs)} ${sideOf(it)==='CL'?'':esc(sideOf(it))} &nbsp; Y: ${fmtDist(it.yu)} ${yq.key==='datum'?'':esc(yq.dir)}${loadTxt(h)?' &nbsp; '+loadTxt(h):''}
+  box.innerHTML=`<button class="ix" type="button" aria-label="Close">&times;</button><b>${esc(h.id)}</b> &nbsp;${esc(h.type)} / ${esc(h.func)}${h.up?' / Hoist Up (invert)':''}${h.auto?' / '+esc(AUTO_NAMES[h.auto]||'Automated'):''}<br>X: ${fmtDist(it.xs)} ${sideOf(it)==='CL'?'':esc(sideOf(it))} &nbsp; Y: ${fmtDist(it.yu)} ${yq.key==='datum'?'':esc(yq.dir)}${loadTxt(h)?' &nbsp; '+loadTxt(h):''}
     <div class="iacts"><button class="btn${done?' on':''}" type="button" data-mark="${esc(h.id)}">${done?'&#10003; Marked':'Mark done'}</button></div>`;
 }
 
@@ -1511,8 +1520,8 @@ function renderInfo(){
 function renderMapUI(){
   const H=S.raw.headers; const body=$('mapBody');
   if(!H.length){ body.innerHTML='<div class="hint">Columns are matched automatically after import. Change them here if a header was not recognised.</div>'; return; }
-  const defs=[['type','Hoist Type'],['func','Hoist Function'],['id','Hoist ID'],['pos','Hoist Position (optional)'],['x','Origin X'],['y','Origin Y'],['load','Load (optional)']];
-  body.innerHTML=defs.map(([k,l])=>`<div class="field"><label>${l}</label><select data-map="${k}"><option value="-1">${(k==='load'||k==='pos')?'- none -':'- not set -'}</option>${H.map((h,i)=>`<option value="${i}"${S.map[k]===i?' selected':''}>${esc(h)}</option>`).join('')}</select></div>`).join('');
+  const defs=[['type','Hoist Type'],['func','Hoist Function'],['id','Hoist ID'],['pos','Hoist Position (optional)'],['x','Origin X'],['y','Origin Y'],['load','Load (optional)'],['hsym','Hoist Symbol (optional)']];
+  body.innerHTML=defs.map(([k,l])=>`<div class="field"><label>${l}</label><select data-map="${k}"><option value="-1">${(k==='load'||k==='pos'||k==='hsym')?'- none -':'- not set -'}</option>${H.map((h,i)=>`<option value="${i}"${S.map[k]===i?' selected':''}>${esc(h)}</option>`).join('')}</select></div>`).join('');
   body.querySelectorAll('select').forEach(sel=>sel.onchange=()=>{ S.map[sel.dataset.map]=parseInt(sel.value,10); refresh(); });
 }
 function renderSymUI(){
@@ -1604,15 +1613,16 @@ const SAMPLE=[
 function csvCell(v){ v=String(v); return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; }
 const SAMPLE_EXTRA=[["30'",[['WX1',"60'",'R','250.00 kg','Scenery'],['WX2',"52'",'R','250.00 kg','Scenery'],['WX3',"44'",'R','250.00 kg','Scenery'],['WX4',"36'",'R','250.00 kg','Scenery'],['WX5',"28'",'R','250.00 kg','Scenery'],['WX6',"20'",'R','250.00 kg','Scenery'],['WY1',"20'",'L','250.00 kg','Scenery'],['WY2',"28'",'L','250.00 kg','Scenery'],['WY3',"36'",'L','250.00 kg','Scenery'],['WY4',"44'",'L','250.00 kg','Scenery'],['WY5',"52'",'L','250.00 kg','Scenery'],['WY6',"60'",'L','250.00 kg','Scenery']]],
  ["12'",[['QB1',"30'",'R','320.00 kg','Lighting'],['HC1',"30'",'L','3000.00 kg','Lighting'],['LB1',"25'",'R','1100 lb','Audio']]]];
+const SAMPLE_HSYM={TR4:'Automated',TL1:'Varispeed',VX2:'TAIT Navigator',VX5:'TAIT Navigator',US1:'Apex',US2:'Apex',US3:'Elevation',US4:'Elevation'};
 const SAMPLE_FUNC_OVERRIDE={US1:'Lighting Automated',US2:'Lighting Automated',US3:'Lighting Automated',US4:'Lighting Automated',TR4:'Lighting Automated',TL1:'Lighting Automated',VX2:'Video Automated',VX5:'Video Automated',TR1:'Super Grid',TL4:'Super Grid',SB1:'Cable Pick',SB2:'Cable Pick',SB3:'Cable Pick',SB4:'Cable Pick',UM1:'Pre-Rig',UM2:'Pre-Rig',UM3:'Pre-Rig',UM4:'Pre-Rig'};
 const SAMPLE_X_OVERRIDE={WR1:"64'3.319\""};
 function sampleCSV(){
-  const rows=[['Hoist Type','Hoist Function','Hoist ID','Hoist Position','Origin X','Origin Y','Load (kg)']];
+  const rows=[['Hoist Type','Hoist Function','Hoist ID','Hoist Position','Origin X','Origin Y','Load (kg)','Hoist Symbol']];
   const marker=/^(USR|USL|DSR|DSL|Floor mark|Chain Block|Fall Arrest)$/;
   for(const [y,items] of SAMPLE.concat(SAMPLE_EXTRA)) for(const [id,x0,side,type,func] of items){
     const x=SAMPLE_X_OVERRIDE[id]||x0, fn=SAMPLE_FUNC_OVERRIDE[id]||func;
     const pos=marker.test(type)?'':(/^(VX|IR|IL|HB|QA)/.test(id)?'Hoist Up':'Hoist Down');
-    rows.push([type,fn,id,pos,(side==='R'?'-':'')+x,y,0]);
+    rows.push([type,fn,id,pos,(side==='R'?'-':'')+x,y,0,SAMPLE_HSYM[id]||'']);
   }
   return rows.map(r=>r.map(csvCell).join(',')).join('\r\n');
 }
@@ -1695,6 +1705,9 @@ function drawSheet(doc,measure){
   const col=hex=>{ const c=pdfRgb(hex); if(mode==='bw') return [0,0,0]; if(mode==='grey'){ const g=Math.min(175,Math.round(.299*c[0]+.587*c[1]+.114*c[2])); return [g,g,g]; } return c; };
   const ringOf=h=>{ const r=S.funcRing[h.func]; return r?col(r):null; };
   const spaced=cs=>doc.setCharSpace(cs);
+  // Centre letter-spaced text ourselves: align:'center' ignores the character spacing, so spaced labels drift off centre
+  const ctext=(str,x,y,cs)=>{ str=String(str); const w=doc.getTextWidth(str)+cs*Math.max(0,str.length-1); spaced(cs); doc.text(str,x-w/2,y,{baseline:'middle'}); spaced(0); };
+  const DIM_S=1.18, ID_S=0.82;   // X value is the most important text in a cell, then the ID
   const rowH=clamp(F(sh.rowH,11),5,40), fsBase=clamp(6.8*rowH/11,3.5,16)*pct('textPct'), showKg=!!sh.load, pad=1.2, gap=1.2, lwMul=pct('linePct');
   let symR=rowH*0.19*0.92*pct('symPct'); symR=Math.min(symR,rowH*(showKg?0.235:0.3));
   const tickMode=sh.tick||'none', tickS=Math.min(3,rowH*0.26), tickW=tickMode==='none'?0:tickS+1.4;
@@ -1712,10 +1725,10 @@ function drawSheet(doc,measure){
   const dimOf=new Map();
   for(const it of all){
     doc.setFont(fam,'bold'); doc.setFontSize(fsBase);
-    const tw=Math.max(doc.getTextWidth(fmtDist(it.xs)),doc.getTextWidth(it.h.id),1); let kgw=0;
+    const tw=Math.max(doc.getTextWidth(fmtDist(it.xs))*DIM_S,doc.getTextWidth(it.h.id)*ID_S,1); let kgw=0;
     if(showKg){ const k=loadTxt(it.h); if(k){ doc.setFontSize(Math.max(3.4,fsBase*0.55)); kgw=doc.getTextWidth(k); } }
     const ring=ringOf(it.h), auto=autoOf(it.h);
-    dimOf.set(it,{tw,symC:Math.max(2*symR*(ring?1.55:(auto==='tag'?1.25:1)),kgw+0.4)});
+    dimOf.set(it,{tw,symC:Math.max(2*symR*(ring?1.55:(auto?1.25:1)),kgw+0.4)});
   }
   const fixedOf=d=>2*pad+d.symC+gap+tickW;
   const fitFs=unitW=>{ let f=Infinity; for(const d of dimOf.values()) f=Math.min(f,fsBase*(unitW-fixedOf(d))/d.tw); return f; };
@@ -1748,13 +1761,12 @@ function drawSheet(doc,measure){
   const pages=[]; for(let i=0;i<prows.length;){ const c=capRows(pages.length); pages.push(prows.slice(i,i+c)); i+=c; }
 
   // ---- legend
-  const types=legendTypes(), funcs=usedFuncs(), anyUp=all.some(it=>it.h.up), anyAuto=all.some(it=>autoOf(it.h));
+  const types=legendTypes(), funcs=usedFuncs(), anyUp=all.some(it=>it.h.up), autos=AUTO_KINDS.filter(k=>all.some(it=>it.h.auto===k));
   function legendLayout(){
     const ents=[]; doc.setFont(fam,'normal'); doc.setFontSize(7);
     types.forEach(tp=>ents.push({k:'t',name:tp.label,sym:tp.sym,w:6+doc.getTextWidth(tp.label)+6}));
     if(anyUp){ ents.push({k:'u',name:'Hoist Up (invert)',w:6+doc.getTextWidth('Hoist Up (invert)')+6}); ents.push({k:'d',name:'Hoist Down',w:6+doc.getTextWidth('Hoist Down')+6}); }
-    const autoLbl='Automated';
-    if(anyAuto) ents.push({k:'a',name:autoLbl,w:6+doc.getTextWidth(autoLbl)+6});
+    autos.forEach(k=>ents.push({k:'a',kind:k,name:AUTO_NAMES[k],w:6+doc.getTextWidth(AUTO_NAMES[k])+6}));
     legendGroups().forEach(g=>ents.push({k:'f',name:g.label,f:g.f,w:(S.funcRing[g.f]?7:5)+doc.getTextWidth(g.label)+6}));
     const lines=[]; let cur=[],cw=0;
     for(const grp of ['t','m','f']){ cur=[];cw=0; for(const e of ents.filter(e=>grp==='t'?e.k==='t':grp==='m'?(e.k==='u'||e.k==='d'||e.k==='a'):e.k==='f')){ if(cw+e.w>W && cur.length){lines.push(cur);cur=[];cw=0;} cur.push(e); cw+=e.w; } if(cur.length) lines.push(cur); }
@@ -1783,17 +1795,16 @@ function drawSheet(doc,measure){
     });
     if(arrow){ doc.setFillColor(...rgb); doc.setDrawColor(255,255,255); doc.setLineWidth(r*0.08); doc.triangle(cx+1.15*r,cy-1.62*r,cx+1.62*r,cy-0.8*r,cx+0.68*r,cy-0.8*r,'FD'); }
     if(mods.auto){
-      const oy=mods.ring?1.62:1.12; doc.setFont(fam,'bold'); doc.setFontSize(Math.max(2.6,0.72*r/0.3528)); doc.setTextColor(...rgb); doc.text('AUTO',cx,cy+(oy+.38)*r,{align:'center',baseline:'middle'});
+      const oy=mods.ring?1.62:1.12; doc.setFont(fam,'bold'); doc.setFontSize(Math.max(2.6,0.72*r/0.3528)); doc.setTextColor(...rgb); doc.text(autoLabel(mods.auto),cx,cy+(oy+.38)*r,{align:'center',baseline:'middle'});
     }
   }
   function bandRow(y,h,label){
     doc.setFillColor(...BAND); doc.setDrawColor(...BORDER); doc.setLineWidth(0.3);
     doc.rect(xR,y,halfW,h,'FD'); doc.rect(xC,y,centreW,h,'FD'); doc.rect(xL,y,halfW,h,'FD');
     doc.setDrawColor(...CBORDER); doc.line(xC,y,xC,y+h); doc.line(xL,y,xL,y+h);
-    doc.setFont(fam,'bold'); doc.setFontSize(6.3); doc.setTextColor(...BANDTXT); spaced(0.35);
-    doc.text(label+sideWord(S.opt.leftL),xR+halfW/2,y+h/2,{align:'center',baseline:'middle'});
-    doc.text(label+sideWord(S.opt.rightL),xL+halfW/2,y+h/2,{align:'center',baseline:'middle'});
-    spaced(0);
+    doc.setFont(fam,'bold'); doc.setFontSize(6.3); doc.setTextColor(...BANDTXT);
+    ctext(label+sideWord(S.opt.leftL),xR+halfW/2,y+h/2,0.35);
+    ctext(label+sideWord(S.opt.rightL),xL+halfW/2,y+h/2,0.35);
   }
   function tickBox(bx,by,done){
     doc.setDrawColor(...MUTED); doc.setLineWidth(0.25); doc.rect(bx,by,tickS,tickS,'S');
@@ -1802,15 +1813,16 @@ function drawSheet(doc,measure){
   function drawItem(it,x0,w,side,y){
     const h=it.h, c=col(itemColor(h)), d=fmtDist(it.xs), rr=ringOf(h), auto=autoOf(h);
     doc.setFont(fam,'bold'); doc.setFontSize(fs);
-    const tw=Math.max(doc.getTextWidth(d),doc.getTextWidth(h.id)), mid=y+rowH/2, lh=fs*0.3528*1.12;
+    const tw=Math.max(doc.getTextWidth(d)*DIM_S,doc.getTextWidth(h.id)*ID_S), mid=y+rowH/2, lh=fs*0.3528*1.12;
     const symCol=dimOf.get(it).symC; let symX,txtX,al;
     if(side==='l'){ txtX=x0+w-pad; al='right'; symX=txtX-tw-gap-symCol/2; } else { symX=x0+pad+symCol/2; txtX=x0+pad+symCol+gap; al='left'; }
     const lo=side==='l'?symX-symCol/2:x0+pad, hi=side==='l'?x0+w-pad:txtX+tw;
     if(lo<x0+(side==='l'?tickW:0)-0.05 || hi>x0+w-(side==='r'?tickW:0)+0.05) info.overflow++;
     doc.setTextColor(...NAVY);
-    doc.text(d,txtX,mid-lh*0.12,{align:al,baseline:'bottom'});
-    doc.text(h.id,txtX,mid+lh*0.12,{align:al,baseline:'top'});
-    const kg=loadTxt(h), ext=auto==='tag'?(rr?2.5:2.0):(rr?1.55:1), sy=kg?mid-symR*(auto==='tag'?0.6:0.25):mid-(auto==='tag'?symR*0.5:0);
+    doc.setFontSize(fs*DIM_S); doc.text(d,txtX,mid-lh*0.08,{align:al,baseline:'bottom'});
+    doc.setFontSize(fs*ID_S); doc.text(h.id,txtX,mid+lh*0.16,{align:al,baseline:'top'});
+    doc.setFontSize(fs);
+    const kg=loadTxt(h), ext=auto?(rr?2.5:2.0):(rr?1.55:1), sy=kg?mid-symR*(auto?0.6:0.25):mid-(auto?symR*0.5:0);
     pdfSym(itemSym(h),symX,sy,symR,c,symR*0.17*lwMul,{up:h.up,ring:rr,auto});
     if(kg){ doc.setFont(fam,'bold'); doc.setFontSize(Math.max(3.4,fs*0.55)); doc.setTextColor(...MUTED); doc.text(kg,symX,Math.min(sy+symR*ext+1.3,y+rowH-0.9),{align:'center',baseline:'middle'}); }
     if(tickMode!=='none') tickBox(side==='l'?x0+0.7:x0+w-0.7-tickS, mid-tickS/2, isDone(h.id));
@@ -1826,8 +1838,8 @@ function drawSheet(doc,measure){
     const nL=r.R.length; cx=xL;
     for(let i=0;i<nL;i++){ const w=(i===nL-1)?(halfW-(nL-1)*unit):unit; const x0=cx; cx+=w; if(i<nL-1){ doc.setDrawColor(...BORDER); doc.setLineWidth(0.25); doc.line(x0+w,y,x0+w,y+rowH); } drawItem(r.R[i],x0,w,'r',y); }
     const mid=xC+centreW/2, hasC=r.C.length>0;
-    doc.setFont(fam,'normal'); doc.setFontSize(dFs); doc.setTextColor(...MUTED); spaced(0.4);
-    doc.text(dirTxt(r),mid,y+rowH*0.30,{align:'center',baseline:'middle'}); spaced(0);
+    doc.setFont(fam,'normal'); doc.setFontSize(dFs); doc.setTextColor(...MUTED);
+    ctext(dirTxt(r),mid,y+rowH*0.30,0.4);
     doc.setFont(fam,'bold'); doc.setFontSize(yFs); doc.setTextColor(...NAVY);
     doc.text(r.yi.txt,mid,y+rowH*(hasC?0.60:0.68),{align:'center',baseline:'middle'});
     if(hasC){
@@ -1884,7 +1896,7 @@ function drawSheet(doc,measure){
         if(e.k==='t') pdfSym(e.sym,x+2,yy-1.2,1.7,NAVY,0.28*lwMul);
         else if(e.k==='u') pdfSym('circle-cross',x+2,yy-1.2,1.7,NAVY,0.28*lwMul,{up:true});
         else if(e.k==='d') pdfSym('circle-cross',x+2,yy-1.2,1.7,NAVY,0.28*lwMul);
-        else if(e.k==='a') pdfSym('circle-cross',x+2,autoMode()==='tag'?yy-2.1:yy-1.2,autoMode()==='tag'?1.2:1.7,NAVY,0.25*lwMul,{auto:autoMode()});
+        else if(e.k==='a') pdfSym('circle-cross',x+2,yy-2.1,1.2,NAVY,0.25*lwMul,{auto:e.kind});
         else { const rg=S.funcRing[e.f]; doc.setFillColor(...col(S.funcMap[e.f])); doc.circle(x+(rg?2.6:1.8),yy-1.2,1.6,'F'); if(rg){ doc.setDrawColor(...col(rg)); doc.setLineWidth(0.3); doc.circle(x+2.6,yy-1.2,2.5,'S'); } tx=x+(rg?7:5); }
         doc.setFont(fam,'normal'); doc.setFontSize(7); doc.setTextColor(...NAVY); doc.text(e.name,tx,yy-1.2,{baseline:'middle'});
         x+=e.w;
@@ -1977,7 +1989,7 @@ function projectData(withLogos){
 function applyProject(o){
   if(!o||(o.app!=='datum'&&o.app!=='markout')||!o.raw||!Array.isArray(o.raw.rows)) throw new Error('bad');
   S.raw={headers:o.raw.headers||[],rows:o.raw.rows,name:o.raw.name||''};
-  S.map=Object.assign({type:-1,func:-1,id:-1,pos:-1,x:-1,y:-1,load:-1},o.map||{});
+  S.map=Object.assign({type:-1,func:-1,id:-1,pos:-1,x:-1,y:-1,load:-1,hsym:-1},o.map||{});
   S.orig=o.orig||{headers:S.raw.headers.slice(),rows:S.raw.rows.map(r=>r.slice()),map:Object.assign({},S.map)};
   S.sample=!!o.sample; S.sampleLoaded=!!o.sampleLoaded; S.sel=null; S.pending={}; S.skip=new Set((o.skip||[]).filter(i=>i>=0&&i<S.raw.rows.length));
   Object.assign(S.opt,o.opt||{}); Object.assign(S.sheet,o.sheet||{}); Object.assign(S.plot,o.plot||{});
@@ -2004,7 +2016,7 @@ function loadProjectFile(f){
 function clearProject(quiet){
   if(!quiet&&isViewer()) return;
   cloudDetach();
-  S.raw={headers:[],rows:[],name:''}; S.map={type:-1,func:-1,id:-1,pos:-1,x:-1,y:-1,load:-1}; S.orig=null; S.sample=false; S.sampleLoaded=false; S.sel=null; S.pending={}; S.skip=new Set();
+  S.raw={headers:[],rows:[],name:''}; S.map={type:-1,func:-1,id:-1,pos:-1,x:-1,y:-1,load:-1,hsym:-1}; S.orig=null; S.sample=false; S.sampleLoaded=false; S.sel=null; S.pending={}; S.skip=new Set();
   S.done=new Set(); S.doneName=''; S.mo.cur=0; S.typeMap={}; S.funcMap={}; S.funcRing={}; S.logoShow=S.logoUser=S._imgShow=S._imgUser=null; saveLogo(); syncLogoUI();
   try{ localStorage.removeItem(PROJ_KEY); }catch(e){}
   $('fileInfo').textContent='No file loaded.'; saveDone(); renderMapUI(); refresh(); schedulePreview(true); if(!quiet) toast('Started a new project.');
@@ -2358,7 +2370,7 @@ function init(){
   document.addEventListener('drop',e=>{ const f=e.dataTransfer&&e.dataTransfer.files[0]; if(f) readFile(f); });
   const sample=()=>loadCSVText(sampleCSV(),'Sample (recreated from reference sheet)',true);
   $('btnSample').onclick=sample; $('btnSample2').onclick=sample;
-  $('btnTemplate').onclick=()=>download('Hoist_Template.csv','Hoist Type,Hoist Function,Hoist ID,Hoist Position,Origin X,Origin Y\r\n1000.00 kg,Lighting,TR1,Hoist Down,-9102,2850\r\n1000.00 kg,Lighting,TL1,Hoist Up,9102,2850\r\n','text/csv');
+  $('btnTemplate').onclick=()=>download('Hoist_Template.csv','Hoist Type,Hoist Function,Hoist ID,Hoist Position,Origin X,Origin Y,Hoist Symbol\r\n1000.00 kg,Lighting,TR1,Hoist Down,-9102,2850,\r\n1000.00 kg,Lighting,TL1,Hoist Up,9102,2850,Automated\r\n','text/csv');
   $('btnPaste').onclick=()=>{ $('pasteBox').hidden=!$('pasteBox').hidden; };
   $('btnPasteGo').onclick=()=>{ const t=$('pasteText').value; if(t.trim()) loadCSVText(t,'Pasted CSV',false); };
   // options

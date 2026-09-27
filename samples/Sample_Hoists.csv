@@ -1,96 +1,96 @@
-Hoist Type,Hoist Function,Hoist ID,Hoist Position,Origin X,Origin Y,Load (kg)
-500.00 kg,Generic,USP,Hoist Down,"-30' - 7""","46' - 3""",0
-1000.00 kg,Video,VX1,Hoist Up,"-20' - 11""","42' - 9""",0
-1000.00 kg,Video Automated,VX2,Hoist Up,"-12' - 7""","42' - 9""",0
-1000.00 kg,Video,VX3,Hoist Up,"-4' - 1""","42' - 9""",0
-1000.00 kg,Video,VX4,Hoist Up,"4' - 1""","42' - 9""",0
-1000.00 kg,Video Automated,VX5,Hoist Up,"12' - 7""","42' - 9""",0
-1000.00 kg,Video,VX6,Hoist Up,"20' - 10""","42' - 9""",0
-1000.00 kg,Lighting Automated,US1,Hoist Down,"-20' - 11""","40' - 5""",0
-1000.00 kg,Lighting Automated,US2,Hoist Down,"-8' - 3""","40' - 5""",0
-1000.00 kg,Lighting Automated,US3,Hoist Down,"8' - 3""","40' - 5""",0
-1000.00 kg,Lighting Automated,US4,Hoist Down,"20' - 10""","40' - 5""",0
-500.00 kg,Lighting Automated,TR4,Hoist Down,"-25' - 8""","36' - 7""",0
-500.00 kg,Lighting Automated,TL1,Hoist Down,"25' - 8""","36' - 7""",0
-500.00 kg,Lighting,TR3,Hoist Down,"-27' - 4""","27' - 5""",0
-500.00 kg,Lighting,TL2,Hoist Down,"27' - 4""","27' - 5""",0
-1000.00 kg,Pre-Rig,UM1,Hoist Down,"-21' - 3""","23' - 4""",0
-1000.00 kg,Pre-Rig,UM2,Hoist Down,"-7' - 7""","23' - 4""",0
-1000.00 kg,Pre-Rig,UM3,Hoist Down,"7' - 7""","23' - 4""",0
-1000.00 kg,Pre-Rig,UM4,Hoist Down,"21' - 3""","23' - 4""",0
-500.00 kg,Lighting,TR2,Hoist Down,"-28' - 10""","18' - 10""",0
-500.00 kg,Lighting,TL3,Hoist Down,"28' - 10""","18' - 10""",0
-500.00 kg,Scenery,DD2,Hoist Down,"6' - 11""","9' - 5""",0
-500.00 kg,Super Grid,TR1,Hoist Down,"-30' - 7""","9' - 3""",0
-500.00 kg,Super Grid,TL4,Hoist Down,"30' - 7""","9' - 3""",0
-500.00 kg,Cable Pick,SB1,Hoist Down,"-40' - 4""","8' - 4""",0
-500.00 kg,Cable Pick,SB4,Hoist Down,"40' - 4""","8' - 4""",0
-500.00 kg,Scenery,DD1,Hoist Down,"-7' - 1""","8' - 1""",0
-500.00 kg,Cable Pick,SB2,Hoist Down,"-36' - 11""","6' - 5""",0
-500.00 kg,Cable Pick,SB3,Hoist Down,"36' - 11""","6' - 5""",0
-1000.00 kg,Lighting,DM1,Hoist Down,"-20' - 11""","5' - 11""",0
-1000.00 kg,Lighting,DM2,Hoist Down,"-7' - 7""","5' - 11""",0
-1000.00 kg,Lighting,DM3,Hoist Down,"7' - 7""","5' - 11""",0
-1000.00 kg,Lighting,DM4,Hoist Down,"20' - 10""","5' - 11""",0
-2000.00 kg,Audio,OF2,Hoist Down,"-41' - 4""",5',0
-2000.00 kg,Audio,OF6,Hoist Down,"41' - 4""",5',0
-2000.00 kg,Audio,OF3,Hoist Down,"-39' - 10""","4' - 2""",0
-2000.00 kg,Audio,OF5,Hoist Down,"39' - 10""","4' - 2""",0
-500.00 kg,Generic,DMP,Hoist Down,"-28' - 1""","2' - 9""",0
-500.00 kg,Scenery,DD4,Hoist Down,"-2' - 6""","2' - 9""",0
-500.00 kg,Scenery,DD6,Hoist Down,"16' - 4""","2' - 9""",0
-1000.00 kg,Video,IR1,Hoist Up,"-65' - 11""","2' - 1""",0
-1000.00 kg,Video,IR2,Hoist Up,-61',"2' - 1""",0
-1000.00 kg,Video,IR3,Hoist Up,"-56' - 1""","2' - 1""",0
-1000.00 kg,Video,IR4,Hoist Up,"-51' - 2""","2' - 1""",0
-1000.00 kg,Video,IL1,Hoist Up,"51' - 2""","2' - 1""",0
-1000.00 kg,Video,IL2,Hoist Up,"56' - 1""","2' - 1""",0
-1000.00 kg,Video,IL3,Hoist Up,61',"2' - 1""",0
-1000.00 kg,Video,IL4,Hoist Up,"65' - 11""","2' - 1""",0
-2000.00 kg,Audio,OF1,Hoist Down,"-42' - 7""","1' - 3""",0
-500.00 kg,Scenery,DD3,Hoist Down,"-16' - 6""","1' - 3""",0
-500.00 kg,Scenery,DD5,Hoist Down,"2' - 4""","1' - 3""",0
-2000.00 kg,Audio,OF4,Hoist Down,"42' - 6""","1' - 3""",0
-500.00 kg,Lighting,WR1,Hoist Down,"-64'3.319""","-0' - 3""",0
-500.00 kg,Lighting,WR2,Hoist Down,"-53' - 3""","-0' - 3""",0
-500.00 kg,Lighting,WL1,Hoist Down,"53' - 3""","-0' - 3""",0
-500.00 kg,Lighting,WL2,Hoist Down,"64' - 3""","-0' - 3""",0
-2000.00 kg,Audio,PA2,Hoist Down,"-32' - 4""","-1' - 3""",0
-2000.00 kg,Audio,PA3,Hoist Down,"-30' - 7""","-1' - 3""",0
-2000.00 kg,Audio,PA5,Hoist Down,"30' - 6""","-1' - 3""",0
-2000.00 kg,Audio,PA6,Hoist Down,"32' - 4""","-1' - 3""",0
-500.00 kg,Scenery,DD8,Hoist Down,"6' - 11""","-3' - 11""",0
-2000.00 kg,Audio,PA1,Hoist Down,"-31' - 5""","-5' - 3""",0
-500.00 kg,Scenery,DD7,Hoist Down,"-7' - 1""","-5' - 3""",0
-2000.00 kg,Audio,PA4,Hoist Down,"31' - 5""","-5' - 3""",0
-500.00 kg,Generic,DSP,Hoist Down,"-24' - 7""",-7',0
-1000.00 kg,Lighting,DS1,Hoist Down,"-20' - 11""","-14' - 2""",0
-1000.00 kg,Lighting,DS2,Hoist Down,"-7' - 7""","-14' - 2""",0
-1000.00 kg,Lighting,DS3,Hoist Down,"7' - 7""","-14' - 2""",0
-1000.00 kg,Lighting,DS4,Hoist Down,"20' - 10""","-14' - 2""",0
-USR,Generic,USR,,-70',50',0
-USL,Generic,USL,,70',50',0
-Chain Block,Other,BF1,,-15',33',0
-Chain Block,Other,BF2,,15',33',0
-250.00 kg,Lighting,QA1,Hoist Up,-50',12',0
-250.00 kg,Lighting,EA1,Hoist Down,-40',12',0
-2500.00 kg,Lighting,HB1,Hoist Up,40',12',0
-Fall Arrest,Other,FA1,,50',12',0
-Floor mark,Generic,FM1,,-0',0',0
-DSR,Generic,DSR,,-70',-20',0
-DSL,Generic,DSL,,70',-20',0
-250.00 kg,Scenery,WX1,Hoist Down,-60',30',0
-250.00 kg,Scenery,WX2,Hoist Down,-52',30',0
-250.00 kg,Scenery,WX3,Hoist Down,-44',30',0
-250.00 kg,Scenery,WX4,Hoist Down,-36',30',0
-250.00 kg,Scenery,WX5,Hoist Down,-28',30',0
-250.00 kg,Scenery,WX6,Hoist Down,-20',30',0
-250.00 kg,Scenery,WY1,Hoist Down,20',30',0
-250.00 kg,Scenery,WY2,Hoist Down,28',30',0
-250.00 kg,Scenery,WY3,Hoist Down,36',30',0
-250.00 kg,Scenery,WY4,Hoist Down,44',30',0
-250.00 kg,Scenery,WY5,Hoist Down,52',30',0
-250.00 kg,Scenery,WY6,Hoist Down,60',30',0
-320.00 kg,Lighting,QB1,Hoist Down,-30',12',0
-3000.00 kg,Lighting,HC1,Hoist Down,30',12',0
-1100 lb,Audio,LB1,Hoist Down,-25',12',0
+Hoist Type,Hoist Function,Hoist ID,Hoist Position,Origin X,Origin Y,Load (kg),Hoist Symbol
+500.00 kg,Generic,USP,Hoist Down,"-30' - 7""","46' - 3""",0,
+1000.00 kg,Video,VX1,Hoist Up,"-20' - 11""","42' - 9""",0,
+1000.00 kg,Video Automated,VX2,Hoist Up,"-12' - 7""","42' - 9""",0,TAIT Navigator
+1000.00 kg,Video,VX3,Hoist Up,"-4' - 1""","42' - 9""",0,
+1000.00 kg,Video,VX4,Hoist Up,"4' - 1""","42' - 9""",0,
+1000.00 kg,Video Automated,VX5,Hoist Up,"12' - 7""","42' - 9""",0,TAIT Navigator
+1000.00 kg,Video,VX6,Hoist Up,"20' - 10""","42' - 9""",0,
+1000.00 kg,Lighting Automated,US1,Hoist Down,"-20' - 11""","40' - 5""",0,Apex
+1000.00 kg,Lighting Automated,US2,Hoist Down,"-8' - 3""","40' - 5""",0,Apex
+1000.00 kg,Lighting Automated,US3,Hoist Down,"8' - 3""","40' - 5""",0,Elevation
+1000.00 kg,Lighting Automated,US4,Hoist Down,"20' - 10""","40' - 5""",0,Elevation
+500.00 kg,Lighting Automated,TR4,Hoist Down,"-25' - 8""","36' - 7""",0,Automated
+500.00 kg,Lighting Automated,TL1,Hoist Down,"25' - 8""","36' - 7""",0,Varispeed
+500.00 kg,Lighting,TR3,Hoist Down,"-27' - 4""","27' - 5""",0,
+500.00 kg,Lighting,TL2,Hoist Down,"27' - 4""","27' - 5""",0,
+1000.00 kg,Pre-Rig,UM1,Hoist Down,"-21' - 3""","23' - 4""",0,
+1000.00 kg,Pre-Rig,UM2,Hoist Down,"-7' - 7""","23' - 4""",0,
+1000.00 kg,Pre-Rig,UM3,Hoist Down,"7' - 7""","23' - 4""",0,
+1000.00 kg,Pre-Rig,UM4,Hoist Down,"21' - 3""","23' - 4""",0,
+500.00 kg,Lighting,TR2,Hoist Down,"-28' - 10""","18' - 10""",0,
+500.00 kg,Lighting,TL3,Hoist Down,"28' - 10""","18' - 10""",0,
+500.00 kg,Scenery,DD2,Hoist Down,"6' - 11""","9' - 5""",0,
+500.00 kg,Super Grid,TR1,Hoist Down,"-30' - 7""","9' - 3""",0,
+500.00 kg,Super Grid,TL4,Hoist Down,"30' - 7""","9' - 3""",0,
+500.00 kg,Cable Pick,SB1,Hoist Down,"-40' - 4""","8' - 4""",0,
+500.00 kg,Cable Pick,SB4,Hoist Down,"40' - 4""","8' - 4""",0,
+500.00 kg,Scenery,DD1,Hoist Down,"-7' - 1""","8' - 1""",0,
+500.00 kg,Cable Pick,SB2,Hoist Down,"-36' - 11""","6' - 5""",0,
+500.00 kg,Cable Pick,SB3,Hoist Down,"36' - 11""","6' - 5""",0,
+1000.00 kg,Lighting,DM1,Hoist Down,"-20' - 11""","5' - 11""",0,
+1000.00 kg,Lighting,DM2,Hoist Down,"-7' - 7""","5' - 11""",0,
+1000.00 kg,Lighting,DM3,Hoist Down,"7' - 7""","5' - 11""",0,
+1000.00 kg,Lighting,DM4,Hoist Down,"20' - 10""","5' - 11""",0,
+2000.00 kg,Audio,OF2,Hoist Down,"-41' - 4""",5',0,
+2000.00 kg,Audio,OF6,Hoist Down,"41' - 4""",5',0,
+2000.00 kg,Audio,OF3,Hoist Down,"-39' - 10""","4' - 2""",0,
+2000.00 kg,Audio,OF5,Hoist Down,"39' - 10""","4' - 2""",0,
+500.00 kg,Generic,DMP,Hoist Down,"-28' - 1""","2' - 9""",0,
+500.00 kg,Scenery,DD4,Hoist Down,"-2' - 6""","2' - 9""",0,
+500.00 kg,Scenery,DD6,Hoist Down,"16' - 4""","2' - 9""",0,
+1000.00 kg,Video,IR1,Hoist Up,"-65' - 11""","2' - 1""",0,
+1000.00 kg,Video,IR2,Hoist Up,-61',"2' - 1""",0,
+1000.00 kg,Video,IR3,Hoist Up,"-56' - 1""","2' - 1""",0,
+1000.00 kg,Video,IR4,Hoist Up,"-51' - 2""","2' - 1""",0,
+1000.00 kg,Video,IL1,Hoist Up,"51' - 2""","2' - 1""",0,
+1000.00 kg,Video,IL2,Hoist Up,"56' - 1""","2' - 1""",0,
+1000.00 kg,Video,IL3,Hoist Up,61',"2' - 1""",0,
+1000.00 kg,Video,IL4,Hoist Up,"65' - 11""","2' - 1""",0,
+2000.00 kg,Audio,OF1,Hoist Down,"-42' - 7""","1' - 3""",0,
+500.00 kg,Scenery,DD3,Hoist Down,"-16' - 6""","1' - 3""",0,
+500.00 kg,Scenery,DD5,Hoist Down,"2' - 4""","1' - 3""",0,
+2000.00 kg,Audio,OF4,Hoist Down,"42' - 6""","1' - 3""",0,
+500.00 kg,Lighting,WR1,Hoist Down,"-64'3.319""","-0' - 3""",0,
+500.00 kg,Lighting,WR2,Hoist Down,"-53' - 3""","-0' - 3""",0,
+500.00 kg,Lighting,WL1,Hoist Down,"53' - 3""","-0' - 3""",0,
+500.00 kg,Lighting,WL2,Hoist Down,"64' - 3""","-0' - 3""",0,
+2000.00 kg,Audio,PA2,Hoist Down,"-32' - 4""","-1' - 3""",0,
+2000.00 kg,Audio,PA3,Hoist Down,"-30' - 7""","-1' - 3""",0,
+2000.00 kg,Audio,PA5,Hoist Down,"30' - 6""","-1' - 3""",0,
+2000.00 kg,Audio,PA6,Hoist Down,"32' - 4""","-1' - 3""",0,
+500.00 kg,Scenery,DD8,Hoist Down,"6' - 11""","-3' - 11""",0,
+2000.00 kg,Audio,PA1,Hoist Down,"-31' - 5""","-5' - 3""",0,
+500.00 kg,Scenery,DD7,Hoist Down,"-7' - 1""","-5' - 3""",0,
+2000.00 kg,Audio,PA4,Hoist Down,"31' - 5""","-5' - 3""",0,
+500.00 kg,Generic,DSP,Hoist Down,"-24' - 7""",-7',0,
+1000.00 kg,Lighting,DS1,Hoist Down,"-20' - 11""","-14' - 2""",0,
+1000.00 kg,Lighting,DS2,Hoist Down,"-7' - 7""","-14' - 2""",0,
+1000.00 kg,Lighting,DS3,Hoist Down,"7' - 7""","-14' - 2""",0,
+1000.00 kg,Lighting,DS4,Hoist Down,"20' - 10""","-14' - 2""",0,
+USR,Generic,USR,,-70',50',0,
+USL,Generic,USL,,70',50',0,
+Chain Block,Other,BF1,,-15',33',0,
+Chain Block,Other,BF2,,15',33',0,
+250.00 kg,Lighting,QA1,Hoist Up,-50',12',0,
+250.00 kg,Lighting,EA1,Hoist Down,-40',12',0,
+2500.00 kg,Lighting,HB1,Hoist Up,40',12',0,
+Fall Arrest,Other,FA1,,50',12',0,
+Floor mark,Generic,FM1,,-0',0',0,
+DSR,Generic,DSR,,-70',-20',0,
+DSL,Generic,DSL,,70',-20',0,
+250.00 kg,Scenery,WX1,Hoist Down,-60',30',0,
+250.00 kg,Scenery,WX2,Hoist Down,-52',30',0,
+250.00 kg,Scenery,WX3,Hoist Down,-44',30',0,
+250.00 kg,Scenery,WX4,Hoist Down,-36',30',0,
+250.00 kg,Scenery,WX5,Hoist Down,-28',30',0,
+250.00 kg,Scenery,WX6,Hoist Down,-20',30',0,
+250.00 kg,Scenery,WY1,Hoist Down,20',30',0,
+250.00 kg,Scenery,WY2,Hoist Down,28',30',0,
+250.00 kg,Scenery,WY3,Hoist Down,36',30',0,
+250.00 kg,Scenery,WY4,Hoist Down,44',30',0,
+250.00 kg,Scenery,WY5,Hoist Down,52',30',0,
+250.00 kg,Scenery,WY6,Hoist Down,60',30',0,
+320.00 kg,Lighting,QB1,Hoist Down,-30',12',0,
+3000.00 kg,Lighting,HC1,Hoist Down,30',12',0,
+1100 lb,Audio,LB1,Hoist Down,-25',12',0,

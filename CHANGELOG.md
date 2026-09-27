@@ -2,6 +2,31 @@
 
 All notable changes to DATUM. Newest first.
 
+## 28 September 2026
+
+### Automation types (new Hoist Symbol column)
+- Automated hoists now come from a new optional CSV column, **Hoist Symbol**, instead of the Hoist Function. The value decides the badge and the text shown under the symbol:
+  - **Auto**, **Automated** or **Varispeed** give **AUTO** (generic).
+  - **NAV** or **Navigator** give **NAV** (TAIT Navigator).
+  - **Apex** gives **APEX**.
+  - **Elevation** gives **ELEV**.
+- If a word matches more than one type, the specific one wins: "TAIT Navigator Automated" shows NAV.
+- The legend lists each type in use: Automated, TAIT Navigator, Apex, Elevation.
+- The column is picked up automatically, can be chosen under **Columns > Hoist Symbol**, and can be edited in the Data tab (**Symbol** column, with suggestions).
+- The template CSV, the built-in sample and the sample files now include the column.
+- **Older CSVs:** files without a Hoist Symbol column still work as before; "Automated" in the Hoist Function shows AUTO. Once the column exists, only it is used.
+
+### Markout Rows
+- **The X value is now the largest text** on each card, then the hoist ID and symbol, then the badges.
+- **Card borders** take the colour of the hoist's symbol, and still turn green when marked done.
+- **Centre-column rows:** rows with a mark in the centre column are highlighted in a lighter grey.
+- **Automated cards** are now the same height as the others.
+- **Badge colour:** automation badges (AUTO, NAV, APEX, ELEV) use the same yellow as INVERT.
+
+### PDF export
+- **X value first:** in each cell the X value is larger and the hoist ID smaller. The fit engine allows for the new sizes, so text is still never clipped.
+- **Centred labels:** Upstage/Downstage in the centre column, and the band labels, are now properly centred.
+
 ## 27 September 2026
 
 ### Sign-in, accounts and cloud projects (new)
