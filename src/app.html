@@ -1316,6 +1316,9 @@ function expandedHtml(r){
 }
 function renderMoList(vis,scrollList){
   const list=$('moList'), keep=list.scrollTop, hide=S.mo.hideDone;
+  // Tapped rows open in place: remember where the tapped row sits on screen (scrollList==='tap').
+  // Next/Previous keep the list still and only scroll when the open row reaches the top or bottom edge.
+  const before=scrollList==='tap'?list.querySelector(`.mo-row[data-ri="${S.mo.cur}"]`):null, beforeY=before?before.getBoundingClientRect().top:null;
   if(!vis.length){ list.innerHTML='<div class="mo-empty">'+(S.rows.length?'All marks complete.':'No hoists to mark out yet.')+'</div>'; return; }
   const ids=items=>{ const v=hide?items.filter(it=>!isDone(it.h.id)):items;
     if(!v.length) return `<span class="mo-none" style="padding:0">${items.length?'&#10003;':'&ndash;'}</span>`;
@@ -1327,7 +1330,13 @@ function renderMoList(vis,scrollList){
       <div class="mo-cell l"><div class="mo-ids l">${ids(r.right)}</div><span class="dl l"></span></div>
       <div class="mo-c"><small>${esc(r.yi.dir)}</small><b>${esc(r.yi.txt)}</b>${all?'<em class="ok">&#10003; done</em>':''}${cl}</div>
       <div class="mo-cell r"><span class="dl r"></span><div class="mo-ids">${ids(r.left)}</div></div></div>`; }).join('');
-  if(scrollList){ const el=list.querySelector('.mo-row.open'); if(el) list.scrollTop=Math.max(0,el.offsetTop-76); } else list.scrollTop=keep;
+  list.scrollTop=keep;
+  if(scrollList){ const el=list.querySelector('.mo-row.open'); if(!el) return;
+    if(beforeY!==null) list.scrollTop+=el.getBoundingClientRect().top-beforeY;   // keep it where it was
+    // then scroll only as far as needed if it runs past the top or bottom of the visible list
+    const lr=list.getBoundingClientRect(), r=el.getBoundingClientRect(), pad=8;
+    if(r.top<lr.top+pad) list.scrollTop-=lr.top+pad-r.top;
+    else if(r.bottom>lr.bottom-pad) list.scrollTop+=Math.min(r.bottom-(lr.bottom-pad), r.top-(lr.top+pad)); }
 }
 function renderMarkout(scrollList){ const vis=clampCur(); moUpdateBar(vis); renderMoList(vis,scrollList); }
 
@@ -2390,7 +2399,7 @@ function init(){
   window.addEventListener('resize',()=>{ const b=$('moReset'); if(!b.classList.contains('armed')) b.textContent=shortLbl()?'Reset':'Reset completed'; });
   $('moList').addEventListener('click',e=>{
     const c=e.target.closest('.mo-card'); if(c){ toggleDone(c.dataset.id); return; }
-    const r=e.target.closest('.mo-row'); if(r && !r.classList.contains('open')){ S.mo.cur=+r.dataset.ri; renderMarkout(true); } });
+    const r=e.target.closest('.mo-row'); if(r && !r.classList.contains('open')){ S.mo.cur=+r.dataset.ri; renderMarkout('tap'); } });
   document.addEventListener('keydown',e=>{ if(S.tab!=='rows') return; const el=e.target; if(el && /^(INPUT|SELECT|TEXTAREA)$/.test(el.tagName)) return;
     if(['ArrowDown','ArrowRight','PageDown'].includes(e.key)){ e.preventDefault(); moGo(1); } else if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){ e.preventDefault(); moGo(-1); } });
   $('btnAutoSym').onclick=()=>{ let n=0; for(const ty of new Set(S.hoists.map(h=>h.type))){ const g=guessSymbol(ty); if(g){ S.typeMap[ty]=g; n++; } } recomputeUp(); renderSymUI(); renderAll(); saveStore(); toast(n?('Matched '+n+' type(s) by name.'):'No type names matched (try names like 1T, 0.5T, Fall Arrest, DSL).'); };
