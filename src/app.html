@@ -322,6 +322,8 @@ a.btn{display:inline-flex;align-items:center;background:var(--raised);border:1px
 body.ro #v-data input,body.ro #v-data select,body.ro #v-data .act,body.ro #dApply,body.ro #dDiscard,body.ro #dAdd,body.ro #dRevert,body.ro #dAlign{pointer-events:none;opacity:.5}
 table.al .same{color:var(--faint)} table.al .chg{color:var(--warn);font-weight:600}
 table.dt td.num{color:var(--muted)}
+table.dt td.rdas{color:var(--muted);font-size:12px}
+table.dt input[data-k=hsym]{min-width:165px}
 .act{display:flex;gap:6px}
 .iconb{width:30px;height:30px;border-radius:8px;border:1px solid var(--line2);background:var(--raised);cursor:pointer;display:grid;place-items:center;color:var(--ink2);padding:0}
 .iconb:hover{background:var(--raised2);color:var(--ink)}
@@ -834,7 +836,7 @@ const STORE_KEY = 'markoutTool.v1', DONE_KEY = 'markoutTool.done.v1', LOGO_KEY =
 /* ============================ state ============================ */
 const S = {
   raw:{headers:[],rows:[],name:''},
-  map:{type:-1,func:-1,id:-1,pos:-1,x:-1,y:-1,load:-1,hsym:-1,auto:-1,place:-1,cap:-1},
+  map:{id:-1,cap:-1,hsym:-1,func:-1,pos:-1,place:-1,x:-1,y:-1,load:-1},
   hoists:[], rows:[], warnings:0,
   typeMap:{}, funcMap:{}, funcRing:{},
   opt:{inUnit:'auto',disp:'ftin',den:1,tol:50,cth:1,rot:0,rowOrder:'top',sideNeg:'left',sideSort:'center',flipX:false,flipY:false,datX:0,datY:0,topL:'UPSTAGE',botL:'DOWNSTAGE',leftL:'SR',rightL:'SL',upStyle:'fill',show:'all',alignTol:25.4,alignMode:'both',alignKeep:'first'},
@@ -909,17 +911,17 @@ function autoMap(headers){
     return -1;
   };
   return {
-    type: find(['hoisttype','type'],['hoisttype']),
-    cap:  find(['capacity','hoistcapacity','capacitykg','swl'],['capacity']),
-    func: find(['hoistfunction','function'],['function','funct']),
-    id:   find(['hoistid','id','name','label'],['hoistid','hoistname','label']),
-    pos:  find(['orientation','hoistorientation','hoistposition','hoistdirection','updown','hoistupdown','direction'],['orientation','hoistposition','updown']),
-    place:find(['position','location','hoistlocation','description'],[]),
-    x:    find(['originx','x','xpos','xposition'],['originx']),
-    y:    find(['originy','y','ypos','yposition'],['originy']),
-    load: find(['load','loadkg','weight','weightkg','swl','loadingkg'],['load','weight']),
-    hsym: find(['hoistsymbol','symbol','hoistsymbology'],['hoistsymbol','symbol']),
-    auto: find(['hoistautomation','automation'],['automation']),
+    // CSV columns: Hoist ID, Capacity (formatted), Hoist Symbol, Function, Hoist Position, Position,
+    // Origin X (formatted), Origin Y (formatted), Low Hook Weight Equivalent. Older files: "Hoist Type" is read as the Hoist Symbol.
+    id:   find(['hoistid','id','name','label'],['hoistid','hoistname']),
+    cap:  find(['capacityformatted','capacity','hoistcapacity','capacitykg'],['capacity']),
+    hsym: find(['hoistsymbol','symbol','hoisttype','type'],['hoistsymbol','symbol','hoisttype']),
+    func: find(['function','hoistfunction'],['function']),
+    pos:  find(['hoistposition','orientation','hoistorientation','updown','hoistupdown'],['hoistposition','orientation','updown']),
+    place:find(['position','location','description'],[]),
+    x:    find(['originxformatted','originx','x'],['originx']),
+    y:    find(['originyformatted','originy','y'],['originy']),
+    load: find(['lowhookweightequivalent','lowhookweight','load','loadkg','weight'],['lowhook','load','weight']),
   };
 }
 
@@ -1076,10 +1078,10 @@ function rebuild(){
   const seen=new Map(), seenPos=new Map();
   rows.forEach((r,i)=>{
     const g=k=> (map[k]>=0 && r[map[k]]!==undefined) ? String(r[map[k]]).trim() : '';
-    const h={row:i+2, skip:S.skip.has(i), id:g('id'), type:g('type')||'(none)', func:g('func')||'(none)', posRaw:g('pos'), xRaw:g('x'), yRaw:g('y'), loadRaw:g('load'), issues:[]};
+    const h={row:i+2, skip:S.skip.has(i), id:g('id'), type:symbolType(g('hsym'))||'(none)', func:g('func')||'(none)', posRaw:g('pos'), xRaw:g('x'), yRaw:g('y'), loadRaw:g('load'), issues:[]};
     h.upRaw=/\bup\b/i.test(h.posRaw) && !/down/i.test(h.posRaw); h.up=h.upRaw;
     h.datum=/^datum$/i.test(h.id)||/^datum$/i.test(h.type);
-    h.hsym=g('hsym'); h.place=g('place'); h.cap=g('cap'); h.auto=autoKind(map.auto>=0?g('auto'):h.hsym);
+    h.hsym=g('hsym'); h.place=g('place'); h.cap=g('cap'); h.auto=autoKind(h.hsym);
     h.x=parseLen(h.xRaw,unit); h.y=parseLen(h.yRaw,unit);
     h.load = h.loadRaw!=='' && !isNaN(parseFloat(h.loadRaw)) ? parseFloat(h.loadRaw) : null;
     if(h.id==='') { h.issues.push('No ID'); h.id='?'+(i+1); }
@@ -1182,7 +1184,7 @@ function autoKind(v){ const t=String(v||'').toLowerCase(), w=re=>new RegExp('(^|
 function autoOf(h){ return h&&h.auto||''; }
 // Values written to the Hoist Automation column (autoKind() reads them back)
 const AUTO_VALUES={AUTO:'Automated',NAV:'TAIT Nav',APEX:'Kinesys APEX',ELEV:'Kinesys Elevation',KES:'Moveket V-Motion'};
-const TYPE_SUGGEST=['250kg','320kg','500kg','1 Ton','2 Ton','2.5 Ton','3 Ton','Chain Block','Fall Arrest','Floor Mark','USR','USL','DSR','DSL'];
+const SYMBOL_SUGGEST=['1/4 Ton','1/3 Ton','1/2 Ton','1 Ton','2 Ton','2.5 Ton','3 Ton','1 Ton Automated','1 Ton TAIT Nav','1 Ton Apex','1 Ton Elevation','1 Ton VMK','Block and Fall','Fall Arrest','Floor Mark','USR Mark','USL Mark','DSR Mark','DSL Mark'];
 function kgLabel(kg){ return kg>=1000 ? (Math.round(kg/100)/10)+' Ton' : Math.round(kg)+'kg'; }
 function nearCap(kg){ let b=kg,bd=Infinity; for(const [k] of CAPS){ const d=Math.abs(kg-k)/k; if(d<bd){ bd=d; b=k; } } return bd<=0.1?b:kg; }
 // Hoist Type from the Hoist Symbol text: 1/4 Ton -> 250kg, 1/3 Ton -> 320kg, 1/2 Ton -> 500kg, 1 Ton, 2 Ton, 2.5 Ton, 3 Ton,
@@ -1203,15 +1205,6 @@ function passShow(h){ const f=S.opt.show||'all'; return f==='all'||!h.cat||h.cat
 function showName(){ return {GRID:'Grid only',SUBHANG:'Subhang only'}[S.opt.show]||''; }
 function isMarker(h){ return /^(floor-mark|corner-)/.test(itemSym(h)); }
 function subTxt(h){ return isMarker(h) ? (h.place||'') : loadTxt(h); }
-// On import: fill the Hoist Type and Hoist Automation columns from Hoist Symbol. Capacity is stored but never used for the type.
-function deriveColumns(){
-  const H=S.raw.headers, rows=S.raw.rows, m=S.map, cell=(r,i)=>i>=0&&r[i]!=null?String(r[i]).trim():'';
-  const colFor=name=>{ let i=H.findIndex(h=>norm(h)===norm(name)); if(i<0){ H.push(name); i=H.length-1; } rows.forEach(r=>{ while(r.length<H.length) r.push(''); }); return i; };
-  const types=m.hsym>=0?rows.map(r=>symbolType(cell(r,m.hsym))):[];
-  if(types.some(Boolean)){ const ti=colFor('Hoist Type'), src=m.type;
-    rows.forEach((r,k)=>{ if(types[k]) r[ti]=types[k]; else if(src>=0&&src!==ti&&!cell(r,ti)) r[ti]=cell(r,src); }); m.type=ti; }
-  if(m.hsym>=0){ const ai=colFor('Hoist Automation'); rows.forEach((r,k)=>{ const a=AUTO_VALUES[autoKind(cell(r,m.hsym))]; if(a) r[ai]=a; }); m.auto=ai; }
-}
 function autoLabel(a){ return (a===true||a==='tag')?'AUTO':String(a); }
 function hoistSVG(h,size){ return symSVG(itemSym(h),scr(h),size,false,{up:h.up,ring:ringCol(h),auto:autoOf(h)}); }
 function itemColor(h){ return S.funcMap[h.func]||'#1a1a1a'; }
@@ -1230,7 +1223,7 @@ function datumNote(){
 }
 
 /* ============================ rendering: data view ============================ */
-const COLKEYS=[['id','Hoist ID'],['type','Hoist Type'],['auto','Hoist Automation'],['cap','Capacity'],['func','Hoist Function'],['pos','Orientation'],['place','Position'],['x','Origin X'],['y','Origin Y'],['load','Load (kg)'],['hsym','Hoist Symbol']];
+const COLKEYS=[['id','Hoist ID'],['cap','Capacity (formatted)'],['hsym','Hoist Symbol'],['func','Function'],['pos','Hoist Position'],['place','Position'],['x','Origin X (formatted)'],['y','Origin Y (formatted)'],['load','Low Hook Weight Equivalent']];
 function storedVal(i,key){ const ci=S.map[key], r=S.raw.rows[i]; return (ci>=0 && r && r[ci]!==undefined) ? String(r[ci]) : ''; }
 function rawVal(i,key){ const p=S.pending[i]; return (p && key in p) ? p[key] : storedVal(i,key); }
 function pendingCount(){ let n=0; for(const i in S.pending) n+=Object.keys(S.pending[i]).length; return n; }
@@ -1311,7 +1304,7 @@ function addRow(after){
   applyPending(true);
   const src=S.raw.rows[after>=0?after:S.raw.rows.length-1]; const row=Array(S.raw.headers.length).fill('');
   const g=k=>{ const ci=S.map[k]; return src&&ci>=0?(src[ci]||''):''; };
-  setRaw(row,'id','NEW'); setRaw(row,'type',g('type')); setRaw(row,'func',g('func')); setRaw(row,'x','0'); setRaw(row,'y','0');
+  setRaw(row,'id','NEW'); setRaw(row,'hsym',g('hsym')); setRaw(row,'func',g('func')); setRaw(row,'x','0'); setRaw(row,'y','0');
   const at=after>=0?after+1:S.raw.rows.length; shiftSkip(at,1); S.raw.rows.splice(at,0,row); refresh(); setTimeout(()=>focusRow(at),30);
 }
 function duplicateRow(i){
@@ -1338,16 +1331,16 @@ function updateDataBar(){
 function renderData(){
   const hs=S.hoists; const types=[...new Set(hs.map(h=>h.type))], funcs=[...new Set(hs.map(h=>h.func))];
   const dl=(id,arr)=>`<datalist id="${id}">${arr.map(v=>`<option value="${esc(v)}">`).join('')}</datalist>`;
-  const inp=(i,k)=>{ const pend=S.pending[i]&&k in S.pending[i]; return `<td class="${pend?'pend':''}"><input type="text" data-ri="${i}" data-k="${k}" value="${esc(rawVal(i,k))}"${k==='type'?' list="dl-type"':k==='func'?' list="dl-func"':k==='auto'?' list="dl-auto"':''} spellcheck="false" autocomplete="off"></td>`; };
+  const inp=(i,k)=>{ const pend=S.pending[i]&&k in S.pending[i]; return `<td class="${pend?'pend':''}"><input type="text" data-ri="${i}" data-k="${k}" value="${esc(rawVal(i,k))}"${k==='hsym'?' list="dl-hsym"':k==='func'?' list="dl-func"':''} spellcheck="false" autocomplete="off"></td>`; };
   const pos=i=>{ const v=rawVal(i,'pos'), pend=S.pending[i]&&'pos' in S.pending[i]; const o=['','Hoist Down','Hoist Up']; if(v&&!o.includes(v)) o.push(v);
     return `<td class="${pend?'pend':''}"><select data-ri="${i}" data-k="pos">${o.map(x=>`<option value="${esc(x)}"${x===v?' selected':''}>${x||'(blank)'}</option>`).join('')}</select></td>`; };
-  const tsug=[...new Set(TYPE_SUGGEST.concat(types.filter(t=>t&&t!=='(none)')))], asug=Object.values(AUTO_VALUES);
-  let html=dl('dl-type',tsug)+dl('dl-func',funcs)+dl('dl-auto',asug)+`<table class="dt"><thead><tr><th>#</th><th title="Skipped rows are left off the plot, markout rows and PDF">Skip</th><th></th><th>ID</th><th>Hoist Type</th><th>Capacity</th><th title="Automated, TAIT Nav, Kinesys APEX, Kinesys Elevation or Moveket V-Motion">Automation</th><th>Function</th><th title="Floor and corner marks: what is being marked (e.g. Main Stage). Hoists: GRID or SUBHANG.">Position</th><th>Orientation</th><th>Origin X</th><th>Origin Y</th><th>Load</th><th>Side / X</th><th>Row Y</th><th>Status</th><th></th></tr></thead><tbody>`;
+  const ssug=[...new Set(SYMBOL_SUGGEST.concat(hs.map(h=>h.hsym).filter(Boolean)))];
+  let html=dl('dl-hsym',ssug)+dl('dl-func',funcs)+`<table class="dt"><thead><tr><th>#</th><th title="Skipped rows are left off the plot, markout rows and PDF">Skip</th><th></th><th>ID</th><th>Capacity</th><th title="Sets the symbol type (e.g. 1/2 Ton, Block and Fall, USR Mark) and automation (Automated, TAIT Nav, Apex, Elevation, VMK)">Hoist Symbol</th><th title="How DATUM reads the Hoist Symbol">Reads as</th><th>Function</th><th title="Floor and corner marks: what is being marked (e.g. Main Stage). Hoists: GRID or SUBHANG.">Position</th><th>Orientation</th><th>Origin X</th><th>Origin Y</th><th>Load</th><th>Side / X</th><th>Row Y</th><th>Status</th><th></th></tr></thead><tbody>`;
   hs.forEach((h,i)=>{
     let sx='',sy='';
     if(h.ok){ const q=tf(h); const th=Math.max(0,S.opt.cth||0); sx=(Math.abs(q.xs)<=th?'CL':q.xs>0?S.opt.rightL:S.opt.leftL)+' '+fmtDist(q.xs); const yi=yInfo(q.yu); sy=yi.key==='datum'?'DATUM':abbr(yi.dir)+' '+yi.txt; }
     const st=h.skip?'<span class="pill">Skipped</span>':h.datum?'<span class="pill">Datum row</span>':(h.issues.length?h.issues.map(x=>`<span class="pill${/Bad/.test(x)?' err':''}">${esc(x)}</span>`).join(' '):'OK');
-    html+=`<tr class="${h.issues.length?'bad':''}${h.skip?' skip':''}${S.sel===h.id?' sel':''}" data-ri="${i}" data-id="${esc(h.id)}"><td class="num">${h.row}</td><td class="skc"><input type="checkbox" data-skip="${i}"${h.skip?' checked':''} title="Skip this row" aria-label="Skip row ${h.row}"></td><td>${hoistSVG(h,16)}</td>${inp(i,'id')}${inp(i,'type')}${inp(i,'cap')}${inp(i,'auto')}${inp(i,'func')}${inp(i,'place')}${pos(i)}${inp(i,'x')}${inp(i,'y')}${inp(i,'load')}<td>${sx}</td><td>${sy}</td><td>${st}</td>
+    html+=`<tr class="${h.issues.length?'bad':''}${h.skip?' skip':''}${S.sel===h.id?' sel':''}" data-ri="${i}" data-id="${esc(h.id)}"><td class="num">${h.row}</td><td class="skc"><input type="checkbox" data-skip="${i}"${h.skip?' checked':''} title="Skip this row" aria-label="Skip row ${h.row}"></td><td>${hoistSVG(h,16)}</td>${inp(i,'id')}${inp(i,'cap')}${inp(i,'hsym')}<td class="rdas">${esc(h.type==='(none)'?'?':h.type)}${h.auto?' &middot; '+esc(AUTO_VALUES[h.auto]):''}</td>${inp(i,'func')}${inp(i,'place')}${pos(i)}${inp(i,'x')}${inp(i,'y')}${inp(i,'load')}<td>${sx}</td><td>${sy}</td><td>${st}</td>
       <td><div class="act"><button class="iconb" data-act="dup" data-ri="${i}" title="Duplicate row"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button>
       <button class="iconb danger" data-act="del" data-ri="${i}" title="Delete row (tap twice)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg></button></div></td></tr>`;
   });
@@ -1554,9 +1547,9 @@ function renderInfo(){
 function renderMapUI(){
   const H=S.raw.headers; const body=$('mapBody');
   if(!H.length){ body.innerHTML='<div class="hint">Columns are matched automatically after import. Change them here if a header was not recognised.</div>'; return; }
-  const defs=[['hsym','Hoist Symbol (sets Type + Automation)'],['type','Hoist Type'],['auto','Hoist Automation (optional)'],['cap','Capacity (optional)'],['func','Hoist Function'],['id','Hoist ID'],['pos','Orientation (optional)'],['place','Position (optional)'],['x','Origin X'],['y','Origin Y'],['load','Load (optional)']];
-  body.innerHTML=defs.map(([k,l])=>`<div class="field"><label>${l}</label><select data-map="${k}"><option value="-1">${(k==='load'||k==='pos'||k==='hsym'||k==='auto'||k==='place'||k==='cap')?'- none -':'- not set -'}</option>${H.map((h,i)=>`<option value="${i}"${S.map[k]===i?' selected':''}>${esc(h)}</option>`).join('')}</select></div>`).join('');
-  body.querySelectorAll('select').forEach(sel=>sel.onchange=()=>{ applyPending(true); S.map[sel.dataset.map]=parseInt(sel.value,10); if(sel.dataset.map==='hsym'&&S.map.hsym>=0){ deriveColumns(); renderMapUI(); } refresh(); });
+  const defs=[['id','Hoist ID'],['cap','Capacity'],['hsym','Hoist Symbol'],['func','Function'],['pos','Orientation'],['place','Position'],['x','Origin X'],['y','Origin Y'],['load','Load']];
+  body.innerHTML=defs.map(([k,l])=>`<div class="field"><label>${l}</label><select data-map="${k}"><option value="-1">${(k==='load'||k==='pos'||k==='place'||k==='cap'||k==='func')?'- none -':'- not set -'}</option>${H.map((h,i)=>`<option value="${i}"${S.map[k]===i?' selected':''}>${esc(h)}</option>`).join('')}</select></div>`).join('');
+  body.querySelectorAll('select').forEach(sel=>sel.onchange=()=>{ applyPending(true); S.map[sel.dataset.map]=parseInt(sel.value,10); refresh(); });
 }
 function renderSymUI(){
   const tb=$('typeMapBody'), fb=$('funcMapBody'); const T=themeT();
@@ -1596,7 +1589,7 @@ function loadCSVText(text,name,isSample){
   const t=parseCSV(text);
   if(t.length<2){ toast('That file has no data rows.'); return; }
   S.raw={headers:t[0].map(s=>s.trim()),rows:t.slice(1),name};
-  S.map=autoMap(S.raw.headers); deriveColumns(); S.sample=!!isSample; S.sel=null;
+  S.map=autoMap(S.raw.headers); S.sample=!!isSample; S.sel=null;
   S.orig={headers:S.raw.headers.slice(),rows:S.raw.rows.map(r=>r.slice()),map:Object.assign({},S.map)}; S.pending={}; S.skip=new Set(); S.mo.cur=0;
   if(S.doneName!==name){ S.done=new Set(); S.doneName=name; saveDone(); }
   if(isSample){ S.typeMap={}; S.funcMap={}; S.funcRing={}; }
@@ -1605,8 +1598,8 @@ function loadCSVText(text,name,isSample){
   S.sampleLoaded=!!isSample;
   $('fileInfo').textContent=`${name} - ${S.raw.rows.length} rows loaded.`;
   renderMapUI(); refresh();
-  const miss=['type','func','id','x','y'].filter(k=>S.map[k]<0);
-  if(miss.length) toast('Check the Columns section - could not match: '+miss.join(', '));
+  const miss=['hsym','id','x','y'].filter(k=>S.map[k]<0);
+  if(miss.length) toast('Check the Columns section - could not match: '+miss.map(k=>({hsym:'Hoist Symbol',id:'Hoist ID',x:'Origin X',y:'Origin Y'})[k]).join(', '));
   requestAnimationFrame(fitPlot);
   const ar=$('appRoot'); if(ar) ar.classList.remove('side-open');
 }
@@ -1660,12 +1653,12 @@ function sampleSymbol(type){ if(/^(USR|USL|DSR|DSL)$/.test(type)) return [ '', t
 const SAMPLE_FUNC_OVERRIDE={TR1:'Super Grid',TL4:'Super Grid',SB1:'Cable Pick',SB2:'Cable Pick',SB3:'Cable Pick',SB4:'Cable Pick',UM1:'Pre-Rig',UM2:'Pre-Rig',UM3:'Pre-Rig',UM4:'Pre-Rig'};
 const SAMPLE_X_OVERRIDE={WR1:"64'3.319\""};
 function sampleCSV(){
-  const rows=[['Capacity','Hoist Function','Hoist ID','Hoist Position','Origin X','Origin Y','Load (kg)','Hoist Symbol','Position']];
+  const rows=[['Hoist ID','Capacity (formatted)','Hoist Symbol','Function','Hoist Position','Position','Origin X (formatted)','Origin Y (formatted)','Low Hook Weight Equivalent']];
   const marker=/^(USR|USL|DSR|DSL|Floor mark|Chain Block|Fall Arrest)$/;
   for(const [y,items] of SAMPLE.concat(SAMPLE_EXTRA)) for(const [id,x0,side,type,func] of items){
     const x=SAMPLE_X_OVERRIDE[id]||x0, fn=SAMPLE_FUNC_OVERRIDE[id]||func;
     const pos=marker.test(type)?'':(/^(VX|IR|IL|HB|QA)/.test(id)?'Hoist Up':'Hoist Down');
-    const [cap,sym]=sampleSymbol(type); rows.push([cap,fn,id,pos,(side==='R'?'-':'')+x,y,0,(sym+' '+(SAMPLE_HSYM[id]||'')).trim(),SAMPLE_PLACE[id]||(marker.test(type)?'':SAMPLE_CAT[fn]||'')]);
+    const [cap,sym]=sampleSymbol(type); rows.push([id,cap?cap+' kg':'',(sym+' '+(SAMPLE_HSYM[id]||'')).trim(),fn,pos,SAMPLE_PLACE[id]||(marker.test(type)?'':SAMPLE_CAT[fn]||''),(side==='R'?'-':'')+x,y,0]);
   }
   return rows.map(r=>r.map(csvCell).join(',')).join('\r\n');
 }
@@ -2032,7 +2025,9 @@ function projectData(withLogos){
 function applyProject(o){
   if(!o||(o.app!=='datum'&&o.app!=='markout')||!o.raw||!Array.isArray(o.raw.rows)) throw new Error('bad');
   S.raw={headers:o.raw.headers||[],rows:o.raw.rows,name:o.raw.name||''};
-  S.map=Object.assign({type:-1,func:-1,id:-1,pos:-1,x:-1,y:-1,load:-1,hsym:-1,auto:-1,place:-1,cap:-1},o.map||{});
+  S.map=Object.assign({id:-1,cap:-1,hsym:-1,func:-1,pos:-1,place:-1,x:-1,y:-1,load:-1},o.map||{});
+  if(!(S.map.hsym>=0) && S.map.type>=0) S.map.hsym=S.map.type;   // projects saved before Hoist Symbol: the old type column is the symbol
+  delete S.map.type; delete S.map.auto;
   S.orig=o.orig||{headers:S.raw.headers.slice(),rows:S.raw.rows.map(r=>r.slice()),map:Object.assign({},S.map)};
   S.sample=!!o.sample; S.sampleLoaded=!!o.sampleLoaded; S.sel=null; S.pending={}; S.skip=new Set((o.skip||[]).filter(i=>i>=0&&i<S.raw.rows.length));
   Object.assign(S.opt,o.opt||{}); Object.assign(S.sheet,o.sheet||{}); Object.assign(S.plot,o.plot||{});
@@ -2059,7 +2054,7 @@ function loadProjectFile(f){
 function clearProject(quiet){
   if(!quiet&&isViewer()) return;
   cloudDetach();
-  S.raw={headers:[],rows:[],name:''}; S.map={type:-1,func:-1,id:-1,pos:-1,x:-1,y:-1,load:-1,hsym:-1,auto:-1,place:-1,cap:-1}; S.orig=null; S.sample=false; S.sampleLoaded=false; S.sel=null; S.pending={}; S.skip=new Set();
+  S.raw={headers:[],rows:[],name:''}; S.map={id:-1,cap:-1,hsym:-1,func:-1,pos:-1,place:-1,x:-1,y:-1,load:-1}; S.orig=null; S.sample=false; S.sampleLoaded=false; S.sel=null; S.pending={}; S.skip=new Set();
   S.done=new Set(); S.doneName=''; S.mo.cur=0; S.typeMap={}; S.funcMap={}; S.funcRing={}; S.logoShow=S.logoUser=S._imgShow=S._imgUser=null; saveLogo(); syncLogoUI();
   try{ localStorage.removeItem(PROJ_KEY); }catch(e){}
   $('fileInfo').textContent='No file loaded.'; saveDone(); renderMapUI(); refresh(); schedulePreview(true); if(!quiet) toast('Started a new project.');
@@ -2413,7 +2408,7 @@ function init(){
   document.addEventListener('drop',e=>{ const f=e.dataTransfer&&e.dataTransfer.files[0]; if(f) readFile(f); });
   const sample=()=>loadCSVText(sampleCSV(),'Sample (recreated from reference sheet)',true);
   $('btnSample').onclick=sample; $('btnSample2').onclick=sample;
-  $('btnTemplate').onclick=()=>download('Hoist_Template.csv','Capacity,Hoist Function,Hoist ID,Hoist Position,Origin X,Origin Y,Hoist Symbol,Position\r\n1000,Lighting,TR1,Hoist Down,-9102,2850,1 Ton,\r\n1000,Lighting,TL1,Hoist Up,9102,2850,1 Ton Automated,\r\n,Generic,DSR,,-12000,-3000,DSR Mark,Main Stage\r\n,Generic,FM1,,0,0,Floor Mark,Camera Riser\r\n','text/csv');
+  $('btnTemplate').onclick=()=>download('Hoist_Template.csv','Hoist ID,Capacity (formatted),Hoist Symbol,Function,Hoist Position,Position,Origin X (formatted),Origin Y (formatted),Low Hook Weight Equivalent\r\nTR1,1000 kg,1 Ton,Lighting,Hoist Down,GRID,-9102,2850,450\r\nTL1,1000 kg,1 Ton Automated,Lighting,Hoist Up,GRID,9102,2850,450\r\nDSR,,DSR Mark,Generic,,Main Stage,-12000,-3000,\r\nFM1,,Floor Mark,Generic,,Camera Riser,0,0,\r\n','text/csv');
   $('btnPaste').onclick=()=>{ $('pasteBox').hidden=!$('pasteBox').hidden; };
   $('btnPasteGo').onclick=()=>{ const t=$('pasteText').value; if(t.trim()) loadCSVText(t,'Pasted CSV',false); };
   // options

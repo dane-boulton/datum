@@ -2,6 +2,29 @@
 
 All notable changes to DATUM. Newest first.
 
+## 28 September 2026 (night)
+
+### Tidier columns
+- **Nine columns.** The Columns panel and the Data tab now use just the nine columns from the export:
+
+  | CSV column | In DATUM |
+  |---|---|
+  | Hoist ID | ID |
+  | Capacity (formatted) | Capacity (stored, not used) |
+  | Hoist Symbol | Symbol type + automation |
+  | Function | Function |
+  | Hoist Position | Orientation |
+  | Position | Label for floor and corner marks; GRID / SUBHANG for hoists, chain blocks and fall arrests |
+  | Origin X (formatted) | Origin X |
+  | Origin Y (formatted) | Origin Y |
+  | Low Hook Weight Equivalent | Load |
+
+- **Formatted columns preferred.** If a file has both "Origin X" and "Origin X (formatted)", or "Capacity" and "Capacity (formatted)", the formatted one is used automatically.
+- **No extra columns.** Hoist Type and Hoist Automation are no longer separate columns; DATUM works them out from Hoist Symbol as it reads the data, so nothing extra is added to your data or exported CSV.
+- **Data tab.** You edit **Hoist Symbol** directly (with suggestions such as 1/2 Ton, 1 Ton TAIT Nav, USR Mark). A read-only **Reads as** column shows how each one is understood, e.g. "1 Ton · TAIT Nav".
+- **Older files and projects** that have a "Hoist Type" column still work: that column is read as the Hoist Symbol.
+- **Sample files and template** use the exact export headers and column order.
+
 ## 28 September 2026 (evening)
 
 ### Grid and subhang hoists

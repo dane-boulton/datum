@@ -1,96 +1,96 @@
-Capacity,Hoist Function,Hoist ID,Hoist Position,Origin X,Origin Y,Load (kg),Hoist Symbol,Position
-500,Generic,USP,Hoist Down,"-30' - 7""","46' - 3""",0,1/2 Ton,
-1000,Video,VX1,Hoist Up,"-20' - 11""","42' - 9""",0,1 Ton,GRID
-1000,Video,VX2,Hoist Up,"-12' - 7""","42' - 9""",0,1 Ton TAIT Nav,GRID
-1000,Video,VX3,Hoist Up,"-4' - 1""","42' - 9""",0,1 Ton,GRID
-1000,Video,VX4,Hoist Up,"4' - 1""","42' - 9""",0,1 Ton,GRID
-1000,Video,VX5,Hoist Up,"12' - 7""","42' - 9""",0,1 Ton TAIT Nav,GRID
-1000,Video,VX6,Hoist Up,"20' - 10""","42' - 9""",0,1 Ton,GRID
-1000,Lighting,US1,Hoist Down,"-20' - 11""","40' - 5""",0,1 Ton Apex,GRID
-1000,Lighting,US2,Hoist Down,"-8' - 3""","40' - 5""",0,1 Ton Apex,GRID
-1000,Lighting,US3,Hoist Down,"8' - 3""","40' - 5""",0,1 Ton Elevation,GRID
-1000,Lighting,US4,Hoist Down,"20' - 10""","40' - 5""",0,1 Ton Elevation,GRID
-500,Lighting,TR4,Hoist Down,"-25' - 8""","36' - 7""",0,1/2 Ton Automated,GRID
-500,Lighting,TL1,Hoist Down,"25' - 8""","36' - 7""",0,1/2 Ton Varispeed,GRID
-500,Lighting,TR3,Hoist Down,"-27' - 4""","27' - 5""",0,1/2 Ton,GRID
-500,Lighting,TL2,Hoist Down,"27' - 4""","27' - 5""",0,1/2 Ton,GRID
-1000,Pre-Rig,UM1,Hoist Down,"-21' - 3""","23' - 4""",0,1 Ton,GRID
-1000,Pre-Rig,UM2,Hoist Down,"-7' - 7""","23' - 4""",0,1 Ton,GRID
-1000,Pre-Rig,UM3,Hoist Down,"7' - 7""","23' - 4""",0,1 Ton,GRID
-1000,Pre-Rig,UM4,Hoist Down,"21' - 3""","23' - 4""",0,1 Ton,GRID
-500,Lighting,TR2,Hoist Down,"-28' - 10""","18' - 10""",0,1/2 Ton,GRID
-500,Lighting,TL3,Hoist Down,"28' - 10""","18' - 10""",0,1/2 Ton,GRID
-500,Scenery,DD2,Hoist Down,"6' - 11""","9' - 5""",0,1/2 Ton,SUBHANG
-500,Super Grid,TR1,Hoist Down,"-30' - 7""","9' - 3""",0,1/2 Ton,GRID
-500,Super Grid,TL4,Hoist Down,"30' - 7""","9' - 3""",0,1/2 Ton,GRID
-500,Cable Pick,SB1,Hoist Down,"-40' - 4""","8' - 4""",0,1/2 Ton,SUBHANG
-500,Cable Pick,SB4,Hoist Down,"40' - 4""","8' - 4""",0,1/2 Ton,SUBHANG
-500,Scenery,DD1,Hoist Down,"-7' - 1""","8' - 1""",0,1/2 Ton,SUBHANG
-500,Cable Pick,SB2,Hoist Down,"-36' - 11""","6' - 5""",0,1/2 Ton,SUBHANG
-500,Cable Pick,SB3,Hoist Down,"36' - 11""","6' - 5""",0,1/2 Ton,SUBHANG
-1000,Lighting,DM1,Hoist Down,"-20' - 11""","5' - 11""",0,1 Ton,GRID
-1000,Lighting,DM2,Hoist Down,"-7' - 7""","5' - 11""",0,1 Ton,GRID
-1000,Lighting,DM3,Hoist Down,"7' - 7""","5' - 11""",0,1 Ton,GRID
-1000,Lighting,DM4,Hoist Down,"20' - 10""","5' - 11""",0,1 Ton,GRID
-2000,Audio,OF2,Hoist Down,"-41' - 4""",5',0,2 Ton,SUBHANG
-2000,Audio,OF6,Hoist Down,"41' - 4""",5',0,2 Ton,SUBHANG
-2000,Audio,OF3,Hoist Down,"-39' - 10""","4' - 2""",0,2 Ton,SUBHANG
-2000,Audio,OF5,Hoist Down,"39' - 10""","4' - 2""",0,2 Ton,SUBHANG
-500,Generic,DMP,Hoist Down,"-28' - 1""","2' - 9""",0,1/2 Ton,
-500,Scenery,DD4,Hoist Down,"-2' - 6""","2' - 9""",0,1/2 Ton,SUBHANG
-500,Scenery,DD6,Hoist Down,"16' - 4""","2' - 9""",0,1/2 Ton,SUBHANG
-1000,Video,IR1,Hoist Up,"-65' - 11""","2' - 1""",0,1 Ton,GRID
-1000,Video,IR2,Hoist Up,-61',"2' - 1""",0,1 Ton,GRID
-1000,Video,IR3,Hoist Up,"-56' - 1""","2' - 1""",0,1 Ton,GRID
-1000,Video,IR4,Hoist Up,"-51' - 2""","2' - 1""",0,1 Ton,GRID
-1000,Video,IL1,Hoist Up,"51' - 2""","2' - 1""",0,1 Ton,GRID
-1000,Video,IL2,Hoist Up,"56' - 1""","2' - 1""",0,1 Ton,GRID
-1000,Video,IL3,Hoist Up,61',"2' - 1""",0,1 Ton,GRID
-1000,Video,IL4,Hoist Up,"65' - 11""","2' - 1""",0,1 Ton,GRID
-2000,Audio,OF1,Hoist Down,"-42' - 7""","1' - 3""",0,2 Ton,SUBHANG
-500,Scenery,DD3,Hoist Down,"-16' - 6""","1' - 3""",0,1/2 Ton,SUBHANG
-500,Scenery,DD5,Hoist Down,"2' - 4""","1' - 3""",0,1/2 Ton,SUBHANG
-2000,Audio,OF4,Hoist Down,"42' - 6""","1' - 3""",0,2 Ton,SUBHANG
-500,Lighting,WR1,Hoist Down,"-64'3.319""","-0' - 3""",0,1/2 Ton,GRID
-500,Lighting,WR2,Hoist Down,"-53' - 3""","-0' - 3""",0,1/2 Ton,GRID
-500,Lighting,WL1,Hoist Down,"53' - 3""","-0' - 3""",0,1/2 Ton,GRID
-500,Lighting,WL2,Hoist Down,"64' - 3""","-0' - 3""",0,1/2 Ton,GRID
-2000,Audio,PA2,Hoist Down,"-32' - 4""","-1' - 3""",0,2 Ton,SUBHANG
-2000,Audio,PA3,Hoist Down,"-30' - 7""","-1' - 3""",0,2 Ton,SUBHANG
-2000,Audio,PA5,Hoist Down,"30' - 6""","-1' - 3""",0,2 Ton,SUBHANG
-2000,Audio,PA6,Hoist Down,"32' - 4""","-1' - 3""",0,2 Ton,SUBHANG
-500,Scenery,DD8,Hoist Down,"6' - 11""","-3' - 11""",0,1/2 Ton,SUBHANG
-2000,Audio,PA1,Hoist Down,"-31' - 5""","-5' - 3""",0,2 Ton,SUBHANG
-500,Scenery,DD7,Hoist Down,"-7' - 1""","-5' - 3""",0,1/2 Ton,SUBHANG
-2000,Audio,PA4,Hoist Down,"31' - 5""","-5' - 3""",0,2 Ton,SUBHANG
-500,Generic,DSP,Hoist Down,"-24' - 7""",-7',0,1/2 Ton,
-1000,Lighting,DS1,Hoist Down,"-20' - 11""","-14' - 2""",0,1 Ton,GRID
-1000,Lighting,DS2,Hoist Down,"-7' - 7""","-14' - 2""",0,1 Ton,GRID
-1000,Lighting,DS3,Hoist Down,"7' - 7""","-14' - 2""",0,1 Ton,GRID
-1000,Lighting,DS4,Hoist Down,"20' - 10""","-14' - 2""",0,1 Ton,GRID
-,Generic,USR,,-70',50',0,USR Mark,Main Stage
-,Generic,USL,,70',50',0,USL Mark,Main Stage
-,Other,BF1,,-15',33',0,Block and Fall,
-,Other,BF2,,15',33',0,Block and Fall,
-250,Lighting,QA1,Hoist Up,-50',12',0,1/4 Ton,GRID
-250,Lighting,EA1,Hoist Down,-40',12',0,1/4 Ton,GRID
-2500,Lighting,HB1,Hoist Up,40',12',0,2.5 Ton,GRID
-,Other,FA1,,50',12',0,Fall Arrest,
-,Generic,FM1,,-0',0',0,Floor Mark,Centre Line
-,Generic,DSR,,-70',-20',0,DSR Mark,Main Stage
-,Generic,DSL,,70',-20',0,DSL Mark,Main Stage
-250,Scenery,WX1,Hoist Down,-60',30',0,1/4 Ton,SUBHANG
-250,Scenery,WX2,Hoist Down,-52',30',0,1/4 Ton,SUBHANG
-250,Scenery,WX3,Hoist Down,-44',30',0,1/4 Ton,SUBHANG
-250,Scenery,WX4,Hoist Down,-36',30',0,1/4 Ton,SUBHANG
-250,Scenery,WX5,Hoist Down,-28',30',0,1/4 Ton,SUBHANG
-250,Scenery,WX6,Hoist Down,-20',30',0,1/4 Ton,SUBHANG
-250,Scenery,WY1,Hoist Down,20',30',0,1/4 Ton,SUBHANG
-250,Scenery,WY2,Hoist Down,28',30',0,1/4 Ton,SUBHANG
-250,Scenery,WY3,Hoist Down,36',30',0,1/4 Ton,SUBHANG
-250,Scenery,WY4,Hoist Down,44',30',0,1/4 Ton,SUBHANG
-250,Scenery,WY5,Hoist Down,52',30',0,1/4 Ton,SUBHANG
-250,Scenery,WY6,Hoist Down,60',30',0,1/4 Ton,SUBHANG
-320,Lighting,QB1,Hoist Down,-30',12',0,1/3 Ton,GRID
-3000,Lighting,HC1,Hoist Down,30',12',0,3 Ton VMK,GRID
-500,Audio,LB1,Hoist Down,-25',12',0,1/2 Ton,SUBHANG
+Hoist ID,Capacity (formatted),Hoist Symbol,Function,Hoist Position,Position,Origin X (formatted),Origin Y (formatted),Low Hook Weight Equivalent
+USP,500 kg,1/2 Ton,Generic,Hoist Down,,"-30' - 7""","46' - 3""",0
+VX1,1000 kg,1 Ton,Video,Hoist Up,GRID,"-20' - 11""","42' - 9""",0
+VX2,1000 kg,1 Ton TAIT Nav,Video,Hoist Up,GRID,"-12' - 7""","42' - 9""",0
+VX3,1000 kg,1 Ton,Video,Hoist Up,GRID,"-4' - 1""","42' - 9""",0
+VX4,1000 kg,1 Ton,Video,Hoist Up,GRID,"4' - 1""","42' - 9""",0
+VX5,1000 kg,1 Ton TAIT Nav,Video,Hoist Up,GRID,"12' - 7""","42' - 9""",0
+VX6,1000 kg,1 Ton,Video,Hoist Up,GRID,"20' - 10""","42' - 9""",0
+US1,1000 kg,1 Ton Apex,Lighting,Hoist Down,GRID,"-20' - 11""","40' - 5""",0
+US2,1000 kg,1 Ton Apex,Lighting,Hoist Down,GRID,"-8' - 3""","40' - 5""",0
+US3,1000 kg,1 Ton Elevation,Lighting,Hoist Down,GRID,"8' - 3""","40' - 5""",0
+US4,1000 kg,1 Ton Elevation,Lighting,Hoist Down,GRID,"20' - 10""","40' - 5""",0
+TR4,500 kg,1/2 Ton Automated,Lighting,Hoist Down,GRID,"-25' - 8""","36' - 7""",0
+TL1,500 kg,1/2 Ton Varispeed,Lighting,Hoist Down,GRID,"25' - 8""","36' - 7""",0
+TR3,500 kg,1/2 Ton,Lighting,Hoist Down,GRID,"-27' - 4""","27' - 5""",0
+TL2,500 kg,1/2 Ton,Lighting,Hoist Down,GRID,"27' - 4""","27' - 5""",0
+UM1,1000 kg,1 Ton,Pre-Rig,Hoist Down,GRID,"-21' - 3""","23' - 4""",0
+UM2,1000 kg,1 Ton,Pre-Rig,Hoist Down,GRID,"-7' - 7""","23' - 4""",0
+UM3,1000 kg,1 Ton,Pre-Rig,Hoist Down,GRID,"7' - 7""","23' - 4""",0
+UM4,1000 kg,1 Ton,Pre-Rig,Hoist Down,GRID,"21' - 3""","23' - 4""",0
+TR2,500 kg,1/2 Ton,Lighting,Hoist Down,GRID,"-28' - 10""","18' - 10""",0
+TL3,500 kg,1/2 Ton,Lighting,Hoist Down,GRID,"28' - 10""","18' - 10""",0
+DD2,500 kg,1/2 Ton,Scenery,Hoist Down,SUBHANG,"6' - 11""","9' - 5""",0
+TR1,500 kg,1/2 Ton,Super Grid,Hoist Down,GRID,"-30' - 7""","9' - 3""",0
+TL4,500 kg,1/2 Ton,Super Grid,Hoist Down,GRID,"30' - 7""","9' - 3""",0
+SB1,500 kg,1/2 Ton,Cable Pick,Hoist Down,SUBHANG,"-40' - 4""","8' - 4""",0
+SB4,500 kg,1/2 Ton,Cable Pick,Hoist Down,SUBHANG,"40' - 4""","8' - 4""",0
+DD1,500 kg,1/2 Ton,Scenery,Hoist Down,SUBHANG,"-7' - 1""","8' - 1""",0
+SB2,500 kg,1/2 Ton,Cable Pick,Hoist Down,SUBHANG,"-36' - 11""","6' - 5""",0
+SB3,500 kg,1/2 Ton,Cable Pick,Hoist Down,SUBHANG,"36' - 11""","6' - 5""",0
+DM1,1000 kg,1 Ton,Lighting,Hoist Down,GRID,"-20' - 11""","5' - 11""",0
+DM2,1000 kg,1 Ton,Lighting,Hoist Down,GRID,"-7' - 7""","5' - 11""",0
+DM3,1000 kg,1 Ton,Lighting,Hoist Down,GRID,"7' - 7""","5' - 11""",0
+DM4,1000 kg,1 Ton,Lighting,Hoist Down,GRID,"20' - 10""","5' - 11""",0
+OF2,2000 kg,2 Ton,Audio,Hoist Down,SUBHANG,"-41' - 4""",5',0
+OF6,2000 kg,2 Ton,Audio,Hoist Down,SUBHANG,"41' - 4""",5',0
+OF3,2000 kg,2 Ton,Audio,Hoist Down,SUBHANG,"-39' - 10""","4' - 2""",0
+OF5,2000 kg,2 Ton,Audio,Hoist Down,SUBHANG,"39' - 10""","4' - 2""",0
+DMP,500 kg,1/2 Ton,Generic,Hoist Down,,"-28' - 1""","2' - 9""",0
+DD4,500 kg,1/2 Ton,Scenery,Hoist Down,SUBHANG,"-2' - 6""","2' - 9""",0
+DD6,500 kg,1/2 Ton,Scenery,Hoist Down,SUBHANG,"16' - 4""","2' - 9""",0
+IR1,1000 kg,1 Ton,Video,Hoist Up,GRID,"-65' - 11""","2' - 1""",0
+IR2,1000 kg,1 Ton,Video,Hoist Up,GRID,-61',"2' - 1""",0
+IR3,1000 kg,1 Ton,Video,Hoist Up,GRID,"-56' - 1""","2' - 1""",0
+IR4,1000 kg,1 Ton,Video,Hoist Up,GRID,"-51' - 2""","2' - 1""",0
+IL1,1000 kg,1 Ton,Video,Hoist Up,GRID,"51' - 2""","2' - 1""",0
+IL2,1000 kg,1 Ton,Video,Hoist Up,GRID,"56' - 1""","2' - 1""",0
+IL3,1000 kg,1 Ton,Video,Hoist Up,GRID,61',"2' - 1""",0
+IL4,1000 kg,1 Ton,Video,Hoist Up,GRID,"65' - 11""","2' - 1""",0
+OF1,2000 kg,2 Ton,Audio,Hoist Down,SUBHANG,"-42' - 7""","1' - 3""",0
+DD3,500 kg,1/2 Ton,Scenery,Hoist Down,SUBHANG,"-16' - 6""","1' - 3""",0
+DD5,500 kg,1/2 Ton,Scenery,Hoist Down,SUBHANG,"2' - 4""","1' - 3""",0
+OF4,2000 kg,2 Ton,Audio,Hoist Down,SUBHANG,"42' - 6""","1' - 3""",0
+WR1,500 kg,1/2 Ton,Lighting,Hoist Down,GRID,"-64'3.319""","-0' - 3""",0
+WR2,500 kg,1/2 Ton,Lighting,Hoist Down,GRID,"-53' - 3""","-0' - 3""",0
+WL1,500 kg,1/2 Ton,Lighting,Hoist Down,GRID,"53' - 3""","-0' - 3""",0
+WL2,500 kg,1/2 Ton,Lighting,Hoist Down,GRID,"64' - 3""","-0' - 3""",0
+PA2,2000 kg,2 Ton,Audio,Hoist Down,SUBHANG,"-32' - 4""","-1' - 3""",0
+PA3,2000 kg,2 Ton,Audio,Hoist Down,SUBHANG,"-30' - 7""","-1' - 3""",0
+PA5,2000 kg,2 Ton,Audio,Hoist Down,SUBHANG,"30' - 6""","-1' - 3""",0
+PA6,2000 kg,2 Ton,Audio,Hoist Down,SUBHANG,"32' - 4""","-1' - 3""",0
+DD8,500 kg,1/2 Ton,Scenery,Hoist Down,SUBHANG,"6' - 11""","-3' - 11""",0
+PA1,2000 kg,2 Ton,Audio,Hoist Down,SUBHANG,"-31' - 5""","-5' - 3""",0
+DD7,500 kg,1/2 Ton,Scenery,Hoist Down,SUBHANG,"-7' - 1""","-5' - 3""",0
+PA4,2000 kg,2 Ton,Audio,Hoist Down,SUBHANG,"31' - 5""","-5' - 3""",0
+DSP,500 kg,1/2 Ton,Generic,Hoist Down,,"-24' - 7""",-7',0
+DS1,1000 kg,1 Ton,Lighting,Hoist Down,GRID,"-20' - 11""","-14' - 2""",0
+DS2,1000 kg,1 Ton,Lighting,Hoist Down,GRID,"-7' - 7""","-14' - 2""",0
+DS3,1000 kg,1 Ton,Lighting,Hoist Down,GRID,"7' - 7""","-14' - 2""",0
+DS4,1000 kg,1 Ton,Lighting,Hoist Down,GRID,"20' - 10""","-14' - 2""",0
+USR,,USR Mark,Generic,,Main Stage,-70',50',0
+USL,,USL Mark,Generic,,Main Stage,70',50',0
+BF1,,Block and Fall,Other,,,-15',33',0
+BF2,,Block and Fall,Other,,,15',33',0
+QA1,250 kg,1/4 Ton,Lighting,Hoist Up,GRID,-50',12',0
+EA1,250 kg,1/4 Ton,Lighting,Hoist Down,GRID,-40',12',0
+HB1,2500 kg,2.5 Ton,Lighting,Hoist Up,GRID,40',12',0
+FA1,,Fall Arrest,Other,,,50',12',0
+FM1,,Floor Mark,Generic,,Centre Line,-0',0',0
+DSR,,DSR Mark,Generic,,Main Stage,-70',-20',0
+DSL,,DSL Mark,Generic,,Main Stage,70',-20',0
+WX1,250 kg,1/4 Ton,Scenery,Hoist Down,SUBHANG,-60',30',0
+WX2,250 kg,1/4 Ton,Scenery,Hoist Down,SUBHANG,-52',30',0
+WX3,250 kg,1/4 Ton,Scenery,Hoist Down,SUBHANG,-44',30',0
+WX4,250 kg,1/4 Ton,Scenery,Hoist Down,SUBHANG,-36',30',0
+WX5,250 kg,1/4 Ton,Scenery,Hoist Down,SUBHANG,-28',30',0
+WX6,250 kg,1/4 Ton,Scenery,Hoist Down,SUBHANG,-20',30',0
+WY1,250 kg,1/4 Ton,Scenery,Hoist Down,SUBHANG,20',30',0
+WY2,250 kg,1/4 Ton,Scenery,Hoist Down,SUBHANG,28',30',0
+WY3,250 kg,1/4 Ton,Scenery,Hoist Down,SUBHANG,36',30',0
+WY4,250 kg,1/4 Ton,Scenery,Hoist Down,SUBHANG,44',30',0
+WY5,250 kg,1/4 Ton,Scenery,Hoist Down,SUBHANG,52',30',0
+WY6,250 kg,1/4 Ton,Scenery,Hoist Down,SUBHANG,60',30',0
+QB1,320 kg,1/3 Ton,Lighting,Hoist Down,GRID,-30',12',0
+HC1,3000 kg,3 Ton VMK,Lighting,Hoist Down,GRID,30',12',0
+LB1,500 kg,1/2 Ton,Audio,Hoist Down,SUBHANG,-25',12',0
