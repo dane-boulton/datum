@@ -7,7 +7,8 @@ const json = (status, body) => new Response(JSON.stringify(body), { status, head
 
 export default async function handler(req) {
   if (req.method !== 'POST') return json(405, { error: 'Use POST.' });
-  const url = (process.env.SUPABASE_URL || '').replace(/\/+$/, ''), key = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+  let url = ''; try { url = new URL((process.env.SUPABASE_URL || '').trim()).origin; } catch {}
+  const key = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim();
   if (!url || !key) return json(501, { error: 'Invite emails are not set up on the server.' });
   const token = (req.headers.get('authorization') || '').replace(/^Bearer\s+/i, '');
   if (!token) return json(401, { error: 'Sign in first.' });

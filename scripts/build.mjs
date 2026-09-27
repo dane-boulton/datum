@@ -8,7 +8,9 @@ const lib = read('node_modules/jspdf/dist/jspdf.umd.min.js').replace('//# source
 const sb = read('node_modules/@supabase/supabase-js/dist/umd/supabase.js').replace(/\/\/# sourceMappingURL=\S+/g, '');
 const brand = read('src/brand.b64').trim();
 const file = existsSync(new URL('../datum.config.json', import.meta.url)) ? JSON.parse(read('datum.config.json')) : {};
-const cloud = { url: process.env.SUPABASE_URL || file.supabaseUrl || '', key: process.env.SUPABASE_ANON_KEY || file.supabaseAnonKey || '' };
+// Keep only the project address (https://xxxx.supabase.co): a trailing slash or a copied /rest/v1/ path breaks sign-in
+const origin = u => { try { return u ? new URL(u.trim()).origin : ''; } catch { console.warn('SUPABASE_URL is not a valid URL: ' + u); return ''; } };
+const cloud = { url: origin(process.env.SUPABASE_URL || file.supabaseUrl || ''), key: (process.env.SUPABASE_ANON_KEY || file.supabaseAnonKey || '').trim() };
 const cloudJs = 'window.DATUM_CLOUD=' + JSON.stringify(cloud.url && cloud.key ? cloud : null).replace(/</g, '\\u003c') + ';';
 const html = read('src/app.html').replace('/*__JSPDF__*/', () => lib).replace('/*__SUPABASE__*/', () => sb)
   .replace('/*__CLOUD_CONFIG__*/', () => cloudJs).replaceAll('__BRAND_ICON__', () => brand);
