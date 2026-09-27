@@ -2,6 +2,14 @@
 
 All notable changes to DATUM. Newest first.
 
+## 29 September 2026
+
+### Mark Type and Automation columns
+- **Read once on import.** Hoist Symbol is read once, when a CSV is imported, into two ordinary columns: **Mark Type** (250kg … 3 Ton, Chain Block, Fall Arrest, Floor Mark, USR/USL/DSR/DSL) and **Automation** (Automated, TAIT Nav, Kinesys APEX, Kinesys Elevation, Moveket V-Motion). It uses the same text rules as before.
+- **Edited directly.** From then on you edit Mark Type and Automation in the Data tab, with suggestions. The Hoist Symbol and "Reads as" columns are no longer shown.
+- **Old function names cleaned up.** Functions such as "Lighting Automated" or "Video Automation", in older projects or files, become "Lighting" / "Video", and "Automated" moves into the Automation column (unless the Hoist Symbol already set a type).
+- **No Columns section.** The Columns mapping section has been removed from the side panel. Columns are matched automatically; if a required one (Hoist ID, Origin X, Origin Y, or Hoist Symbol/Mark Type) is missing, a message says which.
+
 ## 28 September 2026 (night)
 
 ### Tidier columns

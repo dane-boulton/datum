@@ -89,18 +89,24 @@ The script is organised by comment banners `/* ===== … ===== */`. Search for t
 - Cloud: `markoutTool.cloudLink.v1` (S.cloud), `markoutTool.cloudDone.v1` (done marks per cloud project id), `markoutTool.cloudUser.v1` (cached role, used offline), `markoutTool.lastUser`.
 - Project file: `Name.datum.json`, from `projectData(withLogos)`; `applyProject()` loads it.
 
-### CSV columns (`autoMap`)
-- **Nine map keys**, matched to the export headers:
+### CSV columns (`autoMap`, `deriveColumns`)
+- There's no column-mapping panel: `autoMap` matches headers and `renderMapUI` is a stub.
+- **Map keys:**
   - `id`: Hoist ID.
   - `cap`: Capacity (formatted); stored, never used.
-  - `hsym`: Hoist Symbol.
+  - `hsym`: Hoist Symbol; only read on import.
+  - `type`: **Mark Type**.
+  - `auto`: **Automation**.
   - `func`: Function.
-  - `pos`: Hoist Position, shown as **Orientation** (Hoist Up / Hoist Down).
+  - `pos`: Hoist Position, shown as **Orientation**.
   - `place`: Position.
   - `x` / `y`: Origin X / Y (formatted).
   - `load`: Low Hook Weight Equivalent.
-- "(formatted)" headers win over plain ones. An older "Hoist Type" header is read as `hsym`, and `applyProject` maps old projects the same way.
-- **Type and automation** are worked out in `rebuild()`: `h.type = symbolType(hsym)` and `h.auto = autoKind(hsym)`. No derived columns are written. The Data tab edits `hsym` and shows a read-only "Reads as" column.
+- "(formatted)" headers win over plain ones. An old "Hoist Type" header is read as the Hoist Symbol.
+- **`deriveColumns(d)`** runs on `{headers, rows, map}`. It's called on import, and in `applyProject` for both `S.raw` and `S.orig`.
+  - If the Mark Type / Automation columns are missing, it creates them from Hoist Symbol, using `symbolType()` and `autoKind()` with `AUTO_VALUES`.
+  - It also strips "Auto/Automated/Automation" from Function values, moving that into Automation.
+  - After that, `rebuild()` reads `h.type` from Mark Type and `h.auto = autoKind(Automation)`. The Data tab edits Mark Type and Automation directly.
 - **Type names**: 250kg, 320kg, 500kg, 1 Ton, 2 Ton, 2.5 Ton, 3 Ton, Chain Block, Fall Arrest, Floor Mark, USR, USL, DSR, DSL. `guessSymbol()` maps them to symbols.
 - **GRID / SUBHANG:** `hoistCat(h.place)` sets `h.cat` for non-marker items; blank means always shown. `S.opt.show` ('all' / 'GRID' / 'SUBHANG') is filtered by `passShow()` in `buildRows`, `usedTypes`, `usedFuncs` and the legend. The `.showSel` selectors in the plot, Markout Rows and PDF are kept in sync by `syncShow()`.
 - **Markout focus:** `focusItems(r)` (the focused side plus the centre line) drives `visRows`, `markItems`, row counts, auto-advance and next-unmarked. Collapsed rows get `.fl` / `.fr` to hide the other side.
