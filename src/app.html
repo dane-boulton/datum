@@ -582,6 +582,8 @@ table.dt td.num{color:var(--muted)}
             <div class="field"><label>Paper</label><select id="sPage"><option value="a4">A4</option><option value="a3">A3</option><option value="a5">A5</option><option value="letter">Letter</option><option value="legal">Legal</option><option value="tabloid">Tabloid</option></select></div>
             <div class="field"><label>Orientation</label><select id="sOrient"><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select></div>
             <div class="field"><label>Margin (mm)</label><input type="number" id="sMargin" min="4" max="30" step="1"></div>
+            <div class="field"><label>Fit to one page</label><input type="checkbox" id="sOnePage"></div>
+            <div class="hint">Shrinks the whole sheet, header included, so it fits on one page of the chosen paper.</div>
           </div></details>
           <details open><summary>Rows &amp; fit</summary><div class="body">
             <div class="field"><label>Row height (mm)</label><input type="number" id="sRowH" min="5" max="40" step="0.5"></div>
@@ -744,7 +746,7 @@ const S = {
   opt:{inUnit:'auto',disp:'ftin',den:1,tol:50,cth:1,rot:0,rowOrder:'top',sideNeg:'left',sideSort:'center',flipX:false,flipY:false,datX:0,datY:0,topL:'UPSTAGE',botL:'DOWNSTAGE',leftL:'SR',rightL:'SL',upStyle:'fill',alignTol:25.4,alignMode:'both',alignKeep:'first'},
   skip:new Set(), logoShow:null, logoUser:null, _imgShow:null, _imgUser:null,
   mo:{cur:0,focus:'both',hideDone:false,auto:false}, done:new Set(), doneName:'', pending:{}, orig:null,
-  sheet:{sheetType:'FLOOR MARKOUT',show:'',venue:'',datum:'',date:'',rev:'',by:'',footer:'',title:true,page:'a4',orient:'portrait',margin:10,rowH:11,fit:'fixed',capN:4,minPt:5,centreMm:0,textPct:100,yPct:100,symPct:100,linePct:100,font:'helvetica',load:true,tick:'none',mode:'colour',cText:'#1b2440',cMuted:'#5d6b8a',cBorder:'#8d9bbd',cCentre:'#5c6b8f',cBand:'#f3f6fb',cBandText:'#1b2440',centreTint:false,cCentreFill:'#eef2fb',zebra:false,cZebra:'#f3f6fb',logoHShow:14,logoHUser:14,logoAll:false,legend:true,onlyTodo:false,bands:true,zoom:'fit'},
+  sheet:{sheetType:'FLOOR MARKOUT',show:'',venue:'',datum:'',date:'',rev:'',by:'',footer:'',title:true,page:'a4',orient:'portrait',margin:10,rowH:11,fit:'fixed',capN:4,minPt:5,centreMm:0,textPct:100,yPct:100,symPct:100,linePct:100,font:'helvetica',load:true,tick:'none',mode:'colour',cText:'#1b2440',cMuted:'#5d6b8a',cBorder:'#8d9bbd',cCentre:'#5c6b8f',cBand:'#f3f6fb',cBandText:'#1b2440',centreTint:false,cCentreFill:'#eef2fb',zebra:false,cZebra:'#f3f6fb',logoHShow:14,logoHUser:14,logoAll:false,onePage:false,legend:true,onlyTodo:false,bands:true,zoom:'fit'},
   plot:{labels:true,coords:false,grid:true,legend:true,size:9},
   sel:null, tab:'plot', sample:false, theme:'dark', detected:{kind:'metric',unit:'mm'},
 };
@@ -1527,9 +1529,41 @@ class PdfRec{
   save(n){ this.doc.save(n); }
 }
 const PDF_FAMS={helvetica:'Helvetica, Arial, "Liberation Sans", sans-serif',times:'"Times New Roman", Times, "Liberation Serif", serif',courier:'"Courier New", Courier, "Liberation Mono", monospace'};
+// Draws onto `d` at scale k: the sheet is laid out on a virtual page 1/k the size, then shrunk to fit the real page
+class ScaledDoc{
+  constructor(d,k){ this.d=d; this.k=k; const ps=d.internal.pageSize, w=ps.getWidth()/k, h=ps.getHeight()/k; this.internal={pageSize:{getWidth:()=>w,getHeight:()=>h}}; }
+  setFont(f,st){ this.d.setFont(f,st); return this; }
+  setFontSize(n){ this.d.setFontSize(n*this.k); return this; }
+  setTextColor(...c){ this.d.setTextColor(...c); return this; }
+  setDrawColor(...c){ this.d.setDrawColor(...c); return this; }
+  setFillColor(...c){ this.d.setFillColor(...c); return this; }
+  setLineWidth(w){ this.d.setLineWidth(w*this.k); return this; }
+  setLineCap(c){ if(this.d.setLineCap) this.d.setLineCap(c); return this; }
+  setLineJoin(j){ if(this.d.setLineJoin) this.d.setLineJoin(j); return this; }
+  setCharSpace(c){ if(this.d.setCharSpace) this.d.setCharSpace(c*this.k); return this; }
+  getTextWidth(t){ return this.d.getTextWidth(t)/this.k; }
+  addPage(){ this.d.addPage(); return this; }
+  addImage(src,fmt,x,y,w,h,alias){ const k=this.k; this.d.addImage(src,fmt,x*k,y*k,w*k,h*k,alias); return this; }
+  rect(x,y,w,h,st){ const k=this.k; this.d.rect(x*k,y*k,w*k,h*k,st); return this; }
+  roundedRect(x,y,w,h,rx,ry,st){ const k=this.k; this.d.roundedRect(x*k,y*k,w*k,h*k,rx*k,ry*k,st); return this; }
+  line(x1,y1,x2,y2){ const k=this.k; this.d.line(x1*k,y1*k,x2*k,y2*k); return this; }
+  circle(x,y,r,st){ const k=this.k; this.d.circle(x*k,y*k,r*k,st); return this; }
+  lines(segs,x,y,sc,st,closed){ const k=this.k; sc=sc||[1,1]; this.d.lines(segs,x*k,y*k,[sc[0]*k,sc[1]*k],st,closed); return this; }
+  triangle(x1,y1,x2,y2,x3,y3,st){ const k=this.k; this.d.triangle(x1*k,y1*k,x2*k,y2*k,x3*k,y3*k,st); return this; }
+  text(str,x,y,o){ this.d.text(str,x*this.k,y*this.k,o); return this; }
+}
+// Draw the sheet into a new recorder. With "Fit to one page", find the largest scale that puts everything on one page.
+function buildSheet(){
+  const rec=newRec(); if(!S.sheet.onePage){ const info=drawSheet(rec); info.scale=1; return {rec,info}; }
+  const probe=new window.jspdf.jsPDF({orientation:S.sheet.orient,unit:'mm',format:S.sheet.page});
+  const fits=k=>{ const n=drawSheet(new ScaledDoc(probe,k),true); return typeof n!=='number'||n<=1; };
+  let k=1;
+  if(!fits(1)){ let lo=0.1, hi=1; if(fits(lo)){ for(let i=0;i<14;i++){ const m=(lo+hi)/2; if(fits(m)) lo=m; else hi=m; } } k=lo; }
+  const info=drawSheet(new ScaledDoc(rec,k)); info.scale=k; info.fs*=k; return {rec,info};
+}
 function newRec(){ const sh=S.sheet; return new PdfRec(new window.jspdf.jsPDF({orientation:sh.orient,unit:'mm',format:sh.page})); }
 
-function drawSheet(doc){
+function drawSheet(doc,measure){
   const sh=S.sheet, F=(v,d)=>{ const n=parseFloat(v); return isNaN(n)?d:n; }, pct=k=>F(sh[k],100)/100;
   const PW=doc.internal.pageSize.getWidth(), PH=doc.internal.pageSize.getHeight();
   const M=clamp(F(sh.margin,10),4,30), W=PW-2*M, fam=sh.font||'helvetica';
@@ -1606,6 +1640,7 @@ function drawSheet(doc){
   }
   const legend=sh.legend?legendLayout():{lines:[],h:0};
   if(sh.legend){ const last=pages[pages.length-1]; const used=(pages.length===1?titleH1:titleH2)+hdrH+last.length*rowH+ftrH; if(PH-M-bottomM-used<legend.h+4) pages.push([]); }
+  if(measure) return pages.length;
   const N=pages.length; info.pages=N;
 
   // ---- symbol drawing
@@ -1713,7 +1748,7 @@ function drawSheet(doc){
   function pageFooter(n){
     doc.setFont(fam,'normal'); doc.setFontSize(7); doc.setTextColor(...MUTED);
     const nH=src.reduce((s,o)=>s+o.L.length+o.R.length+o.C.length,0);
-    doc.text(sh.footer || (nH+' hoists  |  '+src.length+' rows  |  '+(/downstage/i.test(S.opt.botL)?'Audience at bottom of page':S.opt.topL+' at top of page')),M,PH-M+2);
+    doc.text(sh.footer || [nH+' hoists',src.length+' rows',(sh.show||'').trim()].filter(Boolean).join('  |  '),M,PH-M+2);
     doc.text('Page '+n+' of '+N,M+W,PH-M+2,{align:'right'});
   }
   function fmtDate(v){ const d=new Date(v+'T00:00:00'); return isNaN(d)?v:d.toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'}); }
@@ -1752,7 +1787,7 @@ function drawSheet(doc){
 function exportPDF(){
   if(!window.jspdf){ toast('PDF library did not load.'); return; }
   if(!S.rows.length) return;
-  const rec=newRec(), info=drawSheet(rec);
+  const {rec,info}=buildSheet();
   const fname=((S.sheet.show||'Markout').replace(/[^\w\- ]+/g,'').trim()||'Markout').replace(/\s+/g,'_')+'_DATUM.pdf';
   deliverFile(fname,rec.doc.output('blob'),'application/pdf'); toast('Exported '+fname+' ('+info.pages+' page'+(info.pages>1?'s':'')+')');
 }
@@ -1785,7 +1820,7 @@ function updatePreview(){
   const host=$('pvPages'), sc=$('pvScroll'); if(!host) return;
   const keepTop=sc.scrollTop;
   if(!window.jspdf || !S.rows.length){ host.innerHTML='<div class="mo-empty">'+(S.rows.length?'PDF library did not load.':'Import a CSV to preview the sheet.')+'</div>'; $('pvInfo').textContent=''; $('pvPage').textContent='Page 0 / 0'; return; }
-  const rec=newRec(), info=drawSheet(rec);
+  const {rec,info}=buildSheet();
   const pw=rec.internal.pageSize.getWidth(), ph=rec.internal.pageSize.getHeight();
   const z=S.sheet.zoom; const k=(z==='fit') ? Math.max(1,(sc.clientWidth-(sc.clientWidth<700?20:40))/pw) : (parseFloat(z)||1)*96/25.4;
   const dpr=Math.min(3,window.devicePixelRatio||1);
@@ -1795,7 +1830,7 @@ function updatePreview(){
     paintPage(cv.getContext('2d'),ops,k*dpr,pw,ph); host.appendChild(cv); });
   sc.scrollTop=keepTop; pvUpdatePage();
   const w=[]; if(S.warnings) w.push(S.warnings+' data issue(s) - see the Data tab; rows with a bad X or Y are left off.'); if(info.overflow) w.push(info.overflow+' label(s) overflow - increase margins or reduce text size.');
-  $('pvInfo').innerHTML=`${info.pages} page${info.pages>1?'s':''} &middot; ${info.rows} rows${info.split?' (<b>'+info.split+'</b> extra row'+(info.split>1?'s':'')+' added to fit)':''} &middot; up to ${info.cap} marks per side &middot; text ${Math.round(info.fs/info.fsBase*100)}% of set size${w.length?' &middot; <span class="w">'+w.join(' ')+'</span>':''}`;
+  $('pvInfo').innerHTML=`${info.pages} page${info.pages>1?'s':''} &middot; ${info.rows} rows${info.split?' (<b>'+info.split+'</b> extra row'+(info.split>1?'s':'')+' added to fit)':''} &middot; up to ${info.cap} marks per side &middot; text ${Math.round(info.fs/info.fsBase*100)}% of set size${info.scale<1?' &middot; page scaled to <b>'+Math.round(info.scale*100)+'%</b>':''}${S.sheet.onePage&&info.pages>1?' &middot; <span class="w">too much to fit on one page</span>':''}${w.length?' &middot; <span class="w">'+w.join(' ')+'</span>':''}`;
   pvLastInfo=info;
 }
 let pvLastInfo=null;
@@ -1913,7 +1948,7 @@ function init(){
   // ---- PDF export page
   const sp=()=>schedulePreview();
   [['sType','sheetType','str'],['sShow','show','str'],['sVenue','venue','str'],['sDatum','datum','str'],['sDate','date','str'],['sRev','rev','str'],['sBy','by','str'],['sFooter','footer','str'],['sTitle','title',null],['sLogoHShow','logoHShow','num'],['sLogoHUser','logoHUser','num'],['sLogoAll','logoAll',null],
-   ['sPage','page','str'],['sOrient','orient','str'],['sMargin','margin','num'],['sRowH','rowH','num'],['sFit','fit','str'],['sCapN','capN','num'],['sMinPt','minPt','num'],['sCentre','centreMm','num'],
+   ['sPage','page','str'],['sOrient','orient','str'],['sMargin','margin','num'],['sOnePage','onePage',null],['sRowH','rowH','num'],['sFit','fit','str'],['sCapN','capN','num'],['sMinPt','minPt','num'],['sCentre','centreMm','num'],
    ['sFont','font','str'],['sLoad','load',null],['sTick','tick','str'],['sMode','mode','str'],['cText','cText','str'],['cMuted','cMuted','str'],['cBorder','cBorder','str'],['cCentre','cCentre','str'],['cBand','cBand','str'],['cBandText','cBandText','str'],
    ['sCentreTint','centreTint',null],['cCentreFill','cCentreFill','str'],['sZebra','zebra',null],['cZebra','cZebra','str'],['sLegend','legend',null],['sBands','bands',null],['sOnlyTodo','onlyTodo',null]]
     .forEach(([id,k,ty])=>bindInput(id,S.sheet,k,ty,()=>{ if(id==='sFit') fixedVis(); sp(); }));
