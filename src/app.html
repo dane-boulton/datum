@@ -287,7 +287,6 @@ button.btn.danger{color:var(--err)}
 .cname{flex:1;min-width:160px;display:flex;flex-direction:column;gap:2px}.cname small{color:var(--muted);font-size:11.5px}
 .cacts{display:flex;gap:6px;flex-wrap:wrap}.cacts select{width:auto}
 .cnew{display:flex;gap:8px;margin-top:10px}.cnew input{flex:1;min-width:0}.cnew select{width:auto;flex:none}
-.cdiag{font-size:12px;color:var(--muted)}.cdiag summary{cursor:pointer;margin-bottom:6px}.cdiag table{border-collapse:collapse;width:100%}.cdiag th{text-align:left;font-weight:600;padding:3px 10px 3px 0;white-space:nowrap;vertical-align:top;color:var(--ink2)}.cdiag td{padding:3px 0;word-break:break-all}
 a.btn{display:inline-flex;align-items:center;background:var(--raised);border:1px solid var(--line2);padding:6px 12px;border-radius:var(--radius-sm);color:var(--ink2);text-decoration:none;font-weight:520;font-size:inherit}a.btn:hover{background:var(--raised2);color:var(--ink)}
 body.ro #v-data input,body.ro #v-data select,body.ro #v-data .act,body.ro #dApply,body.ro #dDiscard,body.ro #dAdd,body.ro #dRevert,body.ro #dAlign{pointer-events:none;opacity:.5}
 table.al .same{color:var(--faint)} table.al .chg{color:var(--warn);font-weight:600}
@@ -2044,32 +2043,20 @@ async function cloudSync(){
 // Role from the server, cached per user so the app still opens offline
 async function loadRole(){
   let cached=''; try{ const j=JSON.parse(localStorage.getItem(CLOUD_USER_KEY)||'null'); if(j&&j.id===C.user.id) cached=j.role; }catch(e){}
-  // C.roleIssue explains a missing role: 'noprofile' (no DATUM account record) or 'error' (could not check; C.roleErr)
-  C.roleIssue=''; C.roleErr='';
+  // C.roleIssue explains a missing role: 'noprofile' (no DATUM account record) or 'error' (could not check; details go to the console only)
+  C.roleIssue='';
   // Ask the database for our role directly (my_role() reads the profile server-side); fall back to reading the profile row
   try{ const r=await C.sb.rpc('my_role'); if(!r.error&&['viewer','editor','admin'].includes(r.data)){ C.role=r.data; C._refreshed=false;
     try{ localStorage.setItem(CLOUD_USER_KEY,JSON.stringify({id:C.user.id,role:C.role})); }catch(e){} return; } }catch(e){}
   let res; try{ res=await C.sb.from('profiles').select('role').eq('id',C.user.id).maybeSingle(); }catch(e){ res={error:e}; }
-  if(res.error){ if(cached){ C.role=cached; return; } C.role='disabled'; C.roleIssue='error'; C.roleErr=(res.error&&res.error.message)||String(res.error); return; }
+  if(res.error){ if(cached){ C.role=cached; return; } C.role='disabled'; C.roleIssue='error'; console.warn('DATUM: could not check access:',(res.error&&res.error.message)||res.error); return; }
   if(!res.data||!res.data.role){
     // Nothing came back. If the database did not see our sign-in, refresh the session once and ask again.
     if(!C._refreshed){ C._refreshed=true; try{ const r=await C.sb.auth.refreshSession(); if(!r.error&&r.data&&r.data.session){ C.user=r.data.session.user; return loadRole(); } }catch(e){} }
-    C.role='disabled'; C.roleIssue='noprofile'; C.diag=await signInDiag(); return; }
+    C.role='disabled'; C.roleIssue='noprofile'; console.warn('DATUM: no profile row readable for',C.user.id); return; }
   C._refreshed=false;
   C.role=res.data.role;
   try{ localStorage.setItem(CLOUD_USER_KEY,JSON.stringify({id:C.user.id,role:C.role})); }catch(e){}
-}
-// What the browser and the database each think about this sign-in, shown when the role cannot be found
-async function signInDiag(){
-  const out=[]; const add=(k,v)=>out.push([k,v]);
-  add('Project',(window.DATUM_CLOUD&&window.DATUM_CLOUD.url||'').replace(/^https?:\/\//,''));
-  add('Signed in as',C.email+' ('+(C.user&&C.user.id)+')');
-  try{ const {data}=await C.sb.auth.getSession(); const ss=data&&data.session;
-    add('Browser session',ss?('yes'+(ss.expires_at?', expires '+new Date(ss.expires_at*1000).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}):'')):'none'); }catch(e){ add('Browser session','error: '+e.message); }
-  try{ const {data,error}=await C.sb.auth.getUser(); add('Sign-in server',error?('rejected: '+error.message):('accepted ('+(data.user&&data.user.id)+')')); }catch(e){ add('Sign-in server','error: '+e.message); }
-  try{ const {data,error}=await C.sb.rpc('my_email'); add('Database sees email',error?('error: '+error.message):(data||'(none - request was anonymous)')); }catch(e){ add('Database sees email','error: '+e.message); }
-  try{ const {data,error}=await C.sb.rpc('my_role'); add('Database sees role',error?('error: '+error.message):String(data)); }catch(e){ add('Database sees role','error: '+e.message); }
-  return out;
 }
 async function retrySignIn(){ const {data}=await C.sb.auth.getSession(); C.user=null; showGate('wait'); onAuth(data&&data.session); }
 
@@ -2082,7 +2069,7 @@ function showGate(mode,msg,err){
   const head={in:['Sign in','Sign in to use DATUM.'],setup:['Set up your account','First time here? Use the email address you were invited with and choose a password. If you got an invite email, you can use its link instead.'],reset:['Reset password','We will email you a link to set a new password.'],
     newpw:['Welcome to DATUM','Choose a password for '+esc(C.email)+'. You will use it with this email address to sign in from now on.'],
     wait:['DATUM','Checking your sign-in...'],
-    problem:["Can't finish signing in",C.roleIssue==='noprofile'?'Your account ('+esc(C.email)+') is not set up in DATUM yet. If you are setting DATUM up, run supabase/schema.sql in the Supabase SQL Editor, then try again.':'DATUM could not check your access. Check your connection and try again. If you are setting DATUM up, make sure supabase/schema.sql has been run in Supabase.'],
+    problem:["Can't finish signing in",C.roleIssue==='noprofile'?'Your account ('+esc(C.email)+') is not set up in DATUM yet. Ask your admin to check your invite, then try again.':'DATUM could not check your access. Check your connection and try again.'],
     off:['Access removed','Your access to DATUM has been removed. Ask your admin if this is a mistake.']}[mode];
   let body='';
   if(mode==='wait') body='';
@@ -2091,7 +2078,7 @@ function showGate(mode,msg,err){
     <label>Confirm password<input type="password" id="cPass2" autocomplete="new-password" minlength="8" required></label>
     <div class="cmsg" id="cMsg"></div><button class="btn solid" type="submit" id="cGo">Save password and continue</button>
     <div class="clinks"><a href="#" id="cSkipPw">I will sign in with Google instead</a></div></form>`;
-  else if(mode==='problem') body=`<div class="cform">${C.roleErr?`<div class="cmsg err">${esc(C.roleErr)}</div>`:''}${C.diag&&C.roleIssue==='noprofile'?`<details class="cdiag" open><summary>Details for support</summary><table>${C.diag.map(([k,v])=>`<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>`).join('')}</table></details>`:''}<button class="btn solid" type="button" id="cRetry">Try again</button><button class="btn" type="button" id="cOut2">Sign out</button></div>`;
+  else if(mode==='problem') body=`<div class="cform"><button class="btn solid" type="button" id="cRetry">Try again</button><button class="btn" type="button" id="cOut2">Sign out</button></div>`;
   else if(mode==='off') body=`<div class="cform"><div class="cmsg">Signed in as ${esc(C.email)}.</div><button class="btn" type="button" id="cOut2">Sign out</button></div>`;
   else body=`<form class="cform" id="cForm">
     <label>Email<input type="email" id="cEmail" autocomplete="email" required></label>
