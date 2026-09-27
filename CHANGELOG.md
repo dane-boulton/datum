@@ -4,6 +4,10 @@ All notable changes to DATUM. Newest first.
 
 ## 29 September 2026
 
+### Clearer Position and Load notes
+- **Weights removed from Position.** Position values that are only a weight (such as "1,000kg"), which some exports fill in from the capacity, are cleared on import and when a project is opened.
+- **Easier to read.** The Load / Floor Mark position note under each mark is larger, bolder and brighter in Markout Rows, the plot and the PDF. Marks in the centre column sit on a darker backing, and the centre highlight is slightly toned down.
+
 ### Mark Type and Automation columns
 - **Read once on import.** Hoist Symbol is read once, when a CSV is imported, into two ordinary columns: **Mark Type** (250kg … 3 Ton, Chain Block, Fall Arrest, Floor Mark, USR/USL/DSR/DSL) and **Automation** (Automated, TAIT Nav, Kinesys APEX, Kinesys Elevation, Moveket V-Motion). It uses the same text rules as before.
 - **Edited directly.** From then on you edit Mark Type and Automation in the Data tab, with suggestions. The Hoist Symbol and "Reads as" columns are no longer shown.

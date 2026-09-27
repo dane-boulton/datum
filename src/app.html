@@ -21,7 +21,7 @@
   --ink:#ededee; --ink2:#cdcecf; --muted:#96989a; --faint:#6b6d6f;
   --accent:#d3d6db; --accent2:#a7abb2; --accent-soft:rgba(211,214,219,.15); --accent-ink:#0e0e0f;
   --warn:#f5b04a; --warnbg:rgba(245,176,74,.12); --err:#ff7b72; --errbg:rgba(255,123,114,.14); --sel:#ffd166;
-  --knock:#151617; --focus-a:#5b5f66; --focus-b:#3f4247; --clhi:#4a4d53; --clhi-a:#858a93; --clhi-b:#62666d; --overlay:rgba(18,18,20,.86); --shadow:rgba(0,0,0,.4);
+  --knock:#151617; --focus-a:#5b5f66; --focus-b:#3f4247; --clhi:#4a4d53; --clhi-a:#767b84; --clhi-b:#575b62; --overlay:rgba(18,18,20,.86); --shadow:rgba(0,0,0,.4);
   --plot-bg:radial-gradient(circle at 50% 40%,#151617,#0d0d0d); --empty-bg:radial-gradient(circle at 50% 35%,#1c1c1d,#0e0e0f);
   --radius:10px; --radius-sm:7px; --midw:minmax(120px,200px);
   --font:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
@@ -32,7 +32,7 @@ html[data-theme=light]{
   --ink:#1e1f21; --ink2:#484a4c; --muted:#75777a; --faint:#a4a5a7;
   --accent:#3d4148; --accent2:#2a2d32; --accent-soft:rgba(61,65,72,.12); --accent-ink:#ffffff;
   --warn:#9a5a06; --warnbg:#fff1d6; --err:#c0342b; --errbg:#fde4e2; --sel:#e0a100;
-  --knock:#ffffff; --focus-a:#565a61; --focus-b:#383b40; --clhi:#d3d5d9; --clhi-a:#7c8189; --clhi-b:#5b5f66; --overlay:rgba(255,255,255,.88); --shadow:rgba(20,20,24,.16);
+  --knock:#ffffff; --focus-a:#565a61; --focus-b:#383b40; --clhi:#d3d5d9; --clhi-a:#71767e; --clhi-b:#52565d; --overlay:rgba(255,255,255,.88); --shadow:rgba(20,20,24,.16);
   --plot-bg:radial-gradient(circle at 50% 40%,#ffffff,#f5f5f6); --empty-bg:radial-gradient(circle at 50% 35%,#ffffff,#eeeff0);
 }
 *{box-sizing:border-box}
@@ -224,7 +224,8 @@ table.dt tr.sel td{background:var(--accent-soft)}
 .mo-cnt{font-size:12px;font-weight:650;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.18)}
 .mo-cnt.ok{background:#22c55e}
 .mo-cl{display:flex;flex-direction:column;gap:8px;width:100%;margin-top:6px}
-.mo-cl .mo-card{background:rgba(255,255,255,.14);border-color:var(--sc,rgba(255,255,255,.35));color:#fff}
+.mo-cl .mo-card{background:rgba(0,0,0,.30);border-color:var(--sc,rgba(255,255,255,.35));color:#fff}
+.mo-cl .mo-kg,.mo-cl .mo-card.done .mo-kg{color:#fff;opacity:1}
 .mo-card{position:relative;display:grid;grid-template-columns:1fr auto;gap:8px 10px;align-items:center;text-align:left;padding:12px 14px;border-radius:16px;border:1.5px solid var(--line3);background:var(--raised);color:var(--ink);cursor:pointer;min-height:86px;width:100%;transition:background .15s,border-color .15s,transform .1s;-webkit-tap-highlight-color:transparent}
 .mo-card:active{transform:scale(.985)}
 .mo-dim{font-size:clamp(17px,2.6vw,25px);font-weight:750;letter-spacing:-.015em}
@@ -428,7 +429,7 @@ table.dt input[data-k=auto]{min-width:150px}
 .mo-id{font-size:clamp(14px,1.6vw,16px);font-weight:700}
 .mo-check{width:24px;height:24px}
 .mo-check svg{width:14px;height:14px}
-.mo-kg{font-size:11px}
+.mo-kg{font-size:12.5px;font-weight:600;color:var(--ink2)}
 .mo-invert,.mo-auto{font-size:9.5px;padding:2px 7px;letter-spacing:.1em}
 .mo-nav{padding:6px 12px;gap:8px}
 .mo-nav .navbtn{height:40px;border-radius:12px;font-size:14px}
@@ -1202,11 +1203,13 @@ function showName(){ return {GRID:'Grid only',SUBHANG:'Subhang only'}[S.opt.show
 // Import: read the Hoist Symbol once into editable Mark Type and Automation columns (using the text rules), and move
 // any old "Lighting Automated"-style function names into Automation. Works on {headers, rows, map} (S.raw/S.map or S.orig).
 const AUTO_WORD=/(^|[^a-z])(auto|automated|automation)(?=[^a-z]|$)/i;
+const WEIGHT_ONLY=/^\s*\d{1,3}(?:,\d{3})*(?:\.\d+)?\s*(?:kgs?|kilograms?|t|tons?|tonnes?|lbs?)\s*$/i;
 function deriveColumns(d){
   const H=d.headers, rows=d.rows, m=d.map, cell=(r,i)=>i>=0&&r[i]!=null?String(r[i]).trim():'';
   const colFor=name=>{ let i=H.findIndex(h=>norm(h)===norm(name)); if(i<0){ H.push(name); i=H.length-1; } rows.forEach(r=>{ while(r.length<H.length) r.push(''); }); return i; };
   if(!(m.type>=0)){ const ti=colFor('Mark Type'); if(m.hsym>=0) rows.forEach(r=>{ if(!cell(r,ti)) r[ti]=symbolType(cell(r,m.hsym)); }); m.type=ti; }
   if(!(m.auto>=0)){ const ai=colFor('Automation'); if(m.hsym>=0) rows.forEach(r=>{ if(!cell(r,ai)) r[ai]=AUTO_VALUES[autoKind(cell(r,m.hsym))]||''; }); m.auto=ai; }
+  if(m.place>=0) rows.forEach(r=>{ if(WEIGHT_ONLY.test(cell(r,m.place))) r[m.place]=''; });
   if(m.func>=0) rows.forEach(r=>{ const f=cell(r,m.func); if(AUTO_WORD.test(f)){ r[m.func]=f.replace(new RegExp(AUTO_WORD.source,'gi'),'$1').replace(/[\s\-_\/()]+$/,'').replace(/^[\s\-_\/()]+/,'').replace(/\s{2,}/g,' ').trim()||f; if(!cell(r,m.auto)) r[m.auto]='Automated'; } });
 }
 function isMarker(h){ return /^(floor-mark|corner-)/.test(itemSym(h)); }
@@ -1485,7 +1488,7 @@ function renderPlot(){
     if(declutter&&(showLbl||showCo)){ const cw=Math.max(showCo?(fmtDist(it.xs).length+fmtDist(it.yu).length+8)*5.3:0,pl.length*5.3), w=Math.max(showLbl?String(h.id).length*6.8+2:0,cw), top=y+ly-(showLbl?10:0), bot=y+ly+(showCo?13:3)+(pl?11:0);
       const x0=anc==='end'?lx-w:lx, x1=anc==='end'?lx:lx+w;
       if(sel||fits(x0,top,x1,bot)) placed.push([x0-2,top-1,x1+2,bot+1]); else { showLbl=false; showCo=false; } }
-    if(showLbl&&pl) out+=`<text x="${lx}" y="${y+ly+(showCo?22:11)}" text-anchor="${anc}" font-size="9.5" font-style="italic" fill="${T.sub}">${esc(pl)}</text>`;
+    if(showLbl&&pl) out+=`<text x="${lx}" y="${y+ly+(showCo?22:12)}" text-anchor="${anc}" font-size="10.5" font-weight="600" fill="${T.lab}">${esc(pl)}</text>`;
     if(showLbl) out+=`<text x="${lx}" y="${y+ly}" text-anchor="${anc}" font-size="11" font-weight="650" fill="${T.lab}">${esc(h.id)}</text>`;
     if(showCo) out+=`<text x="${lx}" y="${y+ly+11}" text-anchor="${anc}" font-size="9" fill="${T.sub}">${fmtDist(it.xs)} ${sideOf(it)} / ${fmtDist(it.yu)} ${abbr(it.yu>0?S.opt.topL:S.opt.botL)}</text>`;
     if(isDone(h.id)) out+=`<g transform="translate(${x+R*1.05} ${y-R*1.05})"><circle r="5.5" fill="#22c55e" stroke="var(--knock)" stroke-width="1.2"/><path d="M-2.6 .2L-.8 2 2.8-2" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></g>`;
@@ -1762,7 +1765,7 @@ function drawSheet(doc,measure){
   for(const it of all){
     doc.setFont(fam,'bold'); doc.setFontSize(fsBase);
     const tw=Math.max(doc.getTextWidth(fmtDist(it.xs))*DIM_S,doc.getTextWidth(it.h.id)*ID_S,1); let kgw=0;
-    { const k=subTxt(it.h); if(k){ doc.setFontSize(Math.max(3.4,fsBase*0.55)); kgw=doc.getTextWidth(k); } }
+    { const k=subTxt(it.h); if(k){ doc.setFontSize(Math.max(3.8,fsBase*0.62)); kgw=doc.getTextWidth(k); } }
     const ring=ringOf(it.h), auto=autoOf(it.h);
     dimOf.set(it,{tw,symC:Math.max(2*symR*(ring?1.55:(auto?1.25:1)),kgw+0.4)});
   }
@@ -1860,7 +1863,7 @@ function drawSheet(doc,measure){
     doc.setFontSize(fs);
     const kg=subTxt(h), ext=auto?(rr?2.5:2.0):(rr?1.55:1), sy=kg?mid-symR*(auto?0.6:0.25):mid-(auto?symR*0.5:0);
     pdfSym(itemSym(h),symX,sy,symR,c,symR*0.17*lwMul,{up:h.up,ring:rr,auto});
-    if(kg){ doc.setFont(fam,'bold'); doc.setFontSize(Math.max(3.4,fs*0.55)); doc.setTextColor(...MUTED); doc.text(kg,symX,Math.min(sy+symR*ext+1.3,y+rowH-0.9),{align:'center',baseline:'middle'}); }
+    if(kg){ doc.setFont(fam,'bold'); doc.setFontSize(Math.max(3.8,fs*0.62)); doc.setTextColor(...NAVY); doc.text(kg,symX,Math.min(sy+symR*ext+1.3,y+rowH-0.9),{align:'center',baseline:'middle'}); }
     if(tickMode!=='none') tickBox(side==='l'?x0+0.7:x0+w-0.7-tickS, mid-tickS/2, isDone(h.id));
   }
   function drawRow(r,y,ri){
