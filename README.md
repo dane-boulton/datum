@@ -2,6 +2,7 @@
 
 Single-page app for arena floor markout: import a CSV of chain motors, plot them, work through markout rows on your phone, and export a PDF markout sheet. Installable as a PWA and works offline.
 
+- `CHANGELOG.md` - what has changed, newest first
 - `src/app.html` - the whole app (edit this)
 - `scripts/build.mjs` - inlines jsPDF + icon and writes `site/index.html` and `site/sw.js`
 - `site/` - what Netlify publishes (manifest, icons, headers; `index.html` and `sw.js` are generated)
