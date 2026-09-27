@@ -6,7 +6,7 @@ All notable changes to DATUM. Newest first.
 
 ### Automation types (new Hoist Symbol column)
 - Automated hoists now come from a new optional CSV column, **Hoist Symbol**, instead of the Hoist Function. The value decides the badge and the text shown under the symbol:
-  - **Auto**, **Automated** or **Varispeed** give **AUTO** (generic).
+  - **Auto**, **Automated**, **Varispeed** or **Vari-Speed** give **AUTO** (generic). The Data tab suggests just "Automated" for these.
   - **NAV** or **Navigator** give **NAV** (TAIT Navigator).
   - **Apex** gives **APEX**.
   - **Elevation** gives **ELEV**.
@@ -15,12 +15,12 @@ All notable changes to DATUM. Newest first.
 - The legend lists each type in use: **Automated Hoist**, **TAIT Nav Hoist**, **Kinesys APEX Hoist**, **Kinesys Elevation Hoist**, **MOVEKET V-Motion Hoist**.
 - The column is picked up automatically, can be chosen under **Columns > Hoist Symbol**, and can be edited in the Data tab (**Symbol** column, with suggestions).
 - The template CSV, the built-in sample and the sample files now include the column.
-- **Older CSVs:** files without a Hoist Symbol column still work as before; "Automated" in the Hoist Function shows AUTO. Once the column exists, only it is used.
+- **Functions are plain again.** Automation no longer comes from the Hoist Function, so "Lighting Automated"-style functions are gone from the app and the samples; use Lighting, Video and so on. A function containing "Automated" is now just an ordinary function with its own colour.
 
 ### Markout Rows
 - **The X value is now the largest text** on each card, then the hoist ID and symbol, then the badges.
 - **Card borders** take the colour of the hoist's symbol, and still turn green when marked done.
-- **Centre-column rows:** rows with a mark in the centre column are highlighted in a lighter grey.
+- **Centre-column rows:** when a row has a mark on the centre line, its centre-column cell is highlighted in a lighter grey, both collapsed and open, so it's hard to miss.
 - **Automated cards** are now the same height as the others.
 - **Badge colour:** automation badges (AUTO, NAV, APEX, ELEV) use the same yellow as INVERT.
 

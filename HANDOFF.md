@@ -93,11 +93,10 @@ The script is organised by comment banners `/* ===== … ===== */`. Search for t
 - **Symbols and colours** (decisions already made):
   - Capacity symbols: 250 kg diamond, 320 pentagon, 500 triangle, 1000 circle, 2000 square, 2500 hexagon, 3000 octagon, all with a crosshair. lb values snap to the nearest kg. Also floor mark, corner marks, Chain Block ("Block and Fall"), Fall Arrest (heart).
   - Colours: Lighting red, Audio #ffd000, Cable Pick orange, Scenery light blue, Other green, Super Grid pink, Video purple, Generic light grey, Pre-Rig dark grey with a red ring.
-  - "X Automated" functions share X's colour.
   - **Automation types** come from the optional `Hoist Symbol` column (`S.map.hsym`), via `autoKind()`:
     - NAV/Navigator → `NAV`; Apex → `APEX`; Elevation → `ELEV`; Moveket/Movecat/V-Motion/VMK/VMC → `KES`; Auto/Automated/Varispeed → `AUTO` (checked last).
     - The result is stored as `h.auto` (a label or '') and drawn as a badge and as text under the symbol (`symParts` / `pdfSym` use `autoLabel`).
-    - If the CSV has no Hoist Symbol column, "Auto" in the function gives `AUTO` (legacy fallback).
+    - The function column plays no part: the old "Lighting Automated" handling (colour sharing and grouping) has been removed.
     - Legend names are in `AUTO_NAMES`: Automated Hoist, TAIT Nav Hoist, Kinesys APEX Hoist, Kinesys Elevation Hoist, MOVEKET V-Motion Hoist.
   - The Hoist Up modifier applies to hoists only.
   - Theme is charcoal/grey (no blue).
@@ -114,7 +113,7 @@ The script is organised by comment banners `/* ===== … ===== */`. Search for t
   - `true` (Next / Previous / others): the scroll position is kept, and the list scrolls only as far as needed if the open row passes the top or bottom edge.
   - Auto-advance, hide completed, focus by side.
   - Visual priority on cards and PDF cells: **X value > ID + symbol > badges**. In the PDF, `DIM_S = 1.18` and `ID_S = 0.82`, and the fit engine measures with them.
-  - Card borders use the symbol colour (`--sc`). Rows with centre-column marks get `.hascl` (lighter grey). Automation badges are yellow like INVERT.
+  - Card borders use the symbol colour (`--sc`). Rows with centre-column marks get `.hascl` / `.mo-mid.hascl`: the centre cell turns lighter grey (`--clhi`, `--clhi-a`, `--clhi-b`), collapsed and open. Automation badges are yellow like INVERT.
 - **Plot** (`renderPlot`, `fitPlot`, gestures in `init`):
   - Pointer-event gestures: one-finger / mouse pan, **pinch zoom**, double-tap or double-click to zoom ×2.
   - `isCompact()` means the `COMPACT_MQ` media query matches: `(max-width:700px), (max-height:500px), (pointer:coarse) and (max-width:1100px)`. That is phones, short landscape screens and touch tablets. In compact mode:

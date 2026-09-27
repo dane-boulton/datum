@@ -1,17 +1,17 @@
 Hoist Type,Hoist Function,Hoist ID,Hoist Position,Origin X,Origin Y,Load (kg),Hoist Symbol
 500.00 kg,Generic,USP,Hoist Down,-9322,14097,0,
 1000.00 kg,Video,VX1,Hoist Up,-6375,13030,0,
-1000.00 kg,Video Automated,VX2,Hoist Up,-3835,13030,0,TAIT Navigator
+1000.00 kg,Video,VX2,Hoist Up,-3835,13030,0,TAIT Navigator
 1000.00 kg,Video,VX3,Hoist Up,-1245,13030,0,
 1000.00 kg,Video,VX4,Hoist Up,1245,13030,0,
-1000.00 kg,Video Automated,VX5,Hoist Up,3835,13030,0,TAIT Navigator
+1000.00 kg,Video,VX5,Hoist Up,3835,13030,0,TAIT Navigator
 1000.00 kg,Video,VX6,Hoist Up,6350,13030,0,
-1000.00 kg,Lighting Automated,US1,Hoist Down,-6375,12319,0,Apex
-1000.00 kg,Lighting Automated,US2,Hoist Down,-2515,12319,0,Apex
-1000.00 kg,Lighting Automated,US3,Hoist Down,2515,12319,0,Elevation
-1000.00 kg,Lighting Automated,US4,Hoist Down,6350,12319,0,Elevation
-500.00 kg,Lighting Automated,TR4,Hoist Down,-7823,11151,0,Automated
-500.00 kg,Lighting Automated,TL1,Hoist Down,7823,11151,0,Varispeed
+1000.00 kg,Lighting,US1,Hoist Down,-6375,12319,0,Apex
+1000.00 kg,Lighting,US2,Hoist Down,-2515,12319,0,Apex
+1000.00 kg,Lighting,US3,Hoist Down,2515,12319,0,Elevation
+1000.00 kg,Lighting,US4,Hoist Down,6350,12319,0,Elevation
+500.00 kg,Lighting,TR4,Hoist Down,-7823,11151,0,Automated
+500.00 kg,Lighting,TL1,Hoist Down,7823,11151,0,Automated
 500.00 kg,Lighting,TR3,Hoist Down,-8331,8357,0,
 500.00 kg,Lighting,TL2,Hoist Down,8331,8357,0,
 1000.00 kg,Pre-Rig,UM1,Hoist Down,-6477,7112,0,

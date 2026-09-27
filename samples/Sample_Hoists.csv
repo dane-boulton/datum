@@ -1,17 +1,17 @@
 Hoist Type,Hoist Function,Hoist ID,Hoist Position,Origin X,Origin Y,Load (kg),Hoist Symbol
 500.00 kg,Generic,USP,Hoist Down,"-30' - 7""","46' - 3""",0,
 1000.00 kg,Video,VX1,Hoist Up,"-20' - 11""","42' - 9""",0,
-1000.00 kg,Video Automated,VX2,Hoist Up,"-12' - 7""","42' - 9""",0,TAIT Navigator
+1000.00 kg,Video,VX2,Hoist Up,"-12' - 7""","42' - 9""",0,TAIT Navigator
 1000.00 kg,Video,VX3,Hoist Up,"-4' - 1""","42' - 9""",0,
 1000.00 kg,Video,VX4,Hoist Up,"4' - 1""","42' - 9""",0,
-1000.00 kg,Video Automated,VX5,Hoist Up,"12' - 7""","42' - 9""",0,TAIT Navigator
+1000.00 kg,Video,VX5,Hoist Up,"12' - 7""","42' - 9""",0,TAIT Navigator
 1000.00 kg,Video,VX6,Hoist Up,"20' - 10""","42' - 9""",0,
-1000.00 kg,Lighting Automated,US1,Hoist Down,"-20' - 11""","40' - 5""",0,Apex
-1000.00 kg,Lighting Automated,US2,Hoist Down,"-8' - 3""","40' - 5""",0,Apex
-1000.00 kg,Lighting Automated,US3,Hoist Down,"8' - 3""","40' - 5""",0,Elevation
-1000.00 kg,Lighting Automated,US4,Hoist Down,"20' - 10""","40' - 5""",0,Elevation
-500.00 kg,Lighting Automated,TR4,Hoist Down,"-25' - 8""","36' - 7""",0,Automated
-500.00 kg,Lighting Automated,TL1,Hoist Down,"25' - 8""","36' - 7""",0,Varispeed
+1000.00 kg,Lighting,US1,Hoist Down,"-20' - 11""","40' - 5""",0,Apex
+1000.00 kg,Lighting,US2,Hoist Down,"-8' - 3""","40' - 5""",0,Apex
+1000.00 kg,Lighting,US3,Hoist Down,"8' - 3""","40' - 5""",0,Elevation
+1000.00 kg,Lighting,US4,Hoist Down,"20' - 10""","40' - 5""",0,Elevation
+500.00 kg,Lighting,TR4,Hoist Down,"-25' - 8""","36' - 7""",0,Automated
+500.00 kg,Lighting,TL1,Hoist Down,"25' - 8""","36' - 7""",0,Automated
 500.00 kg,Lighting,TR3,Hoist Down,"-27' - 4""","27' - 5""",0,
 500.00 kg,Lighting,TL2,Hoist Down,"27' - 4""","27' - 5""",0,
 1000.00 kg,Pre-Rig,UM1,Hoist Down,"-21' - 3""","23' - 4""",0,

@@ -21,7 +21,7 @@
   --ink:#ededee; --ink2:#cdcecf; --muted:#96989a; --faint:#6b6d6f;
   --accent:#d3d6db; --accent2:#a7abb2; --accent-soft:rgba(211,214,219,.15); --accent-ink:#0e0e0f;
   --warn:#f5b04a; --warnbg:rgba(245,176,74,.12); --err:#ff7b72; --errbg:rgba(255,123,114,.14); --sel:#ffd166;
-  --knock:#151617; --focus-a:#5b5f66; --focus-b:#3f4247; --overlay:rgba(18,18,20,.86); --shadow:rgba(0,0,0,.4);
+  --knock:#151617; --focus-a:#5b5f66; --focus-b:#3f4247; --clhi:#4a4d53; --clhi-a:#858a93; --clhi-b:#62666d; --overlay:rgba(18,18,20,.86); --shadow:rgba(0,0,0,.4);
   --plot-bg:radial-gradient(circle at 50% 40%,#151617,#0d0d0d); --empty-bg:radial-gradient(circle at 50% 35%,#1c1c1d,#0e0e0f);
   --radius:10px; --radius-sm:7px; --midw:minmax(120px,200px);
   --font:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
@@ -32,7 +32,7 @@ html[data-theme=light]{
   --ink:#1e1f21; --ink2:#484a4c; --muted:#75777a; --faint:#a4a5a7;
   --accent:#3d4148; --accent2:#2a2d32; --accent-soft:rgba(61,65,72,.12); --accent-ink:#ffffff;
   --warn:#9a5a06; --warnbg:#fff1d6; --err:#c0342b; --errbg:#fde4e2; --sel:#e0a100;
-  --knock:#ffffff; --focus-a:#565a61; --focus-b:#383b40; --overlay:rgba(255,255,255,.88); --shadow:rgba(20,20,24,.16);
+  --knock:#ffffff; --focus-a:#565a61; --focus-b:#383b40; --clhi:#d3d5d9; --clhi-a:#7c8189; --clhi-b:#5b5f66; --overlay:rgba(255,255,255,.88); --shadow:rgba(20,20,24,.16);
   --plot-bg:radial-gradient(circle at 50% 40%,#ffffff,#f5f5f6); --empty-bg:radial-gradient(circle at 50% 35%,#ffffff,#eeeff0);
 }
 *{box-sizing:border-box}
@@ -272,7 +272,8 @@ table.dt tr.sel td{background:var(--accent-soft)}
 .mo-row.cur .mo-c .ok{color:#b9f5cf}
 .mo-c .clids{font-size:10.5px;color:var(--muted);margin-top:2px}
 .mo-row.all .mo-ids{opacity:.7}
-.mo-row.hascl:not(.open){background:var(--raised2)}.mo-row.hascl:not(.open):hover{background:var(--line2)}
+.mo-row.hascl .mo-c{background:var(--clhi)}   /* this row has a mark on the centre line */
+.mo-mid.hascl{background:linear-gradient(180deg,var(--clhi-a),var(--clhi-b))}
 .mo-empty{padding:40px 20px;text-align:center;color:var(--muted);font-size:15px}
 /* ---------- data editing ---------- */
 table.dt input[type=text],table.dt select{padding:5px 8px;font-size:12.5px;min-width:116px;border-radius:6px}
@@ -1044,9 +1045,7 @@ function funcDefault(name){
 function ensureFunc(f){
   const d=funcDefault(f);
   if(!(f in S.funcMap)){
-    const base=stripAuto(f).toLowerCase(), sib=Object.keys(S.funcMap).find(k=>k!==f&&stripAuto(k).toLowerCase()===base);
-    if(sib && !d){ S.funcMap[f]=S.funcMap[sib]; if(!(f in S.funcRing)) S.funcRing[f]=S.funcRing[sib]||''; }
-    else { const used=new Set(Object.values(S.funcMap)); S.funcMap[f]=d?d.hex:(PALETTE.find(c=>!used.has(c))||PALETTE[Object.keys(S.funcMap).length%PALETTE.length]); }
+    const used=new Set(Object.values(S.funcMap)); S.funcMap[f]=d?d.hex:(PALETTE.find(c=>!used.has(c))||PALETTE[Object.keys(S.funcMap).length%PALETTE.length]);
   }
   if(!(f in S.funcRing)) S.funcRing[f]=d&&d.ring?d.ring:'';
 }
@@ -1057,16 +1056,11 @@ function assignDefaults(){
       S.typeMap[h.type] = guessSymbol(h.type) || SYM_ORDER_DEFAULT.find(k=>!used.has(k)) || SYM_ORDER_DEFAULT[Object.keys(S.typeMap).length % SYM_ORDER_DEFAULT.length];
     }
   }
-  // plain names first so "X Automated" can inherit the colour of "X"
-  [...new Set(S.hoists.map(h=>h.func))].sort((a,b)=>(isAutoFunc(a)?1:0)-(isAutoFunc(b)?1:0)).forEach(ensureFunc);
+  [...new Set(S.hoists.map(h=>h.func))].forEach(ensureFunc);
   recomputeUp();
 }
-// Functions that differ only by "Auto / Automated / Automation" are one entry in the settings list
-function funcGroups(){
-  const map=new Map();
-  for(const f of new Set(S.hoists.map(h=>h.func))){ const key=stripAuto(f).toLowerCase(); if(!map.has(key)) map.set(key,{label:stripAuto(f),members:[]}); map.get(key).members.push(f); }
-  return [...map.values()].map(g=>{ g.members.sort((a,b)=>(isAutoFunc(a)?1:0)-(isAutoFunc(b)?1:0)); g.f=g.members[0]; return g; });
-}
+// One entry per function in the settings list
+function funcGroups(){ return [...new Set(S.hoists.map(h=>h.func))].map(f=>({label:f,members:[f],f})); }
 function rebuild(){
   const rows=S.raw.rows, map=S.map, hs=[]; let warn=0;
   if(S.opt.inUnit==='auto') S.detected=detectUnits();
@@ -1077,7 +1071,7 @@ function rebuild(){
     const h={row:i+2, skip:S.skip.has(i), id:g('id'), type:g('type')||'(none)', func:g('func')||'(none)', posRaw:g('pos'), xRaw:g('x'), yRaw:g('y'), loadRaw:g('load'), issues:[]};
     h.upRaw=/\bup\b/i.test(h.posRaw) && !/down/i.test(h.posRaw); h.up=h.upRaw;
     h.datum=/^datum$/i.test(h.id)||/^datum$/i.test(h.type);
-    h.hsym=g('hsym'); h.auto=map.hsym>=0 ? autoKind(h.hsym) : (isAutoFunc(h.func)?'AUTO':'');
+    h.hsym=g('hsym'); h.auto=autoKind(h.hsym);
     h.x=parseLen(h.xRaw,unit); h.y=parseLen(h.yRaw,unit);
     h.load = h.loadRaw!=='' && !isNaN(parseFloat(h.loadRaw)) ? parseFloat(h.loadRaw) : null;
     if(h.id==='') { h.issues.push('No ID'); h.id='?'+(i+1); }
@@ -1170,20 +1164,18 @@ function scr(h){ return scrCol(itemColor(h)); }
 function ringCol(h){ const r=S.funcRing[h.func]; return r?scrCol(r):null; }
 function ringRgb(h){ const r=S.funcRing[h.func]; return r?hexToRgb(r):null; }
 // Automated hoists: h.auto is a short label shown as a badge and as text under the symbol ('' = not automated).
-// It comes from the Hoist Symbol column; CSVs without that column fall back to "Auto" in the Hoist Function.
+// It comes from the Hoist Symbol column only.
 const AUTO_KINDS=['AUTO','NAV','APEX','ELEV','KES'], AUTO_NAMES={AUTO:'Automated Hoist',NAV:'TAIT Nav Hoist',APEX:'Kinesys APEX Hoist',ELEV:'Kinesys Elevation Hoist',KES:'MOVEKET V-Motion Hoist'};
 function autoKind(v){ const t=String(v||'').toLowerCase(), w=re=>new RegExp('(^|[^a-z])(?:'+re+')([^a-z]|$)').test(t);
   if(w('nav|navigator')) return 'NAV'; if(w('apex')) return 'APEX'; if(w('elevation')) return 'ELEV';
   if(w('moveket|movecat|v-?motion|vmk|vmc')) return 'KES';
-  if(w('auto|automated|automation|varispeed|vari-speed')) return 'AUTO'; return ''; }
+  if(w('auto|automated|automation|varispeed|vari-speed|vari speed')) return 'AUTO'; return ''; }
 function autoOf(h){ return h&&h.auto||''; }
 function autoLabel(a){ return (a===true||a==='tag')?'AUTO':String(a); }
 function hoistSVG(h,size){ return symSVG(itemSym(h),scr(h),size,false,{up:h.up,ring:ringCol(h),auto:autoOf(h)}); }
 function itemColor(h){ return S.funcMap[h.func]||'#1a1a1a'; }
 function itemSym(h){ return S.typeMap[h.type]||'circle'; }
 function loadTxt(h){ return (S.sheet.load && S.map.load>=0 && h.load!=null) ? (h.load%1?h.load.toFixed(1):h.load)+' kg' : ''; }
-// Auto, Automated, Automation (and Automatic...) as a whole word in the function name; "Autocue" or "Bautista" do not count
-function isAutoFunc(f){ return /(^|[^a-z])auto(mat[a-z]*)?([^a-z]|$)/i.test(String(f||'')); }
 function sideOf(it){ const th=Math.max(0,S.opt.cth||0); return it.xs>th?S.opt.rightL:it.xs<-th?S.opt.leftL:'CL'; }
 
 /* ============================ rendering: rows view ============================ */
@@ -1308,8 +1300,8 @@ function renderData(){
   const inp=(i,k)=>{ const pend=S.pending[i]&&k in S.pending[i]; return `<td class="${pend?'pend':''}"><input type="text" data-ri="${i}" data-k="${k}" value="${esc(rawVal(i,k))}"${k==='type'?' list="dl-type"':k==='func'?' list="dl-func"':k==='hsym'?' list="dl-hsym"':''} spellcheck="false" autocomplete="off"></td>`; };
   const pos=i=>{ const v=rawVal(i,'pos'), pend=S.pending[i]&&'pos' in S.pending[i]; const o=['','Hoist Down','Hoist Up']; if(v&&!o.includes(v)) o.push(v);
     return `<td class="${pend?'pend':''}"><select data-ri="${i}" data-k="pos">${o.map(x=>`<option value="${esc(x)}"${x===v?' selected':''}>${x||'(blank)'}</option>`).join('')}</select></td>`; };
-  const syms=[...new Set(['Automated','Varispeed','TAIT Navigator','Apex','Elevation','Moveket V-Motion'].concat(hs.map(h=>h.hsym).filter(Boolean)))];
-  let html=dl('dl-type',types)+dl('dl-func',funcs)+dl('dl-hsym',syms)+`<table class="dt"><thead><tr><th>#</th><th title="Skipped rows are left off the plot, markout rows and PDF">Skip</th><th></th><th>ID</th><th>Type</th><th>Function</th><th title="Automation: Auto / Varispeed, NAV / Navigator, Apex, Elevation or Moveket / V-Motion / VMK / VMC">Symbol</th><th>Position</th><th>Origin X</th><th>Origin Y</th><th>Load</th><th>Side / X</th><th>Row Y</th><th>Status</th><th></th></tr></thead><tbody>`;
+  const syms=[...new Set(['Automated','TAIT Navigator','Apex','Elevation','Moveket V-Motion'].concat(hs.map(h=>h.hsym).filter(Boolean)))];
+  let html=dl('dl-type',types)+dl('dl-func',funcs)+dl('dl-hsym',syms)+`<table class="dt"><thead><tr><th>#</th><th title="Skipped rows are left off the plot, markout rows and PDF">Skip</th><th></th><th>ID</th><th>Type</th><th>Function</th><th title="Automation: Automated (or Varispeed), NAV / Navigator, Apex, Elevation or Moveket / V-Motion / VMK / VMC">Symbol</th><th>Position</th><th>Origin X</th><th>Origin Y</th><th>Load</th><th>Side / X</th><th>Row Y</th><th>Status</th><th></th></tr></thead><tbody>`;
   hs.forEach((h,i)=>{
     let sx='',sy='';
     if(h.ok){ const q=tf(h); const th=Math.max(0,S.opt.cth||0); sx=(Math.abs(q.xs)<=th?'CL':q.xs>0?S.opt.rightL:S.opt.leftL)+' '+fmtDist(q.xs); const yi=yInfo(q.yu); sy=yi.key==='datum'?'DATUM':abbr(yi.dir)+' '+yi.txt; }
@@ -1366,7 +1358,7 @@ function expandedHtml(r){
   const hd=(txt,sub)=>sub?`<div class="mo-h lbl"><b class="mo-lbl">${esc(sub)}</b></div>`:`<div class="mo-h">${txt}</div>`;
   const nd=r.items.filter(it=>isDone(it.h.id)).length, all=nd===r.items.length;
   const centre=r.centre.length?`<div class="mo-cl">${vis(r.centre).map(moCard).join('')}</div>`:'';
-  const midcol=`<div class="mo-col">${hd('CENTER LINE','')}<div class="mo-mid"><small>${esc(r.yi.dir)}</small><b>${esc(r.yi.txt)}</b><span class="mo-cnt${all?' ok':''}">${all?'Row complete':nd+' / '+r.items.length+' marked'}</span>${centre}</div></div>`;
+  const midcol=`<div class="mo-col">${hd('CENTER LINE','')}<div class="mo-mid${r.centre.length?' hascl':''}"><small>${esc(r.yi.dir)}</small><b>${esc(r.yi.txt)}</b><span class="mo-cnt${all?' ok':''}">${all?'Row complete':nd+' / '+r.items.length+' marked'}</span>${centre}</div></div>`;
   const left=`<div class="mo-col">${hd('LEFT SIDE (X '+(negLeft?'&lt;':'&gt;')+' 0)',S.opt.leftL)}<div class="mo-side">${stack(L)}</div></div>`;
   const right=`<div class="mo-col">${hd('RIGHT SIDE (X '+(negLeft?'&gt;':'&lt;')+' 0)',S.opt.rightL)}<div class="mo-side">${stack(R)}</div></div>`;
   const w='var(--midw)';
@@ -1483,16 +1475,11 @@ function legendTypes(){
   return out;
 }
 function usedTypes(){ return [...new Set(S.hoists.filter(h=>h.ok).map(h=>h.type))]; }
-// Functions that share a colour (and ring) are one legend entry: "Lighting" + "Lighting Automated" -> "Lighting"
-function stripAuto(name){
-  let s=String(name||'').replace(/(^|[^A-Za-z])auto(mat[A-Za-z]*)?(?=[^A-Za-z]|$)/gi,'$1');
-  s=s.replace(/\(\s*\)/g,'').replace(/^[\s\-_\/()]+|[\s\-_\/()]+$/g,'').replace(/\s{2,}/g,' ').trim();
-  return s||String(name);
-}
+// Functions that share a colour (and ring) are one legend entry
 function legendGroups(){
   const map=new Map();
   for(const f of usedFuncs()){
-    const key=String(S.funcMap[f]||'').toLowerCase()+'|'+String(S.funcRing[f]||'').toLowerCase(), lbl=stripAuto(f);
+    const key=String(S.funcMap[f]||'').toLowerCase()+'|'+String(S.funcRing[f]||'').toLowerCase(), lbl=f;
     if(!map.has(key)) map.set(key,{f,names:[]}); const g=map.get(key); if(!g.names.includes(lbl)) g.names.push(lbl);
   }
   return [...map.values()].map(g=>({f:g.f,label:g.names.join(' / ')}));
@@ -1614,8 +1601,8 @@ const SAMPLE=[
 function csvCell(v){ v=String(v); return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; }
 const SAMPLE_EXTRA=[["30'",[['WX1',"60'",'R','250.00 kg','Scenery'],['WX2',"52'",'R','250.00 kg','Scenery'],['WX3',"44'",'R','250.00 kg','Scenery'],['WX4',"36'",'R','250.00 kg','Scenery'],['WX5',"28'",'R','250.00 kg','Scenery'],['WX6',"20'",'R','250.00 kg','Scenery'],['WY1',"20'",'L','250.00 kg','Scenery'],['WY2',"28'",'L','250.00 kg','Scenery'],['WY3',"36'",'L','250.00 kg','Scenery'],['WY4',"44'",'L','250.00 kg','Scenery'],['WY5',"52'",'L','250.00 kg','Scenery'],['WY6',"60'",'L','250.00 kg','Scenery']]],
  ["12'",[['QB1',"30'",'R','320.00 kg','Lighting'],['HC1',"30'",'L','3000.00 kg','Lighting'],['LB1',"25'",'R','1100 lb','Audio']]]];
-const SAMPLE_HSYM={TR4:'Automated',TL1:'Varispeed',VX2:'TAIT Navigator',VX5:'TAIT Navigator',US1:'Apex',US2:'Apex',US3:'Elevation',US4:'Elevation'};
-const SAMPLE_FUNC_OVERRIDE={US1:'Lighting Automated',US2:'Lighting Automated',US3:'Lighting Automated',US4:'Lighting Automated',TR4:'Lighting Automated',TL1:'Lighting Automated',VX2:'Video Automated',VX5:'Video Automated',TR1:'Super Grid',TL4:'Super Grid',SB1:'Cable Pick',SB2:'Cable Pick',SB3:'Cable Pick',SB4:'Cable Pick',UM1:'Pre-Rig',UM2:'Pre-Rig',UM3:'Pre-Rig',UM4:'Pre-Rig'};
+const SAMPLE_HSYM={TR4:'Automated',TL1:'Automated',VX2:'TAIT Navigator',VX5:'TAIT Navigator',US1:'Apex',US2:'Apex',US3:'Elevation',US4:'Elevation'};
+const SAMPLE_FUNC_OVERRIDE={TR1:'Super Grid',TL4:'Super Grid',SB1:'Cable Pick',SB2:'Cable Pick',SB3:'Cable Pick',SB4:'Cable Pick',UM1:'Pre-Rig',UM2:'Pre-Rig',UM3:'Pre-Rig',UM4:'Pre-Rig'};
 const SAMPLE_X_OVERRIDE={WR1:"64'3.319\""};
 function sampleCSV(){
   const rows=[['Hoist Type','Hoist Function','Hoist ID','Hoist Position','Origin X','Origin Y','Load (kg)','Hoist Symbol']];
