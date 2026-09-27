@@ -2055,10 +2055,16 @@ function gateShow(on){ const g=$('gate'); if(!g) return; g.hidden=!on; if(!on) $
 function gMsg(t,err){ const m=$('cMsg'); if(m){ m.textContent=t||''; m.className='cmsg'+(err?' err':''); } }
 function showGate(mode,msg,err){
   mode=mode||'in'; gateShow(true);
-  const head={in:['Sign in','Sign in to use DATUM.'],setup:['Set up your account','First time here? Use the email address you were invited with and choose a password.'],reset:['Reset password','We will email you a link to set a new password.'],
+  const head={in:['Sign in','Sign in to use DATUM.'],setup:['Set up your account','First time here? Use the email address you were invited with and choose a password. If you got an invite email, you can use its link instead.'],reset:['Reset password','We will email you a link to set a new password.'],
+    newpw:['Welcome to DATUM','Choose a password for '+esc(C.email)+'. You will use it with this email address to sign in from now on.'],
     wait:['DATUM','Checking your sign-in...'],off:['Access removed','Your access to DATUM has been removed. Ask your admin if this is a mistake.']}[mode];
   let body='';
   if(mode==='wait') body='';
+  else if(mode==='newpw') body=`<form class="cform" id="cForm">
+    <label>Choose a password<input type="password" id="cPass" autocomplete="new-password" minlength="8" required></label>
+    <label>Confirm password<input type="password" id="cPass2" autocomplete="new-password" minlength="8" required></label>
+    <div class="cmsg" id="cMsg"></div><button class="btn solid" type="submit" id="cGo">Save password and continue</button>
+    <div class="clinks"><a href="#" id="cSkipPw">I will sign in with Google instead</a></div></form>`;
   else if(mode==='off') body=`<div class="cform"><div class="cmsg">Signed in as ${esc(C.email)}.</div><button class="btn" type="button" id="cOut2">Sign out</button></div>`;
   else body=`<form class="cform" id="cForm">
     <label>Email<input type="email" id="cEmail" autocomplete="email" required></label>
@@ -2075,6 +2081,12 @@ function showGate(mode,msg,err){
   if($('cOut2')) $('cOut2').onclick=()=>C.sb.auth.signOut();
   if($('cGoogle')) $('cGoogle').onclick=async()=>{ const {error}=await C.sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:redirectUrl()}}); if(error) gMsg(authErr(error),true); };
   const f=$('cForm'); if(!f) return; const em=$('cEmail'); if(em) em.focus();
+  if(mode==='newpw'){ $('cPass').focus();
+    const done=async upd=>{ const {error}=await C.sb.auth.updateUser(upd); if(error){ gMsg(error.message,true); if($('cGo')) $('cGo').disabled=false; return; }
+      if(C.user.user_metadata) C.user.user_metadata.datum_needs_password=false; enterApp(); toast('Welcome to DATUM.'); };
+    $('cSkipPw').onclick=e=>{ e.preventDefault(); done({data:{datum_needs_password:false}}); };
+    f.onsubmit=e=>{ e.preventDefault(); gMsg(''); if($('cPass').value!==$('cPass2').value){ gMsg('The two passwords do not match.',true); return; } $('cGo').disabled=true; done({password:$('cPass').value,data:{datum_needs_password:false}}); };
+    return; }
   f.onsubmit=async e=>{ e.preventDefault(); const email=$('cEmail').value.trim().toLowerCase(), pw=$('cPass')?$('cPass').value:''; const b=$('cGo'); b.disabled=true; gMsg('');
     try{
       if(mode==='in'){ const {error}=await C.sb.auth.signInWithPassword({email,password:pw}); if(error) throw error; }
@@ -2153,39 +2165,60 @@ function inviteMail(email){
   const url=redirectUrl();
   return 'mailto:'+encodeURIComponent(email)+'?subject='+encodeURIComponent('You are invited to DATUM')+'&body='+encodeURIComponent('You have been invited to DATUM, the production markout tool.\n\n1. Open '+url+'\n2. Choose "First time? Set up your account", enter this email address ('+email+') and choose a password (or use "Continue with Google" if this is a Google account).\n3. Confirm your email from the message DATUM sends you, then sign in.\n');
 }
+// Ask the server to email an invite. Returns {sent,existing} or {manual:true} when invite emails are not set up there.
+async function sendInvite(email,role){
+  let token=''; try{ const {data}=await C.sb.auth.getSession(); token=data&&data.session?data.session.access_token:''; }catch(e){}
+  let r; try{ r=await fetch('/.netlify/functions/invite',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+token},body:JSON.stringify({email,role,redirectTo:redirectUrl()})}); }catch(e){ return {manual:true}; }
+  if(r.status===404||r.status===501) return {manual:true};
+  let j={}; try{ j=await r.json(); }catch(e){}
+  if(!r.ok&&!j.ok) return {error:j.error||('Invite failed ('+r.status+').')};
+  return j;
+}
 async function showTeam(){
   mOpen(`<h3>Team</h3><div class="msub">Only invited emails can create an account. Viewers see projects shared with them; editors can also create and share projects; admins can also invite people and change roles.</div>
-  <div class="mbody"><form class="cnew" id="cInvForm"><input type="email" id="cInvEmail" placeholder="crew@example.com" aria-label="Email to invite" required><select id="cInvRole" aria-label="Role"><option value="viewer">Viewer</option><option value="editor">Editor</option><option value="admin">Admin</option></select><button class="btn solid" type="submit">Invite</button></form>
+  <div class="mbody"><form class="cnew" id="cInvForm"><input type="email" id="cInvEmail" placeholder="crew@example.com" aria-label="Email to invite" required><select id="cInvRole" aria-label="Role"><option value="viewer">Viewer</option><option value="editor">Editor</option><option value="admin">Admin</option></select><button class="btn solid" type="submit" id="cInvGo">Invite</button></form>
   <div class="cmsg" id="cMsg"></div><div id="cTeamList"><div class="cmsg">Loading...</div></div></div>
   <div class="mfoot"><button class="btn" id="cBack">Back to projects</button><span style="flex:1"></span><button class="btn" data-close>Close</button></div>`);
   $('cBack').onclick=showProjects;
+  const report=(em,res)=>{ if(res.error) mMsg(res.error+' You can still use "Email invite" to send the steps yourself.',true);
+    else if(res.manual) mMsg('Invited '+em+'. Automatic invite emails are not set up, so use "Email invite" to send them the sign-up steps.');
+    else if(res.existing) mMsg(em+' already has an account, so no email was sent. They can sign in now.');
+    else mMsg('Invite email sent to '+em+'.'); };
   const load=async()=>{
-    const [pr,iv]=await Promise.all([C.sb.from('profiles').select('id,email,role').order('email'), C.sb.from('invites').select('email,role,created_at').order('email')]);
+    let tm=await C.sb.rpc('team');
+    if(tm.error){ const pr=await C.sb.from('profiles').select('id,email,role').order('email'); tm=pr.error?pr:{data:pr.data.map(p=>Object.assign(p,{signed_in:true}))}; }
+    const iv=await C.sb.from('invites').select('email,role,created_at').order('email');
     const box=$('cTeamList'); if(!box) return;
-    if(pr.error||iv.error){ box.innerHTML=`<div class="cmsg err">${esc((pr.error||iv.error).message)}</div>`; return; }
-    const users=new Map(pr.data.map(p=>[p.email,p])), inv=new Set(iv.data.map(i=>i.email));
-    const pending=iv.data.filter(i=>!users.has(i.email));
-    const opts=(cur,extra)=>['viewer','editor','admin'].concat(extra||[]).map(r=>`<option value="${r}"${r===cur?' selected':''}>${ROLE_NAME[r]}</option>`).join('');
-    let h='<div class="chead">People</div>'+pr.data.map(p=>{ const me=p.id===C.user.id, off=p.role==='disabled';
-      return `<div class="citem"><div class="cname"><b>${esc(p.email)}</b><small>${me?'you':off?'access removed':'signed up'}</small></div><div class="cacts">`+
+    if(tm.error||iv.error){ box.innerHTML=`<div class="cmsg err">${esc((tm.error||iv.error).message)}</div>`; return; }
+    const byEmail=new Map(tm.data.map(p=>[p.email,p]));
+    const people=tm.data.filter(p=>p.signed_in||p.role==='disabled');
+    const pending=iv.data.filter(i=>{ const p=byEmail.get(i.email); return !p||(!p.signed_in&&p.role!=='disabled'); });
+    const opts=cur=>['viewer','editor','admin'].map(r=>`<option value="${r}"${r===cur?' selected':''}>${ROLE_NAME[r]}</option>`).join('');
+    let h='<div class="chead">People</div>'+(people.length?people.map(p=>{ const me=p.id===C.user.id, off=p.role==='disabled';
+      return `<div class="citem"><div class="cname"><b>${esc(p.email)}</b><small>${me?'you':off?'access removed':'active'}</small></div><div class="cacts">`+
         (off?`<button class="btn" data-restore="${esc(p.id)}" data-em="${esc(p.email)}">Restore as viewer</button>`:
-        `<select data-uid="${esc(p.id)}" aria-label="Role for ${esc(p.email)}"${me?' disabled title="Ask another admin to change your own role"':''}>${opts(p.role)}</select>`+(me?'':`<button class="btn danger" data-off="${esc(p.id)}" data-em="${esc(p.email)}">Remove access</button>`))+'</div></div>'; }).join('');
-    h+='<div class="chead">Invited, not signed up yet</div>'+(pending.length?pending.map(i=>`<div class="citem"><div class="cname"><b>${esc(i.email)}</b><small>invited ${when(i.created_at)}</small></div><div class="cacts"><select data-inv="${esc(i.email)}" aria-label="Role for ${esc(i.email)}">${opts(i.role)}</select><a class="btn" href="${esc(inviteMail(i.email))}">Email invite</a><button class="btn danger" data-uninv="${esc(i.email)}">Cancel</button></div></div>`).join(''):'<div class="cmsg">No pending invites.</div>');
+        `<select data-uid="${esc(p.id)}" aria-label="Role for ${esc(p.email)}"${me?' disabled title="Ask another admin to change your own role"':''}>${opts(p.role)}</select>`+(me?'':`<button class="btn danger" data-off="${esc(p.id)}" data-em="${esc(p.email)}">Remove access</button>`))+'</div></div>'; }).join(''):'<div class="cmsg">Nobody yet.</div>');
+    h+='<div class="chead">Invited, not signed in yet</div>'+(pending.length?pending.map(i=>{ const p=byEmail.get(i.email);
+      return `<div class="citem"><div class="cname"><b>${esc(i.email)}</b><small>invited ${when(i.created_at)}${p?' &middot; invite email sent':''}</small></div><div class="cacts"><select data-inv="${esc(i.email)}" data-pid="${p?esc(p.id):''}" aria-label="Role for ${esc(i.email)}">${opts(i.role)}</select><button class="btn" data-resend="${esc(i.email)}">Resend email</button><a class="btn" href="${esc(inviteMail(i.email))}">Email invite</a><button class="btn danger" data-uninv="${esc(i.email)}" data-pid="${p?esc(p.id):''}">Cancel</button></div></div>`; }).join(''):'<div class="cmsg">No pending invites.</div>');
     box.innerHTML=h;
     box.querySelectorAll('select[data-uid]').forEach(s=>s.onchange=async()=>{ const {error}=await C.sb.from('profiles').update({role:s.value}).eq('id',s.dataset.uid); mMsg(error?error.message:'Role updated.',!!error); });
-    box.querySelectorAll('select[data-inv]').forEach(s=>s.onchange=async()=>{ const {error}=await C.sb.from('invites').update({role:s.value}).eq('email',s.dataset.inv); mMsg(error?error.message:'Invite updated.',!!error); });
+    box.querySelectorAll('select[data-inv]').forEach(s=>s.onchange=async()=>{ let {error}=await C.sb.from('invites').update({role:s.value}).eq('email',s.dataset.inv);
+      if(!error&&s.dataset.pid) ({error}=await C.sb.from('profiles').update({role:s.value}).eq('id',s.dataset.pid)); mMsg(error?error.message:'Invite updated.',!!error); });
+    box.querySelectorAll('[data-resend]').forEach(b=>b.onclick=async()=>{ b.disabled=true; const em=b.dataset.resend, i=iv.data.find(x=>x.email===em); report(em,await sendInvite(em,i?i.role:'viewer')); b.disabled=false; });
     box.querySelectorAll('[data-off]').forEach(b=>{ let armed=false; b.onclick=async()=>{ if(!armed){ armed=true; b.textContent='Tap to confirm'; setTimeout(()=>{ armed=false; b.textContent='Remove access'; },3000); return; }
       const {error}=await C.sb.from('profiles').update({role:'disabled'}).eq('id',b.dataset.off); if(!error) await C.sb.from('invites').delete().eq('email',b.dataset.em); mMsg(error?error.message:'Access removed for '+b.dataset.em+'.',!!error); load(); }; });
     box.querySelectorAll('[data-restore]').forEach(b=>b.onclick=async()=>{ await C.sb.from('invites').insert({email:b.dataset.em,role:'viewer'}); const {error}=await C.sb.from('profiles').update({role:'viewer'}).eq('id',b.dataset.restore); mMsg(error?error.message:'Access restored.',!!error); load(); });
-    box.querySelectorAll('[data-uninv]').forEach(b=>b.onclick=async()=>{ const {error}=await C.sb.from('invites').delete().eq('email',b.dataset.uninv); mMsg(error?error.message:'Invite cancelled.',!!error); load(); });
+    box.querySelectorAll('[data-uninv]').forEach(b=>b.onclick=async()=>{ let {error}=await C.sb.from('invites').delete().eq('email',b.dataset.uninv);
+      if(!error&&b.dataset.pid) ({error}=await C.sb.from('profiles').update({role:'disabled'}).eq('id',b.dataset.pid)); mMsg(error?error.message:'Invite cancelled.',!!error); load(); });
   };
   $('cInvForm').onsubmit=async e=>{ e.preventDefault(); const em=$('cInvEmail').value.trim().toLowerCase(), role=$('cInvRole').value; if(!em) return;
-    const {error}=await C.sb.from('invites').insert({email:em,role,invited_by:C.user.id});
-    if(error){ mMsg(/duplicate|23505/.test(error.message+error.code)?em+' is already invited.':error.message,true); return; }
-    $('cInvEmail').value=''; mMsg('Invited '+em+'. Use "Email invite" to send them the sign-up steps.'); load(); };
+    $('cInvGo').disabled=true; mMsg('Sending invite...');
+    let res=await sendInvite(em,role);
+    if(res.manual){ const {error}=await C.sb.from('invites').insert({email:em,role,invited_by:C.user.id});
+      if(error){ mMsg(/duplicate|23505/.test(error.message+error.code)?em+' is already invited.':error.message,true); $('cInvGo').disabled=false; return; } }
+    report(em,res); $('cInvEmail').value=''; $('cInvGo').disabled=false; load(); };
   load();
 }
-
 async function onAuth(session){
   const prev=C.user&&C.user.id; C.user=session?session.user:null; C.email=C.user?String(C.user.email||'').toLowerCase():'';
   if(!C.user){ C.role=''; mClose(); if(S.cloud) cloudDetach(); cloudUI(); if($('gate').hidden||!$('cForm')) showGate('in'); return; }
@@ -2196,6 +2229,10 @@ async function onAuth(session){
   if(last&&last!==C.user.id){ S.cloud=null; saveLink(); try{ localStorage.removeItem(CLOUD_DONE_KEY); }catch(e){} asOff=true; clearProject(true); asOff=false; }
   if(C.role==='disabled'){ S.cloud=null; saveLink(); cloudUI(); showGate('off'); return; }
   if(isViewer()&&!S.cloud&&S.raw.rows.length){ asOff=true; clearProject(true); asOff=false; }
+  if(C.user.user_metadata&&C.user.user_metadata.datum_needs_password){ showGate('newpw'); return; }
+  enterApp();
+}
+function enterApp(){
   gateShow(false); cloudUI(); renderAll(); cloudSync();
   if(isViewer()&&!S.cloud) showProjects();
 }

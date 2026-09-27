@@ -9,6 +9,14 @@
   window.__mock = {
     seed(users) { const db = load(); for (const [email, pw, role] of users) { const id = uuid(); db.users[email] = { id, pw }; db.profiles.push({ id, email, role }); db.invites.push({ email, role: role === 'disabled' ? 'viewer' : role, created_at: now() }); } save(db); },
     invite(email, role) { const db = load(); db.invites.push({ email, role: role || 'viewer', created_at: now() }); save(db); },
+    // what the Netlify invite function + Supabase do: save the invite, create the account, email a sign-in link
+    inviteByEmail(email, role) { const db = load(); email = email.toLowerCase(); const i = db.invites.find(x => x.email === email);
+      if (i) i.role = role; else db.invites.push({ email, role, created_at: now() });
+      if (!db.users[email]) { const id = uuid(); db.users[email] = { id, pw: null, meta: { datum_needs_password: true } }; db.profiles.push({ id, email, role }); }
+      save(db); },
+    // clicking the link in the invite email signs the person in
+    openInviteLink(email) { const db = load(), u = db.users[email]; u.signedIn = true; save(db);
+      localStorage.setItem(SK, JSON.stringify({ access_token: 'tok-' + u.id, user: { id: u.id, email, user_metadata: Object.assign({}, u.meta) } })); },
     db: load, save, calls: [],
   };
   function client() {
@@ -28,14 +36,18 @@
       onAuthStateChange(cb) { listeners.push(cb); setTimeout(() => cb('INITIAL_SESSION', session()), 0); return { data: { subscription: { unsubscribe() {} } } }; },
       async signInWithPassword({ email, password }) { const db = load(), u = db.users[email.toLowerCase()];
         if (!u || u.pw !== password) return { error: { message: 'Invalid login credentials' } };
-        const s = { user: { id: u.id, email: email.toLowerCase() } }; localStorage.setItem(SK, JSON.stringify(s)); emit('SIGNED_IN', s); return { data: s, error: null }; },
+        u.signedIn = true; save(db);
+        const s = { access_token: 'tok-' + u.id, user: { id: u.id, email: email.toLowerCase(), user_metadata: Object.assign({}, u.meta || {}) } }; localStorage.setItem(SK, JSON.stringify(s)); emit('SIGNED_IN', s); return { data: s, error: null }; },
+      async getSession() { return { data: { session: session() }, error: null }; },
       async signUp({ email, password }) { const db = load(); email = email.toLowerCase(); if (db.users[email]) return { error: { message: 'User already registered' } };
         const inv = db.invites.find(i => i.email === email); if (!inv) return { data: null, error: { message: 'Database error saving new user', status: 500 } };
         const id = uuid(); db.users[email] = { id, pw: password }; db.profiles.push({ id, email, role: inv.role }); save(db); return { data: { session: null, user: { id } }, error: null }; },
       async signOut() { localStorage.removeItem(SK); emit('SIGNED_OUT', null); return { error: null }; },
       async signInWithOAuth(o) { window.__mock.calls.push(['oauth', o]); return { error: null }; },
       async resetPasswordForEmail(e, o) { window.__mock.calls.push(['reset', e, o]); return { error: null }; },
-      async updateUser(o) { window.__mock.calls.push(['updateUser', o]); return { error: null }; },
+      async updateUser(o) { window.__mock.calls.push(['updateUser', o]); const s = session(); if (!s) return { error: { message: 'not signed in' } };
+        const db = load(), u = db.users[s.user.email]; if (o.password) u.pw = o.password; if (o.data) u.meta = Object.assign({}, u.meta, o.data); save(db);
+        s.user.user_metadata = Object.assign({}, u.meta); localStorage.setItem(SK, JSON.stringify(s)); emit('USER_UPDATED', s); return { data: { user: s.user }, error: null }; },
     };
     function from(t) {
       const q = { op: 'select', f: [], ord: null, one: null, body: null, ret: false };
@@ -76,7 +88,9 @@
       }
       return b;
     }
-    async function rpc(fn, args) { const db = load(); if (fn === 'is_invited') return { data: access(db) && db.invites.some(i => i.email === String(args.e).toLowerCase()), error: null }; return { data: null, error: { message: 'unknown rpc' } }; }
+    async function rpc(fn, args) { const db = load();
+      if (fn === 'team') return { data: role(db) === 'admin' ? db.profiles.map(p => ({ id: p.id, email: p.email, role: p.role, signed_in: !!(Object.values(db.users).find(u => u.id === p.id) || {}).signedIn })).sort((a, b2) => a.email < b2.email ? -1 : 1) : [], error: null };
+      if (fn === 'is_invited') return { data: access(db) && db.invites.some(i => i.email === String(args.e).toLowerCase()), error: null }; return { data: null, error: { message: 'unknown rpc' } }; }
     return { auth, from, rpc };
   }
   window.__datumSupabase = () => client();

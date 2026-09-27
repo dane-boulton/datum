@@ -1,9 +1,9 @@
 -- Permission tests for schema.sql. Run after auth_stub.sql + schema.sql; any failed check raises an error.
 \set ON_ERROR_STOP on
 -- invite-only: an uninvited email cannot get an account
-do $$ begin insert into auth.users values ('00000000-0000-0000-0000-0000000000ff','nobody@crew.test'); raise exception 'FAIL: uninvited sign-up allowed'; exception when raise_exception then raise notice 'ok  uninvited email cannot create an account'; end $$;
+do $$ begin insert into auth.users (id,email) values ('00000000-0000-0000-0000-0000000000ff','nobody@crew.test'); raise exception 'FAIL: uninvited sign-up allowed'; exception when raise_exception then raise notice 'ok  uninvited email cannot create an account'; end $$;
 insert into public.invites (email, role) values ('admin@crew.test','admin'),('editor@crew.test','editor'),('editor2@crew.test','editor'),('viewer@crew.test','viewer'),('stranger@crew.test','viewer');
-insert into auth.users values
+insert into auth.users (id,email) values
  ('00000000-0000-0000-0000-00000000000a','Admin@Crew.test'),
  ('00000000-0000-0000-0000-00000000000e','editor@crew.test'),
  ('00000000-0000-0000-0000-00000000000f','editor2@crew.test'),
@@ -65,7 +65,7 @@ do $$ begin insert into public.invites (email) values ('pal@crew.test'); raise e
 select pg_temp.as_user('00000000-0000-0000-0000-00000000000a','admin@crew.test');
 insert into public.invites (email, role) values ('notyet@crew.test','viewer');
 select pg_temp.expect((select count(*) from public.invites)=7,'admin sees and adds invites');
-reset role; insert into auth.users values ('00000000-0000-0000-0000-000000000003','NotYet@crew.test'); set role authenticated;
+reset role; insert into auth.users (id,email) values ('00000000-0000-0000-0000-000000000003','NotYet@crew.test'); set role authenticated;
 select pg_temp.as_user('00000000-0000-0000-0000-000000000003','notyet@crew.test');
 select pg_temp.expect((select count(*) from public.projects)=1,'invitee who signs up later sees the shared project');
 -- recipient can leave a share
@@ -84,6 +84,13 @@ reset role; update public.profiles set role='viewer' where email='editor@crew.te
 select pg_temp.as_user('00000000-0000-0000-0000-00000000000e','editor@crew.test');
 update public.projects set name='after demote';
 reset role; select pg_temp.expect((select name from public.projects)='Arena A2','demoted editor can no longer edit (still sees own project)');
+
+-- team status for admins only
+reset role; update auth.users set last_sign_in_at=now() where email<>'NotYet@crew.test'; update auth.users set invited_at=now() where email='NotYet@crew.test'; set role authenticated;
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000a','admin@crew.test');
+select pg_temp.expect((select count(*) from public.team())=6 and (select signed_in from public.team() where email='notyet@crew.test')=false and (select signed_in from public.team() where email='viewer@crew.test'),'admin sees the team with signed-in status');
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000e','editor@crew.test');
+select pg_temp.expect((select count(*) from public.team())=0,'non-admins get an empty team list');
 
 -- removing access
 select pg_temp.as_user('00000000-0000-0000-0000-00000000000a','admin@crew.test');

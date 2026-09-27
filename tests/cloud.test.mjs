@@ -14,6 +14,14 @@ const ctx = await b.newContext({ viewport: { width: 1300, height: 900 }, service
 await ctx.addInitScript(mock);
 const p = await ctx.newPage(); const errs = []; const dialogs = [];
 p.on('pageerror', e => errs.push(e.message)); p.on('dialog', d => { dialogs.push(d.message()); d.accept(); });
+// The Netlify invite function: "not deployed" (404) until inviteFn is switched on, then simulated against the mock database
+let inviteFn = false; const fnCalls = [];
+await p.route('**/.netlify/functions/invite', async route => {
+  if (!inviteFn) return route.fulfill({ status: 404, body: 'Not found' });
+  const req = route.request(), body = JSON.parse(req.postData()); fnCalls.push({ auth: req.headers()['authorization'], body });
+  await p.evaluate(([e, r]) => window.__mock.inviteByEmail(e, r), [body.email, body.role]);
+  return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, sent: true }) });
+});
 let n = 0; const ok = (c, what) => { if (!c) { console.error('FAIL', what); process.exitCode = 1; } else { n++; console.log('ok ', what); } };
 const shot = async name => { if (SHOTS) await p.screenshot({ path: `${SHOTS}/${name}.png` }); };
 const db = () => p.evaluate(() => window.__mock.db());
@@ -53,6 +61,7 @@ let d = await db();
 ok(d.invites.some(i => i.email === 'ed@crew.test' && i.role === 'editor') && d.invites.some(i => i.email === 'view@crew.test' && i.role === 'viewer'), 'admin invites people with a role');
 ok(/mailto:view%40crew\.test/.test(await p.getAttribute('#cTeamList a.btn >> nth=1', 'href') || await p.getAttribute('#cTeamList a.btn', 'href')), 'each pending invite has an Email invite link');
 ok(await p.isDisabled('select[data-uid]'), 'admin cannot change their own role');
+ok(/not set up/.test(await msg()), 'without the server function, the app says to send the steps by Email invite');
 await p.click('[data-close]'); await signOut();
 ok(await gate(), 'signing out returns to the sign-in screen');
 
@@ -118,6 +127,41 @@ await p.click('[data-close]'); await signOut();
 await signIn('view@crew.test');
 ok(await gate() && /Access removed/.test(await p.textContent('#gateBody')), 'a removed person sees "Access removed" and nothing else');
 await p.click('#cOut2'); await p.waitForTimeout(300);
+
+// ---- automatic invite emails (server function available)
+inviteFn = true;
+await signIn('dane@vektorprojects.com');
+await p.click('#btnAccount'); await p.click('#cTeam'); await p.waitForTimeout(300);
+await p.fill('#cInvEmail', 'crew2@crew.test'); await p.selectOption('#cInvRole', 'editor'); await p.click('#cInvGo'); await p.waitForTimeout(500);
+ok(/Invite email sent to crew2@crew.test/.test(await msg()), 'Invite sends the email through the server function');
+ok(fnCalls[0] && /^Bearer tok-/.test(fnCalls[0].auth) && fnCalls[0].body.role === 'editor' && /^http/.test(fnCalls[0].body.redirectTo), 'the function gets the admin\'s sign-in token, the role and the link back to the app');
+let tl = await p.textContent('#cTeamList');
+ok(/invite email sent/.test(tl) && tl.indexOf('crew2@crew.test') > tl.indexOf('Invited, not signed in yet'), 'the invitee shows as invited until they sign in');
+await p.click('[data-resend="crew2@crew.test"]'); await p.waitForTimeout(300);
+ok(fnCalls.length === 2, 'Resend email calls the function again');
+await shot('team-emailed');
+await p.click('[data-close]'); await signOut();
+await p.evaluate(() => window.__mock.openInviteLink('crew2@crew.test')); await p.reload(); await p.waitForTimeout(600);
+ok(await gate() && /Welcome to DATUM/.test(await p.textContent('#gateBody')), 'the invite link opens a choose-your-password step');
+await shot('welcome');
+await p.fill('#cPass', 'password9'); await p.fill('#cPass2', 'password8'); await p.click('#cGo'); await p.waitForTimeout(200);
+ok(/do not match/.test(await msg()), 'the password step checks both entries match');
+await p.fill('#cPass2', 'password9'); await p.click('#cGo'); await p.waitForTimeout(500);
+d = await db();
+ok(!(await gate()) && d.users['crew2@crew.test'].pw === 'password9' && d.users['crew2@crew.test'].meta.datum_needs_password === false, 'after choosing a password the invitee is in the app');
+ok(await p.evaluate(() => canAuthor()), 'the invitee has the role they were invited with (editor)');
+await signOut(); await signIn('crew2@crew.test', 'password9');
+ok(!(await gate()), 'from then on they sign in with email and password');
+await signOut();
+await signIn('dane@vektorprojects.com'); await p.click('#btnAccount'); await p.click('#cTeam'); await p.waitForTimeout(300);
+tl = await p.textContent('#cTeamList');
+ok(tl.indexOf('crew2@crew.test') < tl.indexOf('Invited, not signed in yet'), 'once they have signed in they move to People');
+await p.fill('#cInvEmail', 'gpal@crew.test'); await p.click('#cInvGo'); await p.waitForTimeout(400);
+await p.click('[data-close]'); await signOut();
+await p.evaluate(() => window.__mock.openInviteLink('gpal@crew.test')); await p.reload(); await p.waitForTimeout(600);
+await p.click('#cSkipPw'); await p.waitForTimeout(400);
+ok(!(await gate()) && (await db()).users['gpal@crew.test'].meta.datum_needs_password === false, 'Google users can skip the password step');
+await p.click('[data-close]').catch(() => {}); await signOut();
 
 // ---- password reset
 await p.click('[data-m=reset]'); await p.fill('#cEmail', 'ed@crew.test'); await p.click('#cGo'); await p.waitForTimeout(200);

@@ -93,6 +93,19 @@ language sql stable security definer set search_path = public as $$
   select public.has_access() and exists (select 1 from public.invites where email = lower(e))
 $$;
 
+-- Team list for admins: everyone with an account and whether they have signed in yet
+-- (people invited by email get an account straight away, but have not signed in until they accept)
+drop function if exists public.team();
+create function public.team() returns table (id uuid, email text, role text, signed_in boolean, invited_at timestamptz)
+language sql stable security definer set search_path = public, auth as $$
+  select p.id, p.email, p.role, (u.last_sign_in_at is not null), u.invited_at
+  from public.profiles p join auth.users u on u.id = p.id
+  where public.my_role() = 'admin'
+  order by p.email
+$$;
+revoke execute on function public.team() from public, anon;
+grant execute on function public.team() to authenticated;
+
 -- ---------------------------------------------------------------- projects
 create table if not exists public.projects (
   id          uuid primary key default gen_random_uuid(),
