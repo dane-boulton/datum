@@ -1,0 +1,6 @@
+[build]
+  command = "npm install && node scripts/build.mjs"
+  publish = "site"
+
+[build.environment]
+  NODE_VERSION = "20"
