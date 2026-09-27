@@ -39,6 +39,8 @@
         u.signedIn = true; save(db);
         const s = { access_token: 'tok-' + u.id, user: { id: u.id, email: email.toLowerCase(), user_metadata: Object.assign({}, u.meta || {}) } }; localStorage.setItem(SK, JSON.stringify(s)); emit('SIGNED_IN', s); return { data: s, error: null }; },
       async getSession() { return { data: { session: session() }, error: null }; },
+      async refreshSession() { window.__mock.calls.push(['refresh']); const s = session(); return s ? { data: { session: s }, error: null } : { data: { session: null }, error: { message: 'no session' } }; },
+      async getUser() { const s = session(); return s ? { data: { user: s.user }, error: null } : { data: { user: null }, error: { message: 'not signed in' } }; },
       async signUp({ email, password }) { const db = load(); email = email.toLowerCase(); if (db.users[email]) return { error: { message: 'User already registered' } };
         const inv = db.invites.find(i => i.email === email); if (!inv) return { data: null, error: { message: 'Database error saving new user', status: 500 } };
         const id = uuid(); db.users[email] = { id, pw: password }; db.profiles.push({ id, email, role: inv.role }); save(db); return { data: { session: null, user: { id } }, error: null }; },
@@ -91,6 +93,8 @@
     }
     async function rpc(fn, args) { const db = load();
       if (fn === 'team') return { data: role(db) === 'admin' ? db.profiles.map(p => ({ id: p.id, email: p.email, role: p.role, signed_in: !!(Object.values(db.users).find(u => u.id === p.id) || {}).signedIn })).sort((a, b2) => a.email < b2.email ? -1 : 1) : [], error: null };
+      if (fn === 'my_email') return { data: me() ? me().email : '', error: null };
+      if (fn === 'my_role') return { data: role(db), error: null };
       if (fn === 'is_invited') return { data: access(db) && db.invites.some(i => i.email === String(args.e).toLowerCase()), error: null }; return { data: null, error: { message: 'unknown rpc' } }; }
     return { auth, from, rpc };
   }
