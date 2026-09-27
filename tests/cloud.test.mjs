@@ -183,6 +183,13 @@ await p.click('#cRetry'); await p.waitForTimeout(500);
 ok(!(await gate()), 'Try again works once the database is reachable');
 await p.click('[data-close]').catch(() => {}); await signOut();
 
+// ---- role comes from my_role() even if reading the profile row returns nothing
+await p.evaluate(() => { window.__mock.hideProfiles = true; localStorage.removeItem('markoutTool.cloudUser.v1'); });
+await signIn('crew2@crew.test', 'password9');
+ok(!(await gate()) && await p.evaluate(() => C.role) === 'editor', 'role is read with my_role() when the profile row is not readable');
+await p.evaluate(() => { window.__mock.hideProfiles = false; });
+await p.click('[data-close]').catch(() => {}); await signOut();
+
 // ---- password reset
 await p.click('[data-m=reset]'); await p.fill('#cEmail', 'ed@crew.test'); await p.click('#cGo'); await p.waitForTimeout(200);
 ok((await p.evaluate(() => window.__mock.calls)).some(c => c[0] === 'reset' && c[1] === 'ed@crew.test'), 'forgot password sends a reset email');

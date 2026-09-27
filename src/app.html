@@ -2046,6 +2046,9 @@ async function loadRole(){
   let cached=''; try{ const j=JSON.parse(localStorage.getItem(CLOUD_USER_KEY)||'null'); if(j&&j.id===C.user.id) cached=j.role; }catch(e){}
   // C.roleIssue explains a missing role: 'noprofile' (no DATUM account record) or 'error' (could not check; C.roleErr)
   C.roleIssue=''; C.roleErr='';
+  // Ask the database for our role directly (my_role() reads the profile server-side); fall back to reading the profile row
+  try{ const r=await C.sb.rpc('my_role'); if(!r.error&&['viewer','editor','admin'].includes(r.data)){ C.role=r.data; C._refreshed=false;
+    try{ localStorage.setItem(CLOUD_USER_KEY,JSON.stringify({id:C.user.id,role:C.role})); }catch(e){} return; } }catch(e){}
   let res; try{ res=await C.sb.from('profiles').select('role').eq('id',C.user.id).maybeSingle(); }catch(e){ res={error:e}; }
   if(res.error){ if(cached){ C.role=cached; return; } C.role='disabled'; C.roleIssue='error'; C.roleErr=(res.error&&res.error.message)||String(res.error); return; }
   if(!res.data||!res.data.role){

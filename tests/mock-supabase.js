@@ -62,6 +62,7 @@
       };
       function run() {
         if (!me()) return { data: null, error: { message: 'not signed in' } };
+        if (window.__mock.hideProfiles && t === 'profiles' && q.op === 'select') return { data: q.one ? null : [], error: null };
         if (window.__mock.failTable === t) return { data: null, error: { message: 'relation "public.' + t + '" does not exist' } };
         const db = load(), rows = db[t], match = r => q.f.every(([c, v]) => r[c] === v) && canRead[t](db, r);
         let out;
