@@ -60,6 +60,7 @@
       };
       function run() {
         if (!me()) return { data: null, error: { message: 'not signed in' } };
+        if (window.__mock.failTable === t) return { data: null, error: { message: 'relation "public.' + t + '" does not exist' } };
         const db = load(), rows = db[t], match = r => q.f.every(([c, v]) => r[c] === v) && canRead[t](db, r);
         let out;
         if (q.op === 'select') out = rows.filter(match);

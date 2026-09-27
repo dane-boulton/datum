@@ -163,6 +163,22 @@ await p.click('#cSkipPw'); await p.waitForTimeout(400);
 ok(!(await gate()) && (await db()).users['gpal@crew.test'].meta.datum_needs_password === false, 'Google users can skip the password step');
 await p.click('[data-close]').catch(() => {}); await signOut();
 
+// ---- setup problems are explained, not shown as "access removed"
+await p.evaluate(() => { const db = window.__mock.db(); db.profiles = db.profiles.filter(x => x.email !== 'ed@crew.test'); window.__mock.save(db); localStorage.removeItem('markoutTool.cloudUser.v1'); });
+await signIn('ed@crew.test');
+ok(await gate() && /not set up in DATUM yet/.test(await p.textContent('#gateBody')) && await p.isVisible('#cRetry'), 'a signed-in person with no account record is told why, with Try again');
+await p.evaluate(() => { const db = window.__mock.db(), u = db.users['ed@crew.test']; db.profiles.push({ id: u.id, email: 'ed@crew.test', role: 'editor' }); window.__mock.save(db); });
+await p.click('#cRetry'); await p.waitForTimeout(500);
+ok(!(await gate()) && await p.evaluate(() => canAuthor()), 'Try again gets in once the account record exists');
+await p.click('[data-close]').catch(() => {}); await signOut();
+await p.evaluate(() => { window.__mock.failTable = 'profiles'; localStorage.removeItem('markoutTool.cloudUser.v1'); });
+await signIn('crew2@crew.test', 'password9');
+ok(await gate() && /could not check your access/.test(await p.textContent('#gateBody')) && /does not exist/.test(await p.textContent('#gateBody')), 'a database error is shown instead of "access removed"');
+await p.evaluate(() => { window.__mock.failTable = null; });
+await p.click('#cRetry'); await p.waitForTimeout(500);
+ok(!(await gate()), 'Try again works once the database is reachable');
+await p.click('[data-close]').catch(() => {}); await signOut();
+
 // ---- password reset
 await p.click('[data-m=reset]'); await p.fill('#cEmail', 'ed@crew.test'); await p.click('#cGo'); await p.waitForTimeout(200);
 ok((await p.evaluate(() => window.__mock.calls)).some(c => c[0] === 'reset' && c[1] === 'ed@crew.test'), 'forgot password sends a reset email');

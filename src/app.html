@@ -2043,11 +2043,15 @@ async function cloudSync(){
 // Role from the server, cached per user so the app still opens offline
 async function loadRole(){
   let cached=''; try{ const j=JSON.parse(localStorage.getItem(CLOUD_USER_KEY)||'null'); if(j&&j.id===C.user.id) cached=j.role; }catch(e){}
-  let role=cached;
-  try{ const {data,error}=await C.sb.from('profiles').select('role').eq('id',C.user.id).maybeSingle(); if(!error) role=(data&&data.role)||'disabled'; }catch(e){}
-  C.role=role||'disabled';
+  // C.roleIssue explains a missing role: 'noprofile' (no DATUM account record) or 'error' (could not check; C.roleErr)
+  C.roleIssue=''; C.roleErr='';
+  let res; try{ res=await C.sb.from('profiles').select('role').eq('id',C.user.id).maybeSingle(); }catch(e){ res={error:e}; }
+  if(res.error){ if(cached){ C.role=cached; return; } C.role='disabled'; C.roleIssue='error'; C.roleErr=(res.error&&res.error.message)||String(res.error); return; }
+  if(!res.data||!res.data.role){ C.role='disabled'; C.roleIssue='noprofile'; return; }
+  C.role=res.data.role;
   try{ localStorage.setItem(CLOUD_USER_KEY,JSON.stringify({id:C.user.id,role:C.role})); }catch(e){}
 }
+async function retrySignIn(){ const {data}=await C.sb.auth.getSession(); C.user=null; showGate('wait'); onAuth(data&&data.session); }
 
 /* ---- sign-in screen (covers the whole app until signed in) */
 const GOOGLE_SVG='<svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.2l7.9 6.1C12.5 13.5 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 2.9-2.2 5.4-4.7 7.1l7.6 5.9c4.4-4.1 6.9-10.1 6.9-17.5z"/><path fill="#FBBC05" d="M10.6 28.7c-.5-1.4-.8-3-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.2 0-11.5-4-13.4-9.6l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>';
@@ -2057,7 +2061,9 @@ function showGate(mode,msg,err){
   mode=mode||'in'; gateShow(true);
   const head={in:['Sign in','Sign in to use DATUM.'],setup:['Set up your account','First time here? Use the email address you were invited with and choose a password. If you got an invite email, you can use its link instead.'],reset:['Reset password','We will email you a link to set a new password.'],
     newpw:['Welcome to DATUM','Choose a password for '+esc(C.email)+'. You will use it with this email address to sign in from now on.'],
-    wait:['DATUM','Checking your sign-in...'],off:['Access removed','Your access to DATUM has been removed. Ask your admin if this is a mistake.']}[mode];
+    wait:['DATUM','Checking your sign-in...'],
+    problem:["Can't finish signing in",C.roleIssue==='noprofile'?'Your account ('+esc(C.email)+') is not set up in DATUM yet. If you are setting DATUM up, run supabase/schema.sql in the Supabase SQL Editor, then try again.':'DATUM could not check your access. Check your connection and try again. If you are setting DATUM up, make sure supabase/schema.sql has been run in Supabase.'],
+    off:['Access removed','Your access to DATUM has been removed. Ask your admin if this is a mistake.']}[mode];
   let body='';
   if(mode==='wait') body='';
   else if(mode==='newpw') body=`<form class="cform" id="cForm">
@@ -2065,6 +2071,7 @@ function showGate(mode,msg,err){
     <label>Confirm password<input type="password" id="cPass2" autocomplete="new-password" minlength="8" required></label>
     <div class="cmsg" id="cMsg"></div><button class="btn solid" type="submit" id="cGo">Save password and continue</button>
     <div class="clinks"><a href="#" id="cSkipPw">I will sign in with Google instead</a></div></form>`;
+  else if(mode==='problem') body=`<div class="cform">${C.roleErr?`<div class="cmsg err">${esc(C.roleErr)}</div>`:''}<button class="btn solid" type="button" id="cRetry">Try again</button><button class="btn" type="button" id="cOut2">Sign out</button></div>`;
   else if(mode==='off') body=`<div class="cform"><div class="cmsg">Signed in as ${esc(C.email)}.</div><button class="btn" type="button" id="cOut2">Sign out</button></div>`;
   else body=`<form class="cform" id="cForm">
     <label>Email<input type="email" id="cEmail" autocomplete="email" required></label>
@@ -2079,6 +2086,7 @@ function showGate(mode,msg,err){
   if(msg) gMsg(msg,err);
   $('gateBody').querySelectorAll('[data-m]').forEach(a=>a.onclick=e=>{ e.preventDefault(); showGate(a.dataset.m); });
   if($('cOut2')) $('cOut2').onclick=()=>C.sb.auth.signOut();
+  if($('cRetry')) $('cRetry').onclick=retrySignIn;
   if($('cGoogle')) $('cGoogle').onclick=async()=>{ const {error}=await C.sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:redirectUrl()}}); if(error) gMsg(authErr(error),true); };
   const f=$('cForm'); if(!f) return; const em=$('cEmail'); if(em) em.focus();
   if(mode==='newpw'){ $('cPass').focus();
@@ -2227,7 +2235,7 @@ async function onAuth(session){
   // a different person on this device: start them with a clean slate
   let last=''; try{ last=localStorage.getItem('markoutTool.lastUser')||''; localStorage.setItem('markoutTool.lastUser',C.user.id); }catch(e){}
   if(last&&last!==C.user.id){ S.cloud=null; saveLink(); try{ localStorage.removeItem(CLOUD_DONE_KEY); }catch(e){} asOff=true; clearProject(true); asOff=false; }
-  if(C.role==='disabled'){ S.cloud=null; saveLink(); cloudUI(); showGate('off'); return; }
+  if(C.role==='disabled'){ S.cloud=null; saveLink(); cloudUI(); showGate(C.roleIssue?'problem':'off'); return; }
   if(isViewer()&&!S.cloud&&S.raw.rows.length){ asOff=true; clearProject(true); asOff=false; }
   if(C.user.user_metadata&&C.user.user_metadata.datum_needs_password){ showGate('newpw'); return; }
   enterApp();
