@@ -1171,9 +1171,10 @@ function ringCol(h){ const r=S.funcRing[h.func]; return r?scrCol(r):null; }
 function ringRgb(h){ const r=S.funcRing[h.func]; return r?hexToRgb(r):null; }
 // Automated hoists: h.auto is a short label shown as a badge and as text under the symbol ('' = not automated).
 // It comes from the Hoist Symbol column; CSVs without that column fall back to "Auto" in the Hoist Function.
-const AUTO_KINDS=['AUTO','NAV','APEX','ELEV'], AUTO_NAMES={AUTO:'Automated',NAV:'TAIT Navigator',APEX:'Apex',ELEV:'Elevation'};
+const AUTO_KINDS=['AUTO','NAV','APEX','ELEV','KES'], AUTO_NAMES={AUTO:'Automated Hoist',NAV:'TAIT Nav Hoist',APEX:'Kinesys APEX Hoist',ELEV:'Kinesys Elevation Hoist',KES:'MOVEKET V-Motion Hoist'};
 function autoKind(v){ const t=String(v||'').toLowerCase(), w=re=>new RegExp('(^|[^a-z])(?:'+re+')([^a-z]|$)').test(t);
   if(w('nav|navigator')) return 'NAV'; if(w('apex')) return 'APEX'; if(w('elevation')) return 'ELEV';
+  if(w('moveket|movecat|v-?motion|vmk|vmc')) return 'KES';
   if(w('auto|automated|automation|varispeed|vari-speed')) return 'AUTO'; return ''; }
 function autoOf(h){ return h&&h.auto||''; }
 function autoLabel(a){ return (a===true||a==='tag')?'AUTO':String(a); }
@@ -1307,8 +1308,8 @@ function renderData(){
   const inp=(i,k)=>{ const pend=S.pending[i]&&k in S.pending[i]; return `<td class="${pend?'pend':''}"><input type="text" data-ri="${i}" data-k="${k}" value="${esc(rawVal(i,k))}"${k==='type'?' list="dl-type"':k==='func'?' list="dl-func"':k==='hsym'?' list="dl-hsym"':''} spellcheck="false" autocomplete="off"></td>`; };
   const pos=i=>{ const v=rawVal(i,'pos'), pend=S.pending[i]&&'pos' in S.pending[i]; const o=['','Hoist Down','Hoist Up']; if(v&&!o.includes(v)) o.push(v);
     return `<td class="${pend?'pend':''}"><select data-ri="${i}" data-k="pos">${o.map(x=>`<option value="${esc(x)}"${x===v?' selected':''}>${x||'(blank)'}</option>`).join('')}</select></td>`; };
-  const syms=[...new Set(['Automated','Varispeed','TAIT Navigator','Apex','Elevation'].concat(hs.map(h=>h.hsym).filter(Boolean)))];
-  let html=dl('dl-type',types)+dl('dl-func',funcs)+dl('dl-hsym',syms)+`<table class="dt"><thead><tr><th>#</th><th title="Skipped rows are left off the plot, markout rows and PDF">Skip</th><th></th><th>ID</th><th>Type</th><th>Function</th><th title="Automation: Auto / Varispeed, NAV / Navigator, Apex or Elevation">Symbol</th><th>Position</th><th>Origin X</th><th>Origin Y</th><th>Load</th><th>Side / X</th><th>Row Y</th><th>Status</th><th></th></tr></thead><tbody>`;
+  const syms=[...new Set(['Automated','Varispeed','TAIT Navigator','Apex','Elevation','Moveket V-Motion'].concat(hs.map(h=>h.hsym).filter(Boolean)))];
+  let html=dl('dl-type',types)+dl('dl-func',funcs)+dl('dl-hsym',syms)+`<table class="dt"><thead><tr><th>#</th><th title="Skipped rows are left off the plot, markout rows and PDF">Skip</th><th></th><th>ID</th><th>Type</th><th>Function</th><th title="Automation: Auto / Varispeed, NAV / Navigator, Apex, Elevation or Moveket / V-Motion / VMK / VMC">Symbol</th><th>Position</th><th>Origin X</th><th>Origin Y</th><th>Load</th><th>Side / X</th><th>Row Y</th><th>Status</th><th></th></tr></thead><tbody>`;
   hs.forEach((h,i)=>{
     let sx='',sy='';
     if(h.ok){ const q=tf(h); const th=Math.max(0,S.opt.cth||0); sx=(Math.abs(q.xs)<=th?'CL':q.xs>0?S.opt.rightL:S.opt.leftL)+' '+fmtDist(q.xs); const yi=yInfo(q.yu); sy=yi.key==='datum'?'DATUM':abbr(yi.dir)+' '+yi.txt; }

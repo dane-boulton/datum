@@ -95,10 +95,10 @@ The script is organised by comment banners `/* ===== … ===== */`. Search for t
   - Colours: Lighting red, Audio #ffd000, Cable Pick orange, Scenery light blue, Other green, Super Grid pink, Video purple, Generic light grey, Pre-Rig dark grey with a red ring.
   - "X Automated" functions share X's colour.
   - **Automation types** come from the optional `Hoist Symbol` column (`S.map.hsym`), via `autoKind()`:
-    - NAV/Navigator → `NAV`; Apex → `APEX`; Elevation → `ELEV`; Auto/Automated/Varispeed → `AUTO`.
+    - NAV/Navigator → `NAV`; Apex → `APEX`; Elevation → `ELEV`; Moveket/Movecat/V-Motion/VMK/VMC → `KES`; Auto/Automated/Varispeed → `AUTO` (checked last).
     - The result is stored as `h.auto` (a label or '') and drawn as a badge and as text under the symbol (`symParts` / `pdfSym` use `autoLabel`).
     - If the CSV has no Hoist Symbol column, "Auto" in the function gives `AUTO` (legacy fallback).
-    - Legend names are in `AUTO_NAMES`.
+    - Legend names are in `AUTO_NAMES`: Automated Hoist, TAIT Nav Hoist, Kinesys APEX Hoist, Kinesys Elevation Hoist, MOVEKET V-Motion Hoist.
   - The Hoist Up modifier applies to hoists only.
   - Theme is charcoal/grey (no blue).
 - **Legend** (`legendTypes`, `renderLegend`, PDF `legendLayout`):

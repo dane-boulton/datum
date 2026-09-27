@@ -10,8 +10,9 @@ All notable changes to DATUM. Newest first.
   - **NAV** or **Navigator** give **NAV** (TAIT Navigator).
   - **Apex** gives **APEX**.
   - **Elevation** gives **ELEV**.
+  - **Moveket**, **V-Motion**, **VMK** or **VMC** (also "Movecat") give **KES**.
 - If a word matches more than one type, the specific one wins: "TAIT Navigator Automated" shows NAV.
-- The legend lists each type in use: Automated, TAIT Navigator, Apex, Elevation.
+- The legend lists each type in use: **Automated Hoist**, **TAIT Nav Hoist**, **Kinesys APEX Hoist**, **Kinesys Elevation Hoist**, **MOVEKET V-Motion Hoist**.
 - The column is picked up automatically, can be chosen under **Columns > Hoist Symbol**, and can be edited in the Data tab (**Symbol** column, with suggestions).
 - The template CSV, the built-in sample and the sample files now include the column.
 - **Older CSVs:** files without a Hoist Symbol column still work as before; "Automated" in the Hoist Function shows AUTO. Once the column exists, only it is used.
