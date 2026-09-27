@@ -107,7 +107,7 @@ ok(await p.evaluate(() => S.raw.rows.length) === 95, 'viewer cannot add rows or 
 const tickId = await p.evaluate(() => { const id = S.hoists.find(h => h.ok && !h.datum).id; toggleDone(id); return id; });
 await p.waitForTimeout(2500); d = await db(); ok(d.projects[0].data.raw.rows.length === 95 && JSON.stringify(d.projects[0].data).includes('USR-EDITED'), 'viewer ticks do not write to the cloud');
 ok(await p.evaluate(() => { const { rec, info } = buildSheet(); return info.pages >= 1 && rec.doc.output('blob').size > 1000; }), 'viewer can export a PDF');
-await p.evaluate(() => { const db = window.__mock.db(); db.projects[0].data.raw.rows[0][2] = 'USR-V2'; db.projects[0].updated_at = new Date(Date.now() + 60000).toISOString(); window.__mock.save(db); });
+await p.evaluate(() => { const db = window.__mock.db(); db.projects[0].data.raw.rows[0][db.projects[0].data.map.id] = 'USR-V2'; db.projects[0].updated_at = new Date(Date.now() + 60000).toISOString(); window.__mock.save(db); });
 await p.reload(); await p.waitForTimeout(900);
 ok(!(await gate()) && await p.evaluate(() => S.hoists[0].id) === 'USR-V2', 'viewer stays signed in and gets the owner\'s newer version on reload');
 ok(await p.evaluate(id => S.done.has(id), tickId), 'viewer\'s own done marks are kept on the device');
