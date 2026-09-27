@@ -1,0 +1,96 @@
+Hoist Type,Hoist Function,Hoist ID,Hoist Position,Origin X,Origin Y,Load (kg)
+500.00 kg,Generic,USP,Hoist Down,-9322,14097,0
+1000.00 kg,Video,VX1,Hoist Up,-6375,13030,0
+1000.00 kg,Video Automated,VX2,Hoist Up,-3835,13030,0
+1000.00 kg,Video,VX3,Hoist Up,-1245,13030,0
+1000.00 kg,Video,VX4,Hoist Up,1245,13030,0
+1000.00 kg,Video Automated,VX5,Hoist Up,3835,13030,0
+1000.00 kg,Video,VX6,Hoist Up,6350,13030,0
+1000.00 kg,Lighting Automated,US1,Hoist Down,-6375,12319,0
+1000.00 kg,Lighting Automated,US2,Hoist Down,-2515,12319,0
+1000.00 kg,Lighting Automated,US3,Hoist Down,2515,12319,0
+1000.00 kg,Lighting Automated,US4,Hoist Down,6350,12319,0
+500.00 kg,Lighting Automated,TR4,Hoist Down,-7823,11151,0
+500.00 kg,Lighting Automated,TL1,Hoist Down,7823,11151,0
+500.00 kg,Lighting,TR3,Hoist Down,-8331,8357,0
+500.00 kg,Lighting,TL2,Hoist Down,8331,8357,0
+1000.00 kg,Pre-Rig,UM1,Hoist Down,-6477,7112,0
+1000.00 kg,Pre-Rig,UM2,Hoist Down,-2311,7112,0
+1000.00 kg,Pre-Rig,UM3,Hoist Down,2311,7112,0
+1000.00 kg,Pre-Rig,UM4,Hoist Down,6477,7112,0
+500.00 kg,Lighting,TR2,Hoist Down,-8788,5740,0
+500.00 kg,Lighting,TL3,Hoist Down,8788,5740,0
+500.00 kg,Scenery,DD2,Hoist Down,2108,2870,0
+500.00 kg,Super Grid,TR1,Hoist Down,-9322,2819,0
+500.00 kg,Super Grid,TL4,Hoist Down,9322,2819,0
+500.00 kg,Cable Pick,SB1,Hoist Down,-12294,2540,0
+500.00 kg,Cable Pick,SB4,Hoist Down,12294,2540,0
+500.00 kg,Scenery,DD1,Hoist Down,-2159,2464,0
+500.00 kg,Cable Pick,SB2,Hoist Down,-11252,1956,0
+500.00 kg,Cable Pick,SB3,Hoist Down,11252,1956,0
+1000.00 kg,Lighting,DM1,Hoist Down,-6375,1803,0
+1000.00 kg,Lighting,DM2,Hoist Down,-2311,1803,0
+1000.00 kg,Lighting,DM3,Hoist Down,2311,1803,0
+1000.00 kg,Lighting,DM4,Hoist Down,6350,1803,0
+2000.00 kg,Audio,OF2,Hoist Down,-12598,1524,0
+2000.00 kg,Audio,OF6,Hoist Down,12598,1524,0
+2000.00 kg,Audio,OF3,Hoist Down,-12141,1270,0
+2000.00 kg,Audio,OF5,Hoist Down,12141,1270,0
+500.00 kg,Generic,DMP,Hoist Down,-8560,838,0
+500.00 kg,Scenery,DD4,Hoist Down,-762,838,0
+500.00 kg,Scenery,DD6,Hoist Down,4978,838,0
+1000.00 kg,Video,IR1,Hoist Up,-20091,635,0
+1000.00 kg,Video,IR2,Hoist Up,-18593,635,0
+1000.00 kg,Video,IR3,Hoist Up,-17094,635,0
+1000.00 kg,Video,IR4,Hoist Up,-15596,635,0
+1000.00 kg,Video,IL1,Hoist Up,15596,635,0
+1000.00 kg,Video,IL2,Hoist Up,17094,635,0
+1000.00 kg,Video,IL3,Hoist Up,18593,635,0
+1000.00 kg,Video,IL4,Hoist Up,20091,635,0
+2000.00 kg,Audio,OF1,Hoist Down,-12979,381,0
+500.00 kg,Scenery,DD3,Hoist Down,-5029,381,0
+500.00 kg,Scenery,DD5,Hoist Down,711,381,0
+2000.00 kg,Audio,OF4,Hoist Down,12954,381,0
+500.00 kg,Lighting,WR1,Hoist Down,-19592,-76,0
+500.00 kg,Lighting,WR2,Hoist Down,-16231,-76,0
+500.00 kg,Lighting,WL1,Hoist Down,16231,-76,0
+500.00 kg,Lighting,WL2,Hoist Down,19583,-76,0
+2000.00 kg,Audio,PA2,Hoist Down,-9855,-381,0
+2000.00 kg,Audio,PA3,Hoist Down,-9322,-381,0
+2000.00 kg,Audio,PA5,Hoist Down,9296,-381,0
+2000.00 kg,Audio,PA6,Hoist Down,9855,-381,0
+500.00 kg,Scenery,DD8,Hoist Down,2108,-1194,0
+2000.00 kg,Audio,PA1,Hoist Down,-9576,-1600,0
+500.00 kg,Scenery,DD7,Hoist Down,-2159,-1600,0
+2000.00 kg,Audio,PA4,Hoist Down,9576,-1600,0
+500.00 kg,Generic,DSP,Hoist Down,-7493,-2134,0
+1000.00 kg,Lighting,DS1,Hoist Down,-6375,-4318,0
+1000.00 kg,Lighting,DS2,Hoist Down,-2311,-4318,0
+1000.00 kg,Lighting,DS3,Hoist Down,2311,-4318,0
+1000.00 kg,Lighting,DS4,Hoist Down,6350,-4318,0
+USR,Generic,USR,,-21336,15240,0
+USL,Generic,USL,,21336,15240,0
+Chain Block,Other,BF1,,-4572,10058,0
+Chain Block,Other,BF2,,4572,10058,0
+250.00 kg,Lighting,QA1,Hoist Up,-15240,3658,0
+250.00 kg,Lighting,EA1,Hoist Down,-12192,3658,0
+2500.00 kg,Lighting,HB1,Hoist Up,12192,3658,0
+Fall Arrest,Other,FA1,,15240,3658,0
+Floor mark,Generic,FM1,,0,0,0
+DSR,Generic,DSR,,-21336,-6096,0
+DSL,Generic,DSL,,21336,-6096,0
+250.00 kg,Scenery,WX1,Hoist Down,-18288,9144,0
+250.00 kg,Scenery,WX2,Hoist Down,-15850,9144,0
+250.00 kg,Scenery,WX3,Hoist Down,-13411,9144,0
+250.00 kg,Scenery,WX4,Hoist Down,-10973,9144,0
+250.00 kg,Scenery,WX5,Hoist Down,-8534,9144,0
+250.00 kg,Scenery,WX6,Hoist Down,-6096,9144,0
+250.00 kg,Scenery,WY1,Hoist Down,6096,9144,0
+250.00 kg,Scenery,WY2,Hoist Down,8534,9144,0
+250.00 kg,Scenery,WY3,Hoist Down,10973,9144,0
+250.00 kg,Scenery,WY4,Hoist Down,13411,9144,0
+250.00 kg,Scenery,WY5,Hoist Down,15850,9144,0
+250.00 kg,Scenery,WY6,Hoist Down,18288,9144,0
+320.00 kg,Lighting,QB1,Hoist Down,-9144,3658,0
+3000.00 kg,Lighting,HC1,Hoist Down,9144,3658,0
+1100 lb,Audio,LB1,Hoist Down,-7620,3658,0
