@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "description": "DATUM - Production Markout Tool",
-  "scripts": { "build": "node scripts/build.mjs" },
-  "dependencies": { "jspdf": "4.2.1" }
+  "scripts": {
+    "build": "node scripts/build.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.117.2",
+    "jspdf": "4.2.1"
+  }
 }

@@ -73,9 +73,9 @@ button.btn.solid:hover{background:#c4c8cf}
 .side .body,.pdfset .body{padding:0 0 16px;display:grid;gap:9px}
 .field{display:grid;grid-template-columns:112px 1fr;gap:10px;align-items:center}
 .field label{color:var(--muted);font-size:12.5px}
-input[type=text],input[type=number],input[type=date],select,textarea{width:100%;padding:7px 10px;border:1px solid var(--line2);border-radius:var(--radius-sm);background:var(--bg);color:var(--ink);transition:border-color .15s,box-shadow .15s}
-input[type=text]:hover,input[type=number]:hover,input[type=date]:hover,select:hover,textarea:hover{border-color:var(--line3)}
-input[type=text]:focus,input[type=number]:focus,input[type=date]:focus,select:focus,textarea:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+input[type=text],input[type=email],input[type=password],input[type=number],input[type=date],select,textarea{width:100%;padding:7px 10px;border:1px solid var(--line2);border-radius:var(--radius-sm);background:var(--bg);color:var(--ink);transition:border-color .15s,box-shadow .15s}
+input[type=text]:hover,input[type=email]:hover,input[type=password]:hover,input[type=number]:hover,input[type=date]:hover,select:hover,textarea:hover{border-color:var(--line3)}
+input[type=text]:focus,input[type=email]:focus,input[type=password]:focus,input[type=number]:focus,input[type=date]:focus,select:focus,textarea:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
 input::placeholder,textarea::placeholder{color:var(--faint)}
 select{appearance:none;-webkit-appearance:none;padding-right:30px;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%238892a8' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
 select option{background:var(--raised);color:var(--ink)}
@@ -266,6 +266,22 @@ table.al{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:10px}
 table.al th{text-align:left;font-weight:600;color:var(--muted);font-size:11px;letter-spacing:.04em;padding:4px 8px}
 table.al td{padding:5px 8px;border-top:1px solid var(--line);white-space:nowrap;font-variant-numeric:tabular-nums}
 table.al .gh td{border-top:1px solid var(--line3);padding-top:10px;font-weight:650;color:var(--ink2)}
+[hidden]{display:none!important}
+button.btn.danger{color:var(--err)}
+.iconbtn.acct.in{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.cchip{font-size:11.5px;font-weight:650;padding:4px 10px;border-radius:999px;background:var(--raised2);color:var(--ink2);border:1px solid var(--line2);white-space:nowrap}
+.cchip.warn{background:var(--warnbg);color:var(--warn);border-color:transparent} .cchip.ro{background:var(--accent-soft);color:var(--ink)}
+.cform{display:flex;flex-direction:column;gap:12px;padding-top:14px} .cform label{display:flex;flex-direction:column;gap:5px;font-size:12.5px;color:var(--ink2)}
+.cform .btn{padding:9px 14px} .gbtn{display:flex;align-items:center;justify-content:center;gap:9px}
+.cor{display:flex;align-items:center;gap:10px;color:var(--faint);font-size:12px}.cor::before,.cor::after{content:"";flex:1;border-top:1px solid var(--line2)}
+.clinks{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:12.5px}.clinks a{color:var(--ink2)}
+.cmsg{font-size:12.5px;color:var(--muted);padding:6px 0}.cmsg:empty{display:none}.cmsg.err{color:var(--err)}
+.chead{font-size:11px;font-weight:650;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 0 4px}
+.citem{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line);flex-wrap:wrap}.citem.cur .cname b::before{content:"\25CF ";color:#22c55e}
+.cname{flex:1;min-width:160px;display:flex;flex-direction:column;gap:2px}.cname small{color:var(--muted);font-size:11.5px}
+.cacts{display:flex;gap:6px;flex-wrap:wrap}.cacts select{width:auto}
+.cnew{display:flex;gap:8px;margin-top:10px}.cnew input{flex:1}
+body.ro #v-data input,body.ro #v-data select,body.ro #v-data .act,body.ro #dApply,body.ro #dDiscard,body.ro #dAdd,body.ro #dRevert,body.ro #dAlign{pointer-events:none;opacity:.5}
 table.al .same{color:var(--faint)} table.al .chg{color:var(--warn);font-weight:600}
 table.dt td.num{color:var(--muted)}
 .act{display:flex;gap:6px}
@@ -275,6 +291,7 @@ table.dt td.num{color:var(--muted)}
 .iconb.armed{background:var(--err);border-color:var(--err);color:#fff}
 /* ---------- mobile ---------- */
 .menubtn{display:none}
+@media (max-width:520px){ .brand{display:none} .cchip{display:none} }
 .scrim{display:none}
 @media (max-width:900px){
   .app{grid-template-columns:minmax(0,1fr);grid-template-rows:56px minmax(0,1fr);height:100dvh}
@@ -427,6 +444,8 @@ table.dt td.num{color:var(--muted)}
       <button data-tab="data">Data<span class="badge" id="badge" hidden></span></button>
     </nav>
     <div class="sp"></div>
+    <span class="cchip" id="cloudChip" hidden></span>
+    <button class="iconbtn acct" id="btnAccount" hidden aria-label="Account and cloud projects"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></button>
     <button class="iconbtn" id="btnTheme" title="Switch between dark and light mode" aria-label="Switch theme">
       <svg class="sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
       <svg class="moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -454,6 +473,11 @@ table.dt td.num{color:var(--muted)}
           <button class="btn" id="btnClearProj">New / clear</button>
         </div>
         <input type="file" id="projFile" accept=".json,.datum,.markout,application/json" hidden>
+        <div class="row2" id="cloudRow" hidden style="margin-top:10px">
+          <button class="btn" id="btnCloudProj">Cloud projects&hellip;</button>
+          <button class="btn solid" id="btnCloudSave" hidden>Save to cloud&hellip;</button>
+        </div>
+        <div class="hint" id="cloudInfo"></div>
         <div class="hint" id="projInfo">Projects save the CSV data, all settings, completed marks and logos to a file you can reopen later. Your work is also kept automatically in this browser.</div>
       </div>
     </details>
@@ -661,9 +685,12 @@ table.dt td.num{color:var(--muted)}
   <div class="mbody" id="alignBody"></div>
   <div class="mfoot"><button class="btn" id="alignDiscard">Discard</button><button class="btn" id="alignReview">Review in table</button><button class="btn solid" id="alignApply">Apply changes</button></div>
 </div></div>
+<div class="modal-bg" id="cloudModal" hidden><div class="modal" role="dialog" aria-modal="true" id="cloudBox"></div></div>
 <div class="toast" id="toast"></div>
 
 <script>/*__JSPDF__*/</script>
+<script>/*__SUPABASE__*/</script>
+<script>/*__CLOUD_CONFIG__*/</script>
 <script>
 "use strict";
 /* ============================ constants ============================ */
@@ -744,7 +771,7 @@ const S = {
   hoists:[], rows:[], warnings:0,
   typeMap:{}, funcMap:{}, funcRing:{},
   opt:{inUnit:'auto',disp:'ftin',den:1,tol:50,cth:1,rot:0,rowOrder:'top',sideNeg:'left',sideSort:'center',flipX:false,flipY:false,datX:0,datY:0,topL:'UPSTAGE',botL:'DOWNSTAGE',leftL:'SR',rightL:'SL',upStyle:'fill',alignTol:25.4,alignMode:'both',alignKeep:'first'},
-  skip:new Set(), logoShow:null, logoUser:null, _imgShow:null, _imgUser:null,
+  skip:new Set(), cloud:null, logoShow:null, logoUser:null, _imgShow:null, _imgUser:null,
   mo:{cur:0,focus:'both',hideDone:false,auto:false}, done:new Set(), doneName:'', pending:{}, orig:null,
   sheet:{sheetType:'FLOOR MARKOUT',show:'',venue:'',datum:'',date:'',rev:'',by:'',footer:'',title:true,page:'a4',orient:'portrait',margin:10,rowH:11,fit:'fixed',capN:4,minPt:5,centreMm:0,textPct:100,yPct:100,symPct:100,linePct:100,font:'helvetica',load:true,tick:'none',mode:'colour',cText:'#1b2440',cMuted:'#5d6b8a',cBorder:'#8d9bbd',cCentre:'#5c6b8f',cBand:'#f3f6fb',cBandText:'#1b2440',centreTint:false,cCentreFill:'#eef2fb',zebra:false,cZebra:'#f3f6fb',logoHShow:14,logoHUser:14,logoAll:false,onePage:false,legend:true,onlyTodo:false,bands:true,zoom:'fit'},
   plot:{labels:true,coords:false,grid:true,legend:true,size:9},
@@ -785,7 +812,7 @@ function setLogoFromFile(which,f){
     img.onerror=()=>toast('Could not read that image (try PNG, JPG, SVG or WebP).'); img.src=fr.result; };
   fr.readAsDataURL(f);
 }
-function saveDone(){ try{ localStorage.setItem(DONE_KEY, JSON.stringify({name:S.doneName,ids:[...S.done]})); }catch(e){} autosaveSoon(); }
+function saveDone(){ try{ localStorage.setItem(DONE_KEY, JSON.stringify({name:S.doneName,ids:[...S.done]})); }catch(e){} cloudDoneSave(); autosaveSoon(); }
 function loadDone(){ try{ const j=JSON.parse(localStorage.getItem(DONE_KEY)||'null'); if(j){ S.doneName=j.name||''; S.done=new Set(j.ids||[]); } }catch(e){} }
 
 /* ============================ CSV ============================ */
@@ -1114,8 +1141,9 @@ function ensureCol(key){
 function setRaw(row,key,val){ const ci=ensureCol(key); while(row.length<=ci) row.push(''); row[ci]=val; }
 // Keep skipped-row indices in step when rows are inserted (d>0) or removed (d<0) at index `at`
 function shiftSkip(at,d){ const n=new Set(); for(const i of S.skip){ if(i<at) n.add(i); else if(d<0&&i===at) continue; else n.add(i+d); } S.skip=n; }
-function toggleSkip(i,on){ if(on) S.skip.add(i); else S.skip.delete(i); if(S.sel&&S.hoists[i]&&S.hoists[i].id===S.sel) S.sel=null; refresh(); }
+function toggleSkip(i,on){ if(roGuard()){ renderData(); return; } if(on) S.skip.add(i); else S.skip.delete(i); if(S.sel&&S.hoists[i]&&S.hoists[i].id===S.sel) S.sel=null; refresh(); }
 function applyPending(silent){
+  if(readOnly()){ if(pendingCount()) S.pending={}; return 0; }
   const n=pendingCount(); if(!n) return 0;
   for(const i in S.pending){ const row=S.raw.rows[+i]; if(!row) continue; for(const k in S.pending[i]) setRaw(row,k,S.pending[i][k]); }
   S.pending={}; refresh(); if(!silent) toast('Applied '+n+' change'+(n>1?'s':'')+'.'); return n;
@@ -1131,6 +1159,7 @@ function rawFromMm(mm){
 }
 // Find matching points (mirrored SR/SL pairs and same-X columns) whose X is only slightly out and propose aligned values
 function alignX(){
+  if(roGuard()) return 0;
   if(S.map.x<0||!S.hoists.length){ toast('Import a CSV first.'); return 0; }
   applyPending(true);
   const tol=Math.max(0.1,S.opt.alignTol), rowTol=Math.max(1,S.opt.tol||50), mode=S.opt.alignMode, keep=S.opt.alignKeep;
@@ -1177,6 +1206,7 @@ function showAlignSummary(groups,n,tol){
 function fmtMove(mm){ return fmtDist(mm).replace(/^0' - /,''); } // small moves read as just inches
 function closeAlign(){ $('alignModal').hidden=true; }
 function addRow(after){
+  if(roGuard()) return;
   applyPending(true);
   const src=S.raw.rows[after>=0?after:S.raw.rows.length-1]; const row=Array(S.raw.headers.length).fill('');
   const g=k=>{ const ci=S.map[k]; return src&&ci>=0?(src[ci]||''):''; };
@@ -1184,11 +1214,13 @@ function addRow(after){
   const at=after>=0?after+1:S.raw.rows.length; shiftSkip(at,1); S.raw.rows.splice(at,0,row); refresh(); setTimeout(()=>focusRow(at),30);
 }
 function duplicateRow(i){
+  if(roGuard()) return;
   applyPending(true); const src=S.raw.rows[i]; if(!src) return; const copy=src.slice(); const ci=S.map.id;
   if(ci>=0) copy[ci]=uniqueId(src[ci]); shiftSkip(i+1,1); S.raw.rows.splice(i+1,0,copy); refresh(); setTimeout(()=>focusRow(i+1),30); toast('Row duplicated.');
 }
-function deleteRow(i){ applyPending(true); shiftSkip(i,-1); S.raw.rows.splice(i,1); refresh(); toast('Row deleted. Use "Revert to imported CSV" to undo.'); }
+function deleteRow(i){ if(roGuard()) return; applyPending(true); shiftSkip(i,-1); S.raw.rows.splice(i,1); refresh(); toast('Row deleted. Use "Revert to imported CSV" to undo.'); }
 function revertData(){
+  if(roGuard()) return;
   if(!S.orig) return; S.raw={headers:S.orig.headers.slice(),rows:S.orig.rows.map(r=>r.slice()),name:S.raw.name}; S.map=Object.assign({},S.orig.map);
   S.pending={}; S.skip=new Set(); renderMapUI(); refresh(); toast('Reverted to the imported CSV.');
 }
@@ -1433,6 +1465,7 @@ function select(id, from){
 
 /* ============================ import ============================ */
 function loadCSVText(text,name,isSample){
+  cloudDetach();
   const t=parseCSV(text);
   if(t.length<2){ toast('That file has no data rows.'); return; }
   S.raw={headers:t[0].map(s=>s.trim()),rows:t.slice(1),name};
@@ -1885,17 +1918,18 @@ function saveProjectFile(){
 }
 function loadProjectFile(f){
   if(!f) return; const fr=new FileReader();
-  fr.onload=()=>{ try{ applyProject(JSON.parse(fr.result)); toast('Opened project '+f.name.replace(/\.(datum|markout)\.json$|\.json$/i,'')); const ar=$('appRoot'); if(ar) ar.classList.remove('side-open'); }catch(e){ toast('That file is not a Markout project.'); } };
+  fr.onload=()=>{ try{ const pj=JSON.parse(fr.result); cloudDetach(); applyProject(pj); toast('Opened project '+f.name.replace(/\.(datum|markout)\.json$|\.json$/i,'')); const ar=$('appRoot'); if(ar) ar.classList.remove('side-open'); }catch(e){ toast('That file is not a Markout project.'); } };
   fr.readAsText(f);
 }
 function clearProject(){
+  cloudDetach();
   S.raw={headers:[],rows:[],name:''}; S.map={type:-1,func:-1,id:-1,pos:-1,x:-1,y:-1,load:-1}; S.orig=null; S.sample=false; S.sampleLoaded=false; S.sel=null; S.pending={}; S.skip=new Set();
   S.done=new Set(); S.doneName=''; S.mo.cur=0; S.typeMap={}; S.funcMap={}; S.funcRing={}; S.logoShow=S.logoUser=S._imgShow=S._imgUser=null; saveLogo(); syncLogoUI();
   try{ localStorage.removeItem(PROJ_KEY); }catch(e){}
   $('fileInfo').textContent='No file loaded.'; saveDone(); renderMapUI(); refresh(); schedulePreview(true); toast('Started a new project.');
 }
 let asTimer=0, asOff=false;
-function autosaveSoon(){ if(asOff) return; clearTimeout(asTimer); asTimer=setTimeout(()=>{ try{ if(!S.raw.rows.length){ localStorage.removeItem(PROJ_KEY); return; } localStorage.setItem(PROJ_KEY,JSON.stringify(projectData(false))); const i=$('projInfo'); if(i) i.dataset.saved=new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }catch(e){} },600); }
+function autosaveSoon(){ if(asOff) return; cloudSaveSoon(); clearTimeout(asTimer); asTimer=setTimeout(()=>{ try{ if(!S.raw.rows.length){ localStorage.removeItem(PROJ_KEY); return; } localStorage.setItem(PROJ_KEY,JSON.stringify(projectData(false))); const i=$('projInfo'); if(i) i.dataset.saved=new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }catch(e){} },600); }
 function restoreAutosave(){ try{ const j=JSON.parse(localStorage.getItem(PROJ_KEY)||'null'); if(j&&j.raw&&j.raw.rows&&j.raw.rows.length){ asOff=true; applyProject(j); asOff=false; toast('Restored your last project.'); return true; } }catch(e){} asOff=false; return false; }
 
 /* ============================ wiring ============================ */
@@ -1910,6 +1944,205 @@ function bindInput(id,obj,key,type,after){
   });
 }
 let fixedVis=()=>{};
+/* ============================ cloud: sign-in, projects, sharing (Supabase) ============================ */
+// Roles come from public.profiles: viewer (shared projects only), editor (own projects + sharing), admin (editor + Team).
+// The open cloud project is S.cloud = {id,name,ownerEmail,own,updatedAt,dirty}. Done marks never leave the device.
+const CLOUD_LINK_KEY='markoutTool.cloudLink.v1', CLOUD_DONE_KEY='markoutTool.cloudDone.v1';
+const C={sb:null,user:null,email:'',role:'viewer',timer:0,lastSent:'',busy:false,status:'',err:''};
+const ROLE_NAME={viewer:'Viewer',editor:'Editor',admin:'Admin'};
+function canAuthor(){ return !!C.user && (C.role==='editor'||C.role==='admin'); }
+function readOnly(){ return !!(S.cloud && !S.cloud.own); }
+function roGuard(){ if(!readOnly()) return false; toast('This project is shared with you as view only.'); return true; }
+function saveLink(){ try{ if(S.cloud) localStorage.setItem(CLOUD_LINK_KEY,JSON.stringify(S.cloud)); else localStorage.removeItem(CLOUD_LINK_KEY); }catch(e){} }
+function cloudDoneAll(){ try{ return JSON.parse(localStorage.getItem(CLOUD_DONE_KEY)||'{}')||{}; }catch(e){ return {}; } }
+function cloudDoneSave(){ if(!S.cloud) return; try{ const a=cloudDoneAll(); a[S.cloud.id]=[...S.done]; localStorage.setItem(CLOUD_DONE_KEY,JSON.stringify(a)); }catch(e){} }
+function cloudDetach(){ if(!S.cloud) return; S.cloud=null; C.lastSent=''; saveLink(); cloudUI(); }
+function cloudPayload(){ const o=projectData(true); delete o.done; delete o.doneName; delete o.saved; if(o.mo) delete o.mo.cur; return o; }
+function redirectUrl(){ return location.origin+location.pathname; }
+function when(ts){ if(!ts) return ''; const d=new Date(ts); return isNaN(d)?'':d.toLocaleString([], {day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}); }
+function setStatus(st,err){ C.status=st; C.err=err||''; cloudUI(); }
+
+function cloudUI(){
+  const on=!!C.sb; document.body.classList.toggle('ro',readOnly());
+  const acc=$('btnAccount'); if(!acc) return; acc.hidden=!on;
+  acc.classList.toggle('in',!!C.user); acc.title=C.user?('Signed in as '+C.email+' - account & cloud projects'):'Sign in for cloud projects';
+  $('cloudRow').hidden=!on;
+  const chip=$('cloudChip'), info=$('cloudInfo');
+  let chipTxt='', cls='';
+  if(S.cloud){
+    if(!S.cloud.own) { chipTxt='View only'; cls='ro'; }
+    else if(!C.user) { chipTxt='Signed out'; cls='warn'; }
+    else if(C.status==='saving') chipTxt='Saving...';
+    else if(C.status==='offline'||(S.cloud.dirty&&navigator.onLine===false)) { chipTxt='Offline - will sync'; cls='warn'; }
+    else if(C.status==='error') { chipTxt='Not saved'; cls='warn'; }
+    else chipTxt=S.cloud.dirty?'Unsaved':'Saved';
+    info.innerHTML=`Cloud project <b>${esc(S.cloud.name)}</b>`+(S.cloud.own?'':` &middot; shared by ${esc(S.cloud.ownerEmail)}, view only`)+(C.status==='error'&&C.err?`<br><span class="w">${esc(C.err)}</span>`:'');
+  } else info.textContent=on?(C.user?'This project is only on this device.':'Sign in to keep projects in the cloud and share them with your crew.'):'';
+  chip.hidden=!chipTxt; chip.textContent=chipTxt; chip.className='cchip'+(cls?' '+cls:'');
+  $('btnCloudSave').hidden=!(on&&canAuthor()&&!S.cloud);
+}
+function cloudSaveSoon(){ if(!S.cloud||!S.cloud.own||!C.sb) return; clearTimeout(C.timer); C.timer=setTimeout(cloudSave,2000); }
+async function cloudSave(){
+  if(!S.cloud||!S.cloud.own||!C.user||!S.raw.rows.length) return;
+  const data=cloudPayload(), body=JSON.stringify(data);
+  if(body===C.lastSent&&!S.cloud.dirty) return;
+  if(C.busy){ cloudSaveSoon(); return; }
+  const id=S.cloud.id; C.busy=true; S.cloud.dirty=true; saveLink(); setStatus('saving');
+  let res; try{ res=await C.sb.from('projects').update({data,name:S.cloud.name}).eq('id',id).select('updated_at').single(); }catch(e){ res={error:e}; }
+  C.busy=false; if(!S.cloud||S.cloud.id!==id) return;
+  if(res.error){ const off=navigator.onLine===false||/fetch|network/i.test(res.error.message||''); setStatus(off?'offline':'error',off?'':(/0 rows|no rows|single/i.test(res.error.message||'')?'You no longer have edit access to this project.':res.error.message)); return; }
+  C.lastSent=body; S.cloud.dirty=false; S.cloud.updatedAt=res.data.updated_at; saveLink(); setStatus('saved');
+}
+async function cloudCreate(name){
+  if(!S.raw.rows.length){ toast('Import a CSV first, then save it to the cloud.'); return false; }
+  const data=cloudPayload();
+  const {data:row,error}=await C.sb.from('projects').insert({name,data}).select('id,name,owner_email,updated_at').single();
+  if(error){ toast('Could not save to the cloud: '+error.message); return false; }
+  S.cloud={id:row.id,name:row.name,ownerEmail:row.owner_email,own:true,updatedAt:row.updated_at,dirty:false}; C.lastSent=JSON.stringify(data);
+  saveLink(); cloudDoneSave(); setStatus('saved'); toast('Saved "'+row.name+'" to the cloud. Changes now save automatically.'); return true;
+}
+async function cloudOpen(id,quiet){
+  const {data:row,error}=await C.sb.from('projects').select('id,name,owner,owner_email,data,updated_at').eq('id',id).single();
+  if(error){ toast('Could not open that project: '+error.message); return false; }
+  const o=row.data||{}; o.done=cloudDoneAll()[id]||[]; o.doneName='cloud:'+id;
+  S.cloud={id,name:row.name,ownerEmail:row.owner_email,own:row.owner===C.user.id,updatedAt:row.updated_at,dirty:false};
+  saveLink();
+  try{ applyProject(o); }catch(e){ S.cloud=null; saveLink(); toast('That cloud project could not be read.'); return false; }
+  C.lastSent=JSON.stringify(cloudPayload()); setStatus('saved');
+  if(!quiet) toast('Opened "'+row.name+'"'+(S.cloud.own?'':' (view only)'));
+  const ar=$('appRoot'); if(ar) ar.classList.remove('side-open'); return true;
+}
+// On start-up / sign-in: pick up newer versions, push unsynced edits, notice lost access
+async function cloudSync(){
+  if(!S.cloud||!C.user) { cloudUI(); return; }
+  const {data:row,error}=await C.sb.from('projects').select('updated_at,owner').eq('id',S.cloud.id).maybeSingle();
+  if(error){ setStatus(navigator.onLine===false?'offline':'error',error.message); return; }
+  if(!row){ toast('"'+S.cloud.name+'" is no longer available to you in the cloud. Your copy on this device is kept.'); cloudDetach(); return; }
+  S.cloud.own=row.owner===C.user.id;
+  if(S.cloud.own&&S.cloud.dirty){ C.lastSent=''; cloudSave(); return; }
+  if(row.updated_at!==S.cloud.updatedAt){ if(await cloudOpen(S.cloud.id,true)) toast('Updated "'+S.cloud.name+'" to the latest version.'); return; }
+  C.lastSent=JSON.stringify(cloudPayload()); setStatus('saved');
+}
+async function loadRole(){
+  C.role='viewer'; if(!C.user) return;
+  const {data}=await C.sb.from('profiles').select('role').eq('id',C.user.id).maybeSingle(); if(data&&data.role) C.role=data.role;
+}
+
+/* ---- cloud dialogs */
+function mOpen(html){ $('cloudBox').innerHTML=html; $('cloudModal').hidden=false; const f=$('cloudBox').querySelector('input:not([type=checkbox]),button.solid'); if(f) f.focus(); }
+function mClose(){ $('cloudModal').hidden=true; }
+function mMsg(t,err){ const m=$('cMsg'); if(m){ m.textContent=t; m.className='cmsg'+(err?' err':''); } }
+function busyBtn(b,on){ if(!b) return; b.disabled=on; }
+const GOOGLE_SVG='<svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.2l7.9 6.1C12.5 13.5 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 2.9-2.2 5.4-4.7 7.1l7.6 5.9c4.4-4.1 6.9-10.1 6.9-17.5z"/><path fill="#FBBC05" d="M10.6 28.7c-.5-1.4-.8-3-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.2 0-11.5-4-13.4-9.6l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>';
+function showSignIn(mode){
+  mode=mode||'in';
+  const t={in:'Sign in',up:'Create account',reset:'Reset password'}[mode];
+  mOpen(`<h3>${t}</h3><div class="msub">${mode==='reset'?'We will email you a link to set a new password.':'Cloud projects are saved to your account and can be shared with your crew.'}</div>
+  <form class="mbody cform" id="cForm">
+    <label>Email<input type="email" id="cEmail" autocomplete="email" required></label>
+    ${mode==='reset'?'':`<label>Password<input type="password" id="cPass" autocomplete="${mode==='up'?'new-password':'current-password'}" minlength="6" required></label>`}
+    <div class="cmsg" id="cMsg"></div>
+    <button class="btn solid" type="submit" id="cGo">${mode==='in'?'Sign in':mode==='up'?'Create account':'Send reset link'}</button>
+    ${mode==='reset'?'':`<div class="cor"><span>or</span></div><button class="btn gbtn" type="button" id="cGoogle">${GOOGLE_SVG}Continue with Google</button>`}
+    <div class="clinks">${mode!=='in'?'<a href="#" data-m="in">Have an account? Sign in</a>':'<a href="#" data-m="up">New here? Create an account</a><a href="#" data-m="reset">Forgot password?</a>'}</div>
+  </form><div class="mfoot"><button class="btn" data-close>Close</button></div>`);
+  $('cloudBox').querySelectorAll('[data-m]').forEach(a=>a.onclick=e=>{ e.preventDefault(); showSignIn(a.dataset.m); });
+  if($('cGoogle')) $('cGoogle').onclick=async()=>{ const {error}=await C.sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:redirectUrl()}}); if(error) mMsg(error.message,true); };
+  $('cForm').onsubmit=async e=>{ e.preventDefault(); const email=$('cEmail').value.trim(), pw=$('cPass')?$('cPass').value:''; const b=$('cGo'); busyBtn(b,true); mMsg('');
+    try{
+      if(mode==='in'){ const {error}=await C.sb.auth.signInWithPassword({email,password:pw}); if(error) throw error; mClose(); }
+      else if(mode==='up'){ const {data,error}=await C.sb.auth.signUp({email,password:pw,options:{emailRedirectTo:redirectUrl()}}); if(error) throw error;
+        if(data&&data.session) mClose(); else mMsg('Check your email and click the link to confirm your account, then sign in.'); }
+      else { const {error}=await C.sb.auth.resetPasswordForEmail(email,{redirectTo:redirectUrl()}); if(error) throw error; mMsg('If that email has an account, a reset link is on its way.'); }
+    }catch(err){ mMsg(err.message||String(err),true); }
+    busyBtn(b,false); };
+}
+function showNewPassword(){
+  mOpen(`<h3>Set a new password</h3><div class="msub">Signed in as ${esc(C.email)}.</div>
+  <form class="mbody cform" id="cForm"><label>New password<input type="password" id="cPass" autocomplete="new-password" minlength="6" required></label><div class="cmsg" id="cMsg"></div><button class="btn solid" type="submit" id="cGo">Save password</button></form>
+  <div class="mfoot"><button class="btn" data-close>Close</button></div>`);
+  $('cForm').onsubmit=async e=>{ e.preventDefault(); const {error}=await C.sb.auth.updateUser({password:$('cPass').value}); if(error) mMsg(error.message,true); else { mClose(); toast('Password updated.'); } };
+}
+async function showProjects(){
+  if(!C.user){ showSignIn('in'); return; }
+  mOpen(`<h3>Cloud projects</h3><div class="msub">${esc(C.email)} &middot; ${ROLE_NAME[C.role]||C.role}</div><div class="mbody" id="cList"><div class="cmsg">Loading...</div></div>
+  <div class="mfoot">${C.role==='admin'?'<button class="btn" id="cTeam">Team</button>':''}<button class="btn" id="cOut">Sign out</button><span style="flex:1"></span><button class="btn" data-close>Close</button></div>`);
+  $('cOut').onclick=async()=>{ await C.sb.auth.signOut(); mClose(); };
+  if($('cTeam')) $('cTeam').onclick=showTeam;
+  const {data,error}=await C.sb.from('projects').select('id,name,owner,owner_email,updated_at').order('updated_at',{ascending:false});
+  const box=$('cList'); if(!box) return;
+  if(error){ box.innerHTML=`<div class="cmsg err">Could not load projects: ${esc(error.message)}</div>`; return; }
+  const mine=data.filter(p=>p.owner===C.user.id), shared=data.filter(p=>p.owner!==C.user.id);
+  const cur=S.cloud&&S.cloud.id;
+  const row=(p,own)=>`<div class="citem${p.id===cur?' cur':''}"><div class="cname"><b>${esc(p.name)}</b><small>${own?'':esc(p.owner_email)+' &middot; '}${when(p.updated_at)}${p.id===cur?' &middot; open now':''}</small></div>
+    <div class="cacts"><button class="btn solid" data-open="${p.id}">Open</button>${own?`<button class="btn" data-share="${p.id}">Share</button><button class="btn" data-ren="${p.id}">Rename</button><button class="btn danger" data-del="${p.id}">Delete</button>`:`<button class="btn" data-leave="${p.id}" title="Remove from your list">Remove</button>`}</div></div>`;
+  let h='';
+  if(canAuthor()){
+    h+=`<div class="chead">My projects</div>`+(mine.length?mine.map(p=>row(p,true)).join(''):'<div class="cmsg">No cloud projects yet.</div>');
+    if(!S.cloud&&S.raw.rows.length) h+=`<div class="cnew"><input type="text" id="cNewName" value="${esc(defaultCloudName())}" aria-label="Project name"><button class="btn solid" id="cNewGo">Save current project to cloud</button></div>`;
+  } else h+=`<div class="cmsg">You can open projects shared with you, tick off rows and export PDFs. To create your own cloud projects, ask an admin for editor access.</div>`;
+  h+=`<div class="chead">Shared with me</div>`+(shared.length?shared.map(p=>row(p,false)).join(''):'<div class="cmsg">Nothing has been shared with you yet.</div>');
+  box.innerHTML=h;
+  const byId=id=>data.find(p=>p.id===id);
+  box.querySelectorAll('[data-open]').forEach(b=>b.onclick=async()=>{ if(!S.cloud&&S.raw.rows.length&&!confirm('Replace the project on screen? It is only on this device, so use Save project first if you want to keep it.')) return; if(S.cloud&&S.cloud.own&&S.cloud.dirty) await cloudSave(); busyBtn(b,true); if(await cloudOpen(b.dataset.open)) mClose(); else busyBtn(b,false); });
+  box.querySelectorAll('[data-share]').forEach(b=>b.onclick=()=>showShare(b.dataset.share,byId(b.dataset.share).name));
+  box.querySelectorAll('[data-ren]').forEach(b=>b.onclick=async()=>{ const p=byId(b.dataset.ren), n=prompt('Rename project',p.name); if(!n||!n.trim()||n.trim()===p.name) return;
+    const {error}=await C.sb.from('projects').update({name:n.trim()}).eq('id',p.id); if(error) toast(error.message); else { if(S.cloud&&S.cloud.id===p.id){ S.cloud.name=n.trim(); saveLink(); cloudUI(); } showProjects(); } });
+  box.querySelectorAll('[data-del]').forEach(b=>{ let armed=false; b.onclick=async()=>{ if(!armed){ armed=true; b.textContent='Tap to delete'; setTimeout(()=>{ armed=false; b.textContent='Delete'; },3000); return; }
+    const {error}=await C.sb.from('projects').delete().eq('id',b.dataset.del); if(error){ toast(error.message); return; }
+    if(S.cloud&&S.cloud.id===b.dataset.del){ cloudDetach(); toast('Deleted from the cloud. Your copy on this device is kept.'); } showProjects(); }; });
+  box.querySelectorAll('[data-leave]').forEach(b=>b.onclick=async()=>{ const {error}=await C.sb.from('project_shares').delete().eq('project_id',b.dataset.leave).eq('email',C.email); if(error){ toast(error.message); return; }
+    if(S.cloud&&S.cloud.id===b.dataset.leave) cloudDetach(); showProjects(); });
+  if($('cNewGo')) $('cNewGo').onclick=async()=>{ const n=$('cNewName').value.trim()||defaultCloudName(); busyBtn($('cNewGo'),true); if(await cloudCreate(n)) showProjects(); else busyBtn($('cNewGo'),false); };
+}
+function defaultCloudName(){ return ((S.sheet.show||'').trim()||(S.raw.name||'').replace(/\.csv$/i,'')||'Markout').slice(0,80); }
+async function showShare(id,name){
+  mOpen(`<h3>Share "${esc(name)}"</h3><div class="msub">People you add can open this project, tick off rows and export PDFs. They cannot change it. They need to sign in with this email address; it works even if they have not signed up yet.</div>
+  <div class="mbody"><form class="cnew" id="cShareForm"><input type="email" id="cShareEmail" placeholder="crew@example.com" aria-label="Email to share with" required><button class="btn solid" type="submit">Share</button></form><div class="cmsg" id="cMsg"></div><div id="cShares"><div class="cmsg">Loading...</div></div></div>
+  <div class="mfoot"><button class="btn" id="cBack">Back to projects</button><span style="flex:1"></span><button class="btn" data-close>Close</button></div>`);
+  $('cBack').onclick=showProjects;
+  const load=async()=>{ const {data,error}=await C.sb.from('project_shares').select('email,created_at').eq('project_id',id).order('email'); const box=$('cShares'); if(!box) return;
+    if(error){ box.innerHTML=`<div class="cmsg err">${esc(error.message)}</div>`; return; }
+    box.innerHTML=data.length?'<div class="chead">Shared with</div>'+data.map(s=>`<div class="citem"><div class="cname"><b>${esc(s.email)}</b></div><div class="cacts"><button class="btn" data-rm="${esc(s.email)}">Remove</button></div></div>`).join(''):'<div class="cmsg">Not shared with anyone yet.</div>';
+    box.querySelectorAll('[data-rm]').forEach(b=>b.onclick=async()=>{ const {error}=await C.sb.from('project_shares').delete().eq('project_id',id).eq('email',b.dataset.rm); if(error) mMsg(error.message,true); load(); }); };
+  $('cShareForm').onsubmit=async e=>{ e.preventDefault(); const em=$('cShareEmail').value.trim().toLowerCase(); if(!em) return;
+    if(em===C.email){ mMsg('That is your own email.',true); return; }
+    const {error}=await C.sb.from('project_shares').insert({project_id:id,email:em});
+    if(error) mMsg(/duplicate|23505/.test(error.message+error.code)?'Already shared with '+em+'.':error.message,true); else { mMsg('Shared with '+em+'.'); $('cShareEmail').value=''; load(); } };
+  load();
+}
+async function showTeam(){
+  mOpen(`<h3>Team</h3><div class="msub">Everyone who has signed up. Viewers only see projects shared with them; editors can create and share projects; admins can also change roles here.</div><div class="mbody" id="cTeamList"><div class="cmsg">Loading...</div></div>
+  <div class="mfoot"><button class="btn" id="cBack">Back to projects</button><span style="flex:1"></span><button class="btn" data-close>Close</button></div>`);
+  $('cBack').onclick=showProjects;
+  const {data,error}=await C.sb.from('profiles').select('id,email,role').order('email'); const box=$('cTeamList'); if(!box) return;
+  if(error){ box.innerHTML=`<div class="cmsg err">${esc(error.message)}</div>`; return; }
+  box.innerHTML=data.map(p=>`<div class="citem"><div class="cname"><b>${esc(p.email)}</b>${p.id===C.user.id?'<small>you</small>':''}</div><div class="cacts"><select data-uid="${p.id}" aria-label="Role for ${esc(p.email)}"${p.id===C.user.id?' disabled title="Ask another admin to change your own role"':''}>${['viewer','editor','admin'].map(r=>`<option value="${r}"${r===p.role?' selected':''}>${ROLE_NAME[r]}</option>`).join('')}</select></div></div>`).join('');
+  box.querySelectorAll('select[data-uid]').forEach(s=>s.onchange=async()=>{ const {error}=await C.sb.from('profiles').update({role:s.value}).eq('id',s.dataset.uid); toast(error?error.message:'Role updated.'); });
+}
+
+async function onAuth(session){
+  const prev=C.user&&C.user.id; C.user=session?session.user:null; C.email=C.user?String(C.user.email||'').toLowerCase():'';
+  if(!C.user){ C.role='viewer'; if(prev&&S.cloud) cloudDetach(); cloudUI(); return; }
+  if(prev===C.user.id){ cloudUI(); return; }
+  await loadRole(); cloudUI(); cloudSync();
+}
+function cloudInit(){
+  try{ S.cloud=JSON.parse(localStorage.getItem(CLOUD_LINK_KEY)||'null'); }catch(e){ S.cloud=null; }
+  const cfg=window.DATUM_CLOUD, make=window.__datumSupabase||(window.supabase&&window.supabase.createClient);
+  if(cfg&&make){ try{ C.sb=make(cfg.url,cfg.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}); }catch(e){ C.sb=null; } }
+  if(!C.sb){ S.cloud=null; cloudUI(); return; }
+  $('btnAccount').onclick=()=>C.user?showProjects():showSignIn('in');
+  $('btnCloudProj').onclick=()=>C.user?showProjects():showSignIn('in');
+  $('btnCloudSave').onclick=()=>showProjects();
+  $('cloudModal').addEventListener('click',e=>{ if(e.target.id==='cloudModal'||e.target.closest('[data-close]')) mClose(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!$('cloudModal').hidden) mClose(); });
+  window.addEventListener('online',()=>{ if(S.cloud&&C.user){ if(S.cloud.own&&S.cloud.dirty) cloudSave(); else cloudSync(); } });
+  window.addEventListener('offline',cloudUI);
+  C.sb.auth.onAuthStateChange((ev,session)=>{ setTimeout(()=>{ onAuth(session); if(ev==='PASSWORD_RECOVERY') showNewPassword(); },0); });
+  cloudUI();
+}
+
 function init(){
   loadStore(); loadDone();
   document.documentElement.dataset.theme=S.theme;
@@ -2040,6 +2273,7 @@ function init(){
   arm($('btnClearProj'),'New / clear','Tap again to clear',clearProject);
   renderSymUI(); renderAll();
   restoreAutosave();
+  cloudInit();
   if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 }
 window.addEventListener('DOMContentLoaded',init);

@@ -19,8 +19,14 @@ Hoist Type (auto-mapped to a "Capacity" column if present) -> symbol; Hoist Func
 - Save/load: project file `Name.datum.json` (data, edits, settings, done marks, logos) + autosave to browser localStorage.
 - Align X (Data tab): finds mirrored SR/SL pairs and same-X columns whose X is within a tolerance (default 1") and proposes aligned values as pending edits; user reviews then Apply.
 - Theme: charcoal/grey (no blue). Icons: white diamond glyph on grey gradient.
+- Align X shows a summary pop-up of each change (old/new X, in/out amount) with Apply / Review in table / Discard.
+- Data tab Skip checkbox per row (S.skip, raw row indices, shifted on add/delete, saved in projects): skipped rows stay in data/CSV export but are left off plot, rows, PDF, legend, warnings, Align X.
+- PDF: logos centred vertically on the header text; auto footer ends with the show name; "Fit to one page" scales the whole sheet (ScaledDoc wrapper + search for the largest scale that gives one page).
+- Legend shows metric ratings for capacity symbols (250 kg ... 1 ton, 2 ton) and merges types sharing a symbol; other types keep their names.
+- Cloud (optional, Supabase; see docs/CLOUD_SETUP.md): roles viewer/editor/admin in public.profiles; editors own projects and share by email (view only); done marks stay on the device; S.cloud is the linked project, editors' changes auto-save after 2 s; importing/opening a file/new project unlinks. Build inlines supabase-js and injects SUPABASE_URL / SUPABASE_ANON_KEY (env or datum.config.json); cloud UI is hidden without them.
 
 ## Hosting / workflow
 - Repo: dane-boulton/datum on GitHub (private), Netlify builds via `netlify.toml` (`npm install && node scripts/build.mjs`, publish `site`).
-- Commit each change. Test with Playwright (chromium at /opt/pw-browsers/chromium) against `python3 -m http.server -d site`.
+- Commit each change. Test with Playwright (chromium at /opt/pw-browsers/chromium) against `python3 -m http.server -d site`. Install playwright with `npm i --no-save playwright` (not a dependency, so Netlify does not download browsers).
+- Cloud tests: `supabase/test/rls_test.sql` (access rules on local Postgres) and `tests/cloud.test.mjs` (UI against tests/mock-supabase.js; build with SUPABASE_URL=https://mock.supabase.co SUPABASE_ANON_KEY=mock first).
 - The user prefers concise summaries and iterative changes; ask before large redesigns.

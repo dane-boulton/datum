@@ -2,3 +2,4 @@ node_modules/
 site/index.html
 site/sw.js
 package-lock.json.bak
+datum.config.json
