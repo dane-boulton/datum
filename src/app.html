@@ -116,12 +116,38 @@ html:not([data-theme=light]) .iconbtn .moon{display:none}
 .edge{position:absolute;font-size:10.5px;font-weight:600;letter-spacing:.18em;color:var(--muted);pointer-events:none;background:var(--overlay);border:1px solid var(--line);padding:3px 9px;border-radius:20px;backdrop-filter:blur(6px)}
 .edge.t{top:10px;left:50%;transform:translateX(-50%)} .edge.b{bottom:28px;left:50%;transform:translateX(-50%)}
 .edge.l{left:10px;top:50%;transform:translateY(-50%)} .edge.r{right:10px;top:50%;transform:translateY(-50%)}
-#legend{position:absolute;right:14px;bottom:40px;background:var(--overlay);border:1px solid var(--line2);border-radius:var(--radius);padding:10px 12px;max-width:240px;font-size:12px;backdrop-filter:blur(8px);box-shadow:0 8px 30px var(--shadow)}
+#legend{position:absolute;right:14px;bottom:40px;max-height:calc(100% - 60px);overflow:auto;background:var(--overlay);border:1px solid var(--line2);border-radius:var(--radius);padding:10px 12px;max-width:240px;font-size:12px;backdrop-filter:blur(8px);box-shadow:0 8px 30px var(--shadow)}
 #legend h4{margin:0 0 5px;font-size:10px;letter-spacing:.12em;color:var(--muted);font-weight:650}
 #legend .it{display:flex;align-items:center;gap:8px;margin:3px 0;color:var(--ink2)}
 #legend .sw{width:11px;height:11px;border-radius:50%;flex:none}
 #info{position:absolute;left:14px;bottom:40px;background:var(--raised);border:1px solid var(--line3);color:var(--ink2);border-radius:var(--radius);padding:10px 14px;font-size:12px;display:none;max-width:60%;box-shadow:0 8px 30px var(--shadow)}
 #info b{font-size:15px;color:var(--ink);letter-spacing:-.01em}
+#info .iacts{display:flex;gap:8px;margin-top:8px}#info .iacts .btn{padding:5px 12px}#info .iacts .btn.on{background:#22c55e;border-color:#22c55e;color:#04130a}
+#info .ix,#legend .kx{display:none}
+.popts{display:contents}
+.compact-only{display:none}
+/* compact plot: phones in portrait (narrow) and landscape (short) */
+@media (max-width:700px), (max-height:500px), (pointer:coarse) and (max-width:1100px){
+  .compact-only{display:inline-flex;align-items:center;justify-content:center}
+  .wide-only{display:none!important}
+  #v-plot .toolbar{gap:6px;padding:6px 8px;flex-wrap:wrap}
+  #v-plot .toolbar .hint{display:none}
+  #v-plot .popts{display:none}
+  #v-plot .toolbar.more .popts{display:flex;flex-basis:100%;flex-wrap:wrap;gap:8px 14px;padding:4px 2px 2px}
+  #pKey[aria-expanded=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+  #legend{display:none!important}
+  #plotWrap.keyopen #legend{display:block!important;left:0;right:0;bottom:0;max-width:none;max-height:62%;overflow:auto;border-radius:16px 16px 0 0;padding:12px 16px 16px;columns:2 150px;column-gap:18px}
+  #legend h4{break-after:avoid}
+  #legend .kx,#info .ix{display:grid;place-items:center;position:absolute;top:6px;right:6px;width:32px;height:32px;border-radius:9px;border:1px solid var(--line2);background:var(--raised);color:var(--ink2);font-size:18px;cursor:pointer;line-height:1}
+  #plotWrap.keyopen #legend{padding-top:14px}
+  #legend .kx{top:8px;right:10px}
+  #legend h4:first-of-type{margin-right:40px}
+  #info{left:8px;right:8px;bottom:8px;max-width:none;padding:12px 48px 12px 14px;border-radius:14px;font-size:13px}
+  #info b{font-size:18px}
+  #info .iacts .btn{padding:9px 16px;font-size:14px}
+  .edge{font-size:9px;padding:2px 7px;letter-spacing:.12em}
+  .edge.b{bottom:8px}
+}
 .scroll{flex:1;overflow:auto;padding:20px}
 .paper{max-width:1000px;margin:0 auto;background:var(--panel);border:1px solid var(--line2);border-radius:var(--radius);box-shadow:0 12px 40px var(--shadow);overflow:clip}
 .sheethead{padding:16px 18px;border-bottom:1px solid var(--line2);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
@@ -430,6 +456,24 @@ table.dt td.num{color:var(--muted)}
   .mo-nav{padding:5px 8px}.mo-nav .navbtn{height:38px}
 }
 
+/* ---------- short landscape screens (phones on their side) ---------- */
+@media (max-height:500px) and (orientation:landscape){
+  .app{grid-template-rows:44px minmax(0,1fr)}
+  .side{top:44px}
+  .app.side-open .scrim{inset:44px 0 0 0}
+  .iconbtn{width:32px;height:32px}
+  .tabs{padding:2px}.tabs button{padding:4px 10px}
+  #v-plot .toolbar{position:absolute;top:8px;left:8px;z-index:6;background:transparent;border:0;padding:0;max-width:calc(100% - 16px)}
+  #v-plot .toolbar.more{background:var(--panel);border:1px solid var(--line2);border-radius:12px;padding:6px 8px;box-shadow:0 8px 30px var(--shadow)}
+  #v-plot .edge.t{top:10px;left:auto;right:10px;transform:none}
+  #plotWrap.keyopen #legend{max-height:78%;columns:3 150px}
+  .mo-bar .inl label{display:none}
+  .mo-prog{min-width:0;flex:1 1 140px;order:0}
+  .mo-nav{padding:3px 8px}.mo-nav .navbtn{height:32px}
+  .mo-h{padding:2px}
+  .pdfpage{grid-template-columns:minmax(250px,38%) minmax(0,1fr);grid-template-rows:none}
+  .pdfset{max-height:none;border-right:1px solid var(--line);border-bottom:0}
+}
 .mo-h.lbl{padding:6px 8px}
 .mo-lbl{font-size:22px;font-weight:800;letter-spacing:.08em;color:var(--ink)}
 @media (max-width:900px){ .mo-lbl{font-size:19px;letter-spacing:.05em} .mo-h.lbl{padding:5px 2px} }
@@ -556,12 +600,16 @@ table.dt td.num{color:var(--muted)}
 
     <section class="view on" id="v-plot">
       <div class="toolbar">
-        <div class="grp"><button class="btn" id="zFit">Fit</button><button class="btn sq" id="zIn">+</button><button class="btn sq" id="zOut">&minus;</button></div>
+        <div class="grp"><button class="btn" id="zFit">Fit</button><button class="btn sq" id="zIn" aria-label="Zoom in">+</button><button class="btn sq" id="zOut" aria-label="Zoom out">&minus;</button></div>
+        <button class="btn compact-only" id="pKey" aria-expanded="false">Key</button>
+        <button class="btn sq compact-only" id="pMore" aria-label="More plot options" aria-expanded="false">&middot;&middot;&middot;</button>
+        <div class="popts">
         <label><input type="checkbox" id="pLabels" checked> IDs</label>
         <label><input type="checkbox" id="pCoords"> Coordinates</label>
         <label><input type="checkbox" id="pGrid" checked> Grid</label>
-        <label><input type="checkbox" id="pLegend" checked> Legend</label>
+        <label class="wide-only"><input type="checkbox" id="pLegend" checked> Legend</label>
         <label>Symbol size <input type="range" id="pSize" min="5" max="18" value="9"></label>
+        </div>
         <span class="hint">Scroll to zoom &middot; drag to pan &middot; click a hoist to select</span>
       </div>
       <div id="plotWrap">
@@ -1342,6 +1390,8 @@ function renderMarkout(scrollList){ const vis=clampCur(); moUpdateBar(vis); rend
 
 /* ============================ rendering: plot ============================ */
 const P={cx:0,cy:0,k:.05,W:800,H:600};
+const COMPACT_MQ=window.matchMedia('(max-width:700px), (max-height:500px), (pointer:coarse) and (max-width:1100px)');
+function isCompact(){ return COMPACT_MQ.matches; }
 function plotItems(){ return S.rows.flatMap(r=>r.items); }
 function fitPlot(){
   const its=plotItems(); const el=$('plotWrap'); P.W=el.clientWidth; P.H=el.clientHeight;
@@ -1349,7 +1399,7 @@ function fitPlot(){
   let x0=Infinity,x1=-Infinity,y0=Infinity,y1=-Infinity;
   for(const it of its){ x0=Math.min(x0,it.xs); x1=Math.max(x1,it.xs); y0=Math.min(y0,-it.yu); y1=Math.max(y1,-it.yu); }
   x0=Math.min(x0,0); x1=Math.max(x1,0);
-  const pad=80, bw=Math.max(x1-x0,1000), bh=Math.max(y1-y0,1000), lw=(S.plot.legend&&P.W>900)?250:0;
+  const pad=isCompact()?Math.max(40,Math.min(P.W,P.H)*0.09):80, bw=Math.max(x1-x0,1000), bh=Math.max(y1-y0,1000), lw=(S.plot.legend&&P.W>900)?250:0;
   P.k=Math.min((P.W-2*pad-lw)/bw,(P.H-2*pad)/bh); P.cx=(x0+x1)/2+(lw/2)/P.k; P.cy=(y0+y1)/2;
   renderPlot();
 }
@@ -1371,7 +1421,10 @@ function renderPlot(){
   }
   out+=`<line x1="${sx(0)}" y1="0" x2="${sx(0)}" y2="${H}" stroke="${T.cl}" stroke-dasharray="6 4"/><text x="${sx(0)+4}" y="46" font-size="10" fill="${T.clTxt}">CENTRE LINE</text>`;
   out+=`<line x1="0" y1="${sy(0)}" x2="${W}" y2="${sy(0)}" stroke="${T.cl}" stroke-dasharray="6 4"/><text x="${W-4}" y="${sy(0)-4}" text-anchor="end" font-size="10" fill="${T.clTxt}">DATUM</text>`;
-  const R=S.plot.size;
+  const R=S.plot.size, declutter=isCompact(), placed=[];
+  // on small screens only draw labels that do not overlap one already drawn (selected hoist always wins)
+  const fits=(x0,y0,x1,y1)=>{ for(const b of placed) if(x0<b[2]&&x1>b[0]&&y0<b[3]&&y1>b[1]) return false; return true; };
+  if(declutter) for(const it of plotItems()){ const x=W/2+(it.xs-P.cx)*k, y=H/2+(-it.yu-P.cy)*k; placed.push([x-R*0.9,y-R*0.9,x+R*0.9,y+R*0.9]); }
   for(const it of plotItems()){
     const h=it.h, x=sx(it.xs), y=sy(-it.yu);
     if(x<-40||x>W+40||y<-40||y>H+40) continue;
@@ -1382,8 +1435,12 @@ function renderPlot(){
     out+=`<g transform="translate(${x} ${y}) scale(${R})" fill="none" stroke="${col}" stroke-width=".2" stroke-linejoin="round" stroke-linecap="round">${symParts(itemSym(h),col,{up:h.up,ring:ringCol(h),auto:autoOf(h)})}</g>`;
     const sk=itemSym(h); let lx=x+R+4+(ringCol(h)?R*.55:0), ly=S.plot.coords?-1:4, anc='start';
     if(sk.indexOf('corner-')===0){ const aR=/r$/.test(sk), aD=sk.indexOf('corner-us')===0; anc=aR?'end':'start'; lx=x+(aR?-6:6); ly=aD?-6:13; if(S.plot.coords&&aD) ly=-17; }
-    if(S.plot.labels) out+=`<text x="${lx}" y="${y+ly}" text-anchor="${anc}" font-size="11" font-weight="650" fill="${T.lab}">${esc(h.id)}</text>`;
-    if(S.plot.coords) out+=`<text x="${lx}" y="${y+ly+11}" text-anchor="${anc}" font-size="9" fill="${T.sub}">${fmtDist(it.xs)} ${sideOf(it)} / ${fmtDist(it.yu)} ${abbr(it.yu>0?S.opt.topL:S.opt.botL)}</text>`;
+    let showLbl=S.plot.labels, showCo=S.plot.coords;
+    if(declutter&&(showLbl||showCo)){ const cw=showCo?(fmtDist(it.xs).length+fmtDist(it.yu).length+8)*5.3:0, w=Math.max(showLbl?String(h.id).length*6.8+2:0,cw), top=y+ly-(showLbl?10:0), bot=y+ly+(showCo?13:3);
+      const x0=anc==='end'?lx-w:lx, x1=anc==='end'?lx:lx+w;
+      if(sel||fits(x0,top,x1,bot)) placed.push([x0-2,top-1,x1+2,bot+1]); else { showLbl=false; showCo=false; } }
+    if(showLbl) out+=`<text x="${lx}" y="${y+ly}" text-anchor="${anc}" font-size="11" font-weight="650" fill="${T.lab}">${esc(h.id)}</text>`;
+    if(showCo) out+=`<text x="${lx}" y="${y+ly+11}" text-anchor="${anc}" font-size="9" fill="${T.sub}">${fmtDist(it.xs)} ${sideOf(it)} / ${fmtDist(it.yu)} ${abbr(it.yu>0?S.opt.topL:S.opt.botL)}</text>`;
     if(isDone(h.id)) out+=`<g transform="translate(${x+R*1.05} ${y-R*1.05})"><circle r="5.5" fill="#22c55e" stroke="var(--knock)" stroke-width="1.2"/><path d="M-2.6 .2L-.8 2 2.8-2" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></g>`;
     out+=`<title>${esc(h.id)} - ${esc(h.type)} / ${esc(h.func)}${h.up?' / Hoist Up':''}${h.auto?' / Automated':''}${isDone(h.id)?' / marked':''}</title></g>`;
   }
@@ -1432,12 +1489,12 @@ function legendGroups(){
 }
 function usedFuncs(){ return [...new Set(S.hoists.filter(h=>h.ok).map(h=>h.func))]; }
 function renderLegend(){
-  const L=$('legend'); if(!S.plot.legend||!S.hoists.length){ L.style.display='none'; return; }
-  L.style.display='block'; const T=themeT();
+  const L=$('legend'); if(!S.hoists.length){ L.style.display='none'; return; }
+  L.style.display=(S.plot.legend||isCompact())?'block':'none'; const T=themeT();
   const anyUp=S.hoists.some(h=>h.ok&&h.up), anyAuto=S.hoists.some(h=>h.ok&&h.auto&&autoMode());
   const mods=(anyUp?`<div class="it">${symSVG('circle-cross',T.ink,16,false,{up:true})}Hoist Up (invert)</div><div class="it">${symSVG('circle-cross',T.ink,16)}Hoist Down</div>`:'')
     +(anyAuto?`<div class="it">${symSVG('circle-cross',T.ink,16,false,{auto:autoMode()})}Automated</div>`:'');
-  L.innerHTML='<h4>HOIST TYPE</h4>'+legendTypes().map(e=>`<div class="it">${symSVG(e.sym,T.ink,16)}${esc(e.label)}</div>`).join('')
+  L.innerHTML='<button class="kx" type="button" aria-label="Close key">&times;</button><h4>HOIST TYPE</h4>'+legendTypes().map(e=>`<div class="it">${symSVG(e.sym,T.ink,16)}${esc(e.label)}</div>`).join('')
     +(mods?'<h4 style="margin-top:6px">MODIFIERS</h4>'+mods:'')
     +'<h4 style="margin-top:6px">FUNCTION</h4>'+legendGroups().map(g=>{ const f=g.f, r=S.funcRing[f]; return `<div class="it"><span class="sw" style="background:${scrCol(S.funcMap[f])}${r?`;box-shadow:0 0 0 2px var(--knock),0 0 0 3.5px ${scrCol(r)}`:''}"></span>${esc(g.label)}</div>`; }).join('');
 }
@@ -1445,7 +1502,9 @@ function renderInfo(){
   const box=$('info'); if(!S.sel){ box.style.display='none'; return; }
   const it=plotItems().find(i=>i.h.id===S.sel); if(!it){ box.style.display='none'; return; }
   const h=it.h; box.style.display='block';
-  const yq=yInfo(it.yu); box.innerHTML=`<b>${esc(h.id)}</b> &nbsp;${esc(h.type)} / ${esc(h.func)}${h.up?' / Hoist Up (invert)':''}${h.auto?' / Automated':''}<br>X: ${fmtDist(it.xs)} ${sideOf(it)==='CL'?'':esc(sideOf(it))} &nbsp; Y: ${fmtDist(it.yu)} ${yq.key==='datum'?'':esc(yq.dir)}${loadTxt(h)?' &nbsp; '+loadTxt(h):''}${isDone(h.id)?' &nbsp; \u2713 marked':''}`;
+  const yq=yInfo(it.yu), done=isDone(h.id);
+  box.innerHTML=`<button class="ix" type="button" aria-label="Close">&times;</button><b>${esc(h.id)}</b> &nbsp;${esc(h.type)} / ${esc(h.func)}${h.up?' / Hoist Up (invert)':''}${h.auto?' / Automated':''}<br>X: ${fmtDist(it.xs)} ${sideOf(it)==='CL'?'':esc(sideOf(it))} &nbsp; Y: ${fmtDist(it.yu)} ${yq.key==='datum'?'':esc(yq.dir)}${loadTxt(h)?' &nbsp; '+loadTxt(h):''}
+    <div class="iacts"><button class="btn${done?' on':''}" type="button" data-mark="${esc(h.id)}">${done?'&#10003; Marked':'Mark done'}</button></div>`;
 }
 
 /* ============================ sidebar UI ============================ */
@@ -2354,13 +2413,38 @@ function init(){
   plot.addEventListener('wheel',e=>{ e.preventDefault(); const r=plot.getBoundingClientRect(); const mx=e.clientX-r.left,my=e.clientY-r.top;
     const wx=P.cx+(mx-P.W/2)/P.k, wy=P.cy+(my-P.H/2)/P.k; P.k=clamp(P.k*Math.exp(-e.deltaY*0.0015),0.002,3);
     P.cx=wx-(mx-P.W/2)/P.k; P.cy=wy-(my-P.H/2)/P.k; if(!P.raf) P.raf=requestAnimationFrame(()=>{P.raf=0;renderPlot();}); },{passive:false});
-  let drag=null;
-  plot.addEventListener('pointerdown',e=>{ drag={x:e.clientX,y:e.clientY,cx:P.cx,cy:P.cy,moved:false,t:e.target}; });
-  window.addEventListener('pointermove',e=>{ if(!drag) return; const dx=e.clientX-drag.x, dy=e.clientY-drag.y;
-    if(!drag.moved && Math.hypot(dx,dy)>4){ drag.moved=true; plot.classList.add('grabbing'); }
-    if(drag.moved){ P.cx=drag.cx-dx/P.k; P.cy=drag.cy-dy/P.k; if(!P.raf) P.raf=requestAnimationFrame(()=>{P.raf=0;renderPlot();}); } });
-  window.addEventListener('pointerup',e=>{ if(!drag) return; const d=drag; drag=null; plot.classList.remove('grabbing');
-    if(!d.moved){ const g=d.t.closest&&d.t.closest('.hz'); if(g) select(g.dataset.id,'plot'); else if(S.sel){ S.sel=null; renderAll(); } } });
+  // Pan with one finger / the mouse, pinch to zoom and pan with two fingers, double-tap (or double-click) to zoom in
+  const pts=new Map(); let drag=null, pinch=null, lastTap=null;
+  const redraw=()=>{ if(!P.raf) P.raf=requestAnimationFrame(()=>{P.raf=0;renderPlot();}); };
+  const local=(x,y)=>{ const r=plot.getBoundingClientRect(); return [x-r.left,y-r.top]; };
+  const zoomAt=(f,mx,my)=>{ const wx=P.cx+(mx-P.W/2)/P.k, wy=P.cy+(my-P.H/2)/P.k; P.k=clamp(P.k*f,0.002,3); P.cx=wx-(mx-P.W/2)/P.k; P.cy=wy-(my-P.H/2)/P.k; redraw(); };
+  const startPinch=()=>{ const [a,b]=[...pts.values()], m=local((a.x+b.x)/2,(a.y+b.y)/2);
+    pinch={d:Math.hypot(a.x-b.x,a.y-b.y)||1,k:P.k,wx:P.cx+(m[0]-P.W/2)/P.k,wy:P.cy+(m[1]-P.H/2)/P.k}; drag=null; };
+  plot.addEventListener('pointerdown',e=>{ pts.set(e.pointerId,{x:e.clientX,y:e.clientY}); try{ plot.setPointerCapture(e.pointerId); }catch(_){}
+    if(pts.size===2) startPinch(); else if(pts.size===1) drag={x:e.clientX,y:e.clientY,cx:P.cx,cy:P.cy,moved:false,t:e.target,type:e.pointerType}; });
+  plot.addEventListener('pointermove',e=>{ if(!pts.has(e.pointerId)) return; pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(pinch&&pts.size>=2){ const [a,b]=[...pts.values()], m=local((a.x+b.x)/2,(a.y+b.y)/2);
+      P.k=clamp(pinch.k*Math.hypot(a.x-b.x,a.y-b.y)/pinch.d,0.002,3); P.cx=pinch.wx-(m[0]-P.W/2)/P.k; P.cy=pinch.wy-(m[1]-P.H/2)/P.k; redraw(); return; }
+    if(!drag) return; const dx=e.clientX-drag.x, dy=e.clientY-drag.y;
+    if(!drag.moved && Math.hypot(dx,dy)>(drag.type==='touch'?8:4)){ drag.moved=true; plot.classList.add('grabbing'); }
+    if(drag.moved){ P.cx=drag.cx-dx/P.k; P.cy=drag.cy-dy/P.k; redraw(); } });
+  const endPt=e=>{ if(!pts.has(e.pointerId)) return; pts.delete(e.pointerId);
+    if(pinch){ if(pts.size<2){ pinch=null; if(pts.size===1){ const [q]=[...pts.values()]; drag={x:q.x,y:q.y,cx:P.cx,cy:P.cy,moved:true}; } } return; }
+    const d=drag; drag=null; plot.classList.remove('grabbing'); if(!d||d.moved||e.type==='pointercancel') return;
+    const now=Date.now(), [mx,my]=local(e.clientX,e.clientY);
+    if(d.type==='touch'&&lastTap&&now-lastTap.t<320&&Math.hypot(mx-lastTap.x,my-lastTap.y)<30){ lastTap=null; zoomAt(2,mx,my); return; }
+    lastTap={t:now,x:mx,y:my};
+    const g=d.t.closest&&d.t.closest('.hz');
+    if(g){ if($('plotWrap').classList.contains('keyopen')) setKey(false); select(g.dataset.id,'plot'); } else if($('plotWrap').classList.contains('keyopen')) setKey(false); else if(S.sel){ S.sel=null; renderAll(); } };
+  plot.addEventListener('pointerup',endPt); plot.addEventListener('pointercancel',endPt);
+  plot.addEventListener('dblclick',e=>{ const [mx,my]=local(e.clientX,e.clientY); zoomAt(2,mx,my); });
+  // Key sheet, more options, hoist card
+  const setKey=on=>{ $('plotWrap').classList.toggle('keyopen',on); $('pKey').setAttribute('aria-expanded',on); if(on&&S.sel){ S.sel=null; renderAll(); } };
+  $('pKey').onclick=()=>setKey(!$('plotWrap').classList.contains('keyopen'));
+  $('pMore').onclick=()=>{ const tb=$('pMore').closest('.toolbar'), on=!tb.classList.contains('more'); tb.classList.toggle('more',on); $('pMore').setAttribute('aria-expanded',on); requestAnimationFrame(()=>renderPlot()); };
+  $('legend').addEventListener('click',e=>{ if(e.target.closest('.kx')) setKey(false); });
+  $('info').addEventListener('click',e=>{ if(e.target.closest('.ix')){ S.sel=null; renderAll(); return; }
+    const m=e.target.closest('[data-mark]'); if(m){ toggleDone(m.dataset.mark); renderInfo(); } });
   window.addEventListener('resize',()=>{ if(S.tab==='plot') renderPlot(); });
   // rows/data selection
   // ---- data tab: inline editing
