@@ -11,7 +11,7 @@ const file = existsSync(new URL('../datum.config.json', import.meta.url)) ? JSON
 const cloud = { url: process.env.SUPABASE_URL || file.supabaseUrl || '', key: process.env.SUPABASE_ANON_KEY || file.supabaseAnonKey || '' };
 const cloudJs = 'window.DATUM_CLOUD=' + JSON.stringify(cloud.url && cloud.key ? cloud : null).replace(/</g, '\\u003c') + ';';
 const html = read('src/app.html').replace('/*__JSPDF__*/', () => lib).replace('/*__SUPABASE__*/', () => sb)
-  .replace('/*__CLOUD_CONFIG__*/', () => cloudJs).replace('__BRAND_ICON__', () => brand);
+  .replace('/*__CLOUD_CONFIG__*/', () => cloudJs).replaceAll('__BRAND_ICON__', () => brand);
 write('site/index.html', html);
 const stamp = new Date().toISOString().replace(/\D/g, '').slice(0, 14);
 write('site/sw.js', read('src/sw.js.tpl').replace('__BUILD__', stamp));

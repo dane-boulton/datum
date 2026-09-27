@@ -16,5 +16,5 @@ Single-page app for arena floor markout: import a CSV of chain motors, plot them
 ## Deploy
 Netlify builds automatically from `netlify.toml` (build: `npm install && node scripts/build.mjs`, publish: `site`). Push to `main` to deploy.
 
-## Cloud sign-in (optional)
-Set `SUPABASE_URL` and `SUPABASE_ANON_KEY` in Netlify to turn on sign-in, cloud projects and sharing. Without them the app works offline-only, as before. Full steps: `docs/CLOUD_SETUP.md`.
+## Cloud sign-in
+Set `SUPABASE_URL` and `SUPABASE_ANON_KEY` in Netlify to put the app behind an invite-only sign-in with cloud projects and sharing. Without them the app builds with no sign-in (useful for local work). Full steps: `docs/CLOUD_SETUP.md`.

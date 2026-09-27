@@ -2,12 +2,13 @@
 // Access rules mirror supabase/schema.sql (tested separately against Postgres by supabase/test/rls_test.sql).
 (() => {
   const DBK = '__mockdb', SK = '__mocksession';
-  const load = () => JSON.parse(localStorage.getItem(DBK) || 'null') || { users: {}, profiles: [], projects: [], project_shares: [] };
+  const load = () => JSON.parse(localStorage.getItem(DBK) || 'null') || { users: {}, profiles: [], projects: [], project_shares: [], invites: [] };
   const save = db => localStorage.setItem(DBK, JSON.stringify(db));
   const uuid = () => 'xxxxxxxx-xxxx-4xxx-8xxx-xxxxxxxxxxxx'.replace(/x/g, () => (Math.random() * 16 | 0).toString(16));
   let tick = 0; const now = () => new Date(Date.now() + (tick++)).toISOString();
   window.__mock = {
-    seed(users) { const db = load(); for (const [email, pw, role] of users) { const id = uuid(); db.users[email] = { id, pw }; db.profiles.push({ id, email, role }); } save(db); },
+    seed(users) { const db = load(); for (const [email, pw, role] of users) { const id = uuid(); db.users[email] = { id, pw }; db.profiles.push({ id, email, role }); db.invites.push({ email, role: role === 'disabled' ? 'viewer' : role, created_at: now() }); } save(db); },
+    invite(email, role) { const db = load(); db.invites.push({ email, role: role || 'viewer', created_at: now() }); save(db); },
     db: load, save, calls: [],
   };
   function client() {
@@ -15,11 +16,13 @@
     const session = () => JSON.parse(localStorage.getItem(SK) || 'null');
     const emit = (ev, s) => listeners.forEach(cb => cb(ev, s));
     const me = () => session() && session().user;
-    const role = db => { const u = me(); const p = u && db.profiles.find(p => p.id === u.id); return p ? p.role : 'viewer'; };
+    const role = db => { const u = me(); const p = u && db.profiles.find(p => p.id === u.id); return p ? p.role : 'disabled'; };
     const author = db => ['editor', 'admin'].includes(role(db));
+    const access = db => ['viewer', 'editor', 'admin'].includes(role(db));
     const owns = (db, pid) => db.projects.some(p => p.id === pid && p.owner === me().id);
-    const canRead = { projects: (db, r) => r.owner === me().id || db.project_shares.some(s => s.project_id === r.id && s.email === me().email),
-      project_shares: (db, r) => owns(db, r.project_id) || r.email === me().email,
+    const canRead = { projects: (db, r) => access(db) && (r.owner === me().id || db.project_shares.some(s => s.project_id === r.id && s.email === me().email)),
+      project_shares: (db, r) => access(db) && (owns(db, r.project_id) || r.email === me().email),
+      invites: db => role(db) === 'admin',
       profiles: (db, r) => r.id === me().id || role(db) === 'admin' };
     const auth = {
       onAuthStateChange(cb) { listeners.push(cb); setTimeout(() => cb('INITIAL_SESSION', session()), 0); return { data: { subscription: { unsubscribe() {} } } }; },
@@ -27,7 +30,8 @@
         if (!u || u.pw !== password) return { error: { message: 'Invalid login credentials' } };
         const s = { user: { id: u.id, email: email.toLowerCase() } }; localStorage.setItem(SK, JSON.stringify(s)); emit('SIGNED_IN', s); return { data: s, error: null }; },
       async signUp({ email, password }) { const db = load(); email = email.toLowerCase(); if (db.users[email]) return { error: { message: 'User already registered' } };
-        const id = uuid(); db.users[email] = { id, pw: password }; db.profiles.push({ id, email, role: 'viewer' }); save(db); return { data: { session: null, user: { id } }, error: null }; },
+        const inv = db.invites.find(i => i.email === email); if (!inv) return { data: null, error: { message: 'Database error saving new user', status: 500 } };
+        const id = uuid(); db.users[email] = { id, pw: password }; db.profiles.push({ id, email, role: inv.role }); save(db); return { data: { session: null, user: { id } }, error: null }; },
       async signOut() { localStorage.removeItem(SK); emit('SIGNED_OUT', null); return { error: null }; },
       async signInWithOAuth(o) { window.__mock.calls.push(['oauth', o]); return { error: null }; },
       async resetPasswordForEmail(e, o) { window.__mock.calls.push(['reset', e, o]); return { error: null }; },
@@ -53,12 +57,14 @@
             Object.assign(r, { id: uuid(), owner: me().id, owner_email: me().email, created_at: now(), updated_at: now() }); }
           if (t === 'project_shares') { if (!(owns(db, r.project_id) && author(db))) return { data: null, error: { message: 'new row violates row-level security policy', code: '42501' } };
             if (rows.some(s => s.project_id === r.project_id && s.email === r.email)) return { data: null, error: { message: 'duplicate key value violates unique constraint', code: '23505' } }; }
+          if (t === 'invites') { if (role(db) !== 'admin') return { data: null, error: { message: 'new row violates row-level security policy', code: '42501' } };
+            if (rows.some(i => i.email === r.email)) return { data: null, error: { message: 'duplicate key value violates unique constraint', code: '23505' } }; r.created_at = now(); }
           rows.push(r); out = [r];
         } else if (q.op === 'update') {
-          out = rows.filter(match).filter(r => t === 'projects' ? (r.owner === me().id && author(db)) : t === 'profiles' ? role(db) === 'admin' : false);
+          out = rows.filter(match).filter(r => t === 'projects' ? (r.owner === me().id && author(db)) : (t === 'profiles' || t === 'invites') ? role(db) === 'admin' : false);
           for (const r of out) { Object.assign(r, q.body); if (t === 'projects') r.updated_at = now(); }
         } else {
-          out = rows.filter(match).filter(r => t === 'projects' ? (r.owner === me().id && author(db)) : t === 'project_shares' ? (owns(db, r.project_id) || r.email === me().email) : false);
+          out = rows.filter(match).filter(r => t === 'projects' ? (r.owner === me().id && author(db)) : t === 'project_shares' ? (owns(db, r.project_id) || r.email === me().email) : t === 'invites' ? role(db) === 'admin' : false);
           db[t] = rows.filter(r => !out.includes(r)); if (t === 'projects') db.project_shares = db.project_shares.filter(s => !out.some(p => p.id === s.project_id));
         }
         save(db);
@@ -70,7 +76,8 @@
       }
       return b;
     }
-    return { auth, from };
+    async function rpc(fn, args) { const db = load(); if (fn === 'is_invited') return { data: access(db) && db.invites.some(i => i.email === String(args.e).toLowerCase()), error: null }; return { data: null, error: { message: 'unknown rpc' } }; }
+    return { auth, from, rpc };
   }
   window.__datumSupabase = () => client();
 })();

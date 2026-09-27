@@ -267,6 +267,12 @@ table.al th{text-align:left;font-weight:600;color:var(--muted);font-size:11px;le
 table.al td{padding:5px 8px;border-top:1px solid var(--line);white-space:nowrap;font-variant-numeric:tabular-nums}
 table.al .gh td{border-top:1px solid var(--line3);padding-top:10px;font-weight:650;color:var(--ink2)}
 [hidden]{display:none!important}
+.gate{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto}
+.gatebox{width:100%;max-width:400px;background:var(--panel);border:1px solid var(--line3);border-radius:14px;padding:22px 22px 18px;box-shadow:0 20px 60px var(--shadow)}
+.gatebrand{display:flex;align-items:center;gap:12px;margin-bottom:18px}.gatebrand .logo{width:34px;height:34px;border-radius:9px;overflow:hidden;display:block}.gatebrand .logo img{width:100%;height:100%;display:block}
+.gatebrand b{display:block;font-size:16px}.gatebrand small{color:var(--muted);font-size:12px}
+.gatebox h3{margin:0 0 4px;font-size:18px}.gatebox .msub{color:var(--muted);font-size:13px;line-height:1.45}
+.vonly{display:none} body.viewer .vonly{display:block} body.viewer .edonly{display:none!important}
 button.btn.danger{color:var(--err)}
 .iconbtn.acct.in{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .cchip{font-size:11.5px;font-weight:650;padding:4px 10px;border-radius:999px;background:var(--raised2);color:var(--ink2);border:1px solid var(--line2);white-space:nowrap}
@@ -280,7 +286,8 @@ button.btn.danger{color:var(--err)}
 .citem{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line);flex-wrap:wrap}.citem.cur .cname b::before{content:"\25CF ";color:#22c55e}
 .cname{flex:1;min-width:160px;display:flex;flex-direction:column;gap:2px}.cname small{color:var(--muted);font-size:11.5px}
 .cacts{display:flex;gap:6px;flex-wrap:wrap}.cacts select{width:auto}
-.cnew{display:flex;gap:8px;margin-top:10px}.cnew input{flex:1}
+.cnew{display:flex;gap:8px;margin-top:10px}.cnew input{flex:1;min-width:0}.cnew select{width:auto;flex:none}
+a.btn{display:inline-flex;align-items:center;background:var(--raised);border:1px solid var(--line2);padding:6px 12px;border-radius:var(--radius-sm);color:var(--ink2);text-decoration:none;font-weight:520;font-size:inherit}a.btn:hover{background:var(--raised2);color:var(--ink)}
 body.ro #v-data input,body.ro #v-data select,body.ro #v-data .act,body.ro #dApply,body.ro #dDiscard,body.ro #dAdd,body.ro #dRevert,body.ro #dAlign{pointer-events:none;opacity:.5}
 table.al .same{color:var(--faint)} table.al .chg{color:var(--warn);font-weight:600}
 table.dt td.num{color:var(--muted)}
@@ -456,18 +463,18 @@ table.dt td.num{color:var(--muted)}
     <details open>
       <summary>1. Import CSV</summary>
       <div class="body">
-        <div class="drop" id="drop">Drop a CSV here or click to choose<input type="file" id="file" accept=".csv,.txt,text/csv" hidden></div>
-        <div class="row2">
+        <div class="drop edonly" id="drop">Drop a CSV here or click to choose<input type="file" id="file" accept=".csv,.txt,text/csv" hidden></div>
+        <div class="row2 edonly">
           <button class="btn" id="btnSample">Load sample</button>
           <button class="btn" id="btnTemplate">Download template CSV</button>
           <button class="btn" id="btnPaste">Paste CSV&hellip;</button>
         </div>
-        <div id="pasteBox" hidden>
+        <div id="pasteBox" class="edonly" hidden>
           <textarea id="pasteText" rows="5" placeholder="Hoist Type,Hoist Function,Hoist ID,Origin X,Origin Y"></textarea>
           <div class="row2" style="margin-top:6px"><button class="btn solid" id="btnPasteGo">Import pasted text</button></div>
         </div>
-        <div class="hint" id="fileInfo">No file loaded.</div>
-        <div class="row2" style="margin-top:10px">
+        <div class="hint edonly" id="fileInfo">No file loaded.</div>
+        <div class="row2 edonly" style="margin-top:10px">
           <button class="btn solid" id="btnSaveProj">Save project</button>
           <button class="btn" id="btnOpenProj">Open project&hellip;</button>
           <button class="btn" id="btnClearProj">New / clear</button>
@@ -478,7 +485,7 @@ table.dt td.num{color:var(--muted)}
           <button class="btn solid" id="btnCloudSave" hidden>Save to cloud&hellip;</button>
         </div>
         <div class="hint" id="cloudInfo"></div>
-        <div class="hint" id="projInfo">Projects save the CSV data, all settings, completed marks and logos to a file you can reopen later. Your work is also kept automatically in this browser.</div>
+        <div class="hint edonly" id="projInfo">Projects save the CSV data, all settings, completed marks and logos to a file you can reopen later. Your work is also kept automatically in this browser.</div>
       </div>
     </details>
 
@@ -539,9 +546,12 @@ table.dt td.num{color:var(--muted)}
 
   <main class="main">
     <div class="empty" id="empty">
-      <h2>Import a chain motor CSV to begin</h2>
-      <div>Columns: Hoist Type, Hoist Function, Hoist ID, Origin X, Origin Y (optional: Load)</div>
-      <div class="row2"><button class="btn solid" id="btnSample2">Load sample data</button><button class="btn" id="btnPick2">Choose a CSV</button></div>
+      <h2 class="edonly">Import a chain motor CSV to begin</h2>
+      <div class="edonly">Columns: Hoist Type, Hoist Function, Hoist ID, Origin X, Origin Y (optional: Load)</div>
+      <div class="row2 edonly"><button class="btn solid" id="btnSample2">Load sample data</button><button class="btn" id="btnPick2">Choose a CSV</button></div>
+      <h2 class="vonly">No project open</h2>
+      <div class="vonly">Open a project that has been shared with you.</div>
+      <div class="vonly"><button class="btn solid" id="btnViewerOpen">Shared projects</button></div>
     </div>
 
     <section class="view on" id="v-plot">
@@ -685,6 +695,7 @@ table.dt td.num{color:var(--muted)}
   <div class="mbody" id="alignBody"></div>
   <div class="mfoot"><button class="btn" id="alignDiscard">Discard</button><button class="btn" id="alignReview">Review in table</button><button class="btn solid" id="alignApply">Apply changes</button></div>
 </div></div>
+<div class="gate" id="gate" hidden><div class="gatebox"><div class="gatebrand"><span class="logo"><img src="__BRAND_ICON__" alt="" width="34" height="34"></span><div><b>DATUM</b><small>Production Markout Tool</small></div></div><div id="gateBody"></div></div></div>
 <div class="modal-bg" id="cloudModal" hidden><div class="modal" role="dialog" aria-modal="true" id="cloudBox"></div></div>
 <div class="toast" id="toast"></div>
 
@@ -1465,6 +1476,7 @@ function select(id, from){
 
 /* ============================ import ============================ */
 function loadCSVText(text,name,isSample){
+  if(isViewer()){ toast('You have view-only access.'); return; }
   cloudDetach();
   const t=parseCSV(text);
   if(t.length<2){ toast('That file has no data rows.'); return; }
@@ -1918,15 +1930,16 @@ function saveProjectFile(){
 }
 function loadProjectFile(f){
   if(!f) return; const fr=new FileReader();
-  fr.onload=()=>{ try{ const pj=JSON.parse(fr.result); cloudDetach(); applyProject(pj); toast('Opened project '+f.name.replace(/\.(datum|markout)\.json$|\.json$/i,'')); const ar=$('appRoot'); if(ar) ar.classList.remove('side-open'); }catch(e){ toast('That file is not a Markout project.'); } };
+  fr.onload=()=>{ if(isViewer()){ toast('You have view-only access.'); return; } try{ const pj=JSON.parse(fr.result); cloudDetach(); applyProject(pj); toast('Opened project '+f.name.replace(/\.(datum|markout)\.json$|\.json$/i,'')); const ar=$('appRoot'); if(ar) ar.classList.remove('side-open'); }catch(e){ toast('That file is not a Markout project.'); } };
   fr.readAsText(f);
 }
-function clearProject(){
+function clearProject(quiet){
+  if(!quiet&&isViewer()) return;
   cloudDetach();
   S.raw={headers:[],rows:[],name:''}; S.map={type:-1,func:-1,id:-1,pos:-1,x:-1,y:-1,load:-1}; S.orig=null; S.sample=false; S.sampleLoaded=false; S.sel=null; S.pending={}; S.skip=new Set();
   S.done=new Set(); S.doneName=''; S.mo.cur=0; S.typeMap={}; S.funcMap={}; S.funcRing={}; S.logoShow=S.logoUser=S._imgShow=S._imgUser=null; saveLogo(); syncLogoUI();
   try{ localStorage.removeItem(PROJ_KEY); }catch(e){}
-  $('fileInfo').textContent='No file loaded.'; saveDone(); renderMapUI(); refresh(); schedulePreview(true); toast('Started a new project.');
+  $('fileInfo').textContent='No file loaded.'; saveDone(); renderMapUI(); refresh(); schedulePreview(true); if(!quiet) toast('Started a new project.');
 }
 let asTimer=0, asOff=false;
 function autosaveSoon(){ if(asOff) return; cloudSaveSoon(); clearTimeout(asTimer); asTimer=setTimeout(()=>{ try{ if(!S.raw.rows.length){ localStorage.removeItem(PROJ_KEY); return; } localStorage.setItem(PROJ_KEY,JSON.stringify(projectData(false))); const i=$('projInfo'); if(i) i.dataset.saved=new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }catch(e){} },600); }
@@ -1945,14 +1958,18 @@ function bindInput(id,obj,key,type,after){
 }
 let fixedVis=()=>{};
 /* ============================ cloud: sign-in, projects, sharing (Supabase) ============================ */
-// Roles come from public.profiles: viewer (shared projects only), editor (own projects + sharing), admin (editor + Team).
+// When cloud is configured the whole app sits behind a sign-in screen. Accounts are invite only (public.invites).
+// Roles come from public.profiles: viewer (shared projects only, view only), editor (own projects + sharing),
+// admin (editor + Team: invites and roles), disabled (no access).
 // The open cloud project is S.cloud = {id,name,ownerEmail,own,updatedAt,dirty}. Done marks never leave the device.
-const CLOUD_LINK_KEY='markoutTool.cloudLink.v1', CLOUD_DONE_KEY='markoutTool.cloudDone.v1';
-const C={sb:null,user:null,email:'',role:'viewer',timer:0,lastSent:'',busy:false,status:'',err:''};
-const ROLE_NAME={viewer:'Viewer',editor:'Editor',admin:'Admin'};
+const CLOUD_LINK_KEY='markoutTool.cloudLink.v1', CLOUD_DONE_KEY='markoutTool.cloudDone.v1', CLOUD_USER_KEY='markoutTool.cloudUser.v1';
+const C={sb:null,user:null,email:'',role:'',timer:0,lastSent:'',busy:false,status:'',err:''};
+const ROLE_NAME={viewer:'Viewer',editor:'Editor',admin:'Admin',disabled:'No access'};
+const NOT_INVITED='That email has not been invited to DATUM yet. Ask your admin to invite you, then try again.';
 function canAuthor(){ return !!C.user && (C.role==='editor'||C.role==='admin'); }
-function readOnly(){ return !!(S.cloud && !S.cloud.own); }
-function roGuard(){ if(!readOnly()) return false; toast('This project is shared with you as view only.'); return true; }
+function isViewer(){ return !!C.sb && !canAuthor(); }
+function readOnly(){ return !!(S.cloud && !S.cloud.own) || isViewer(); }
+function roGuard(){ if(!readOnly()) return false; toast(isViewer()?'You have view-only access.':'This project is shared with you as view only.'); return true; }
 function saveLink(){ try{ if(S.cloud) localStorage.setItem(CLOUD_LINK_KEY,JSON.stringify(S.cloud)); else localStorage.removeItem(CLOUD_LINK_KEY); }catch(e){} }
 function cloudDoneAll(){ try{ return JSON.parse(localStorage.getItem(CLOUD_DONE_KEY)||'{}')||{}; }catch(e){ return {}; } }
 function cloudDoneSave(){ if(!S.cloud) return; try{ const a=cloudDoneAll(); a[S.cloud.id]=[...S.done]; localStorage.setItem(CLOUD_DONE_KEY,JSON.stringify(a)); }catch(e){} }
@@ -1961,23 +1978,23 @@ function cloudPayload(){ const o=projectData(true); delete o.done; delete o.done
 function redirectUrl(){ return location.origin+location.pathname; }
 function when(ts){ if(!ts) return ''; const d=new Date(ts); return isNaN(d)?'':d.toLocaleString([], {day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}); }
 function setStatus(st,err){ C.status=st; C.err=err||''; cloudUI(); }
+function authErr(e){ const m=(e&&e.message)||String(e); return /database error saving new user|not.?invited|signups? not allowed/i.test(m)?NOT_INVITED:m; }
 
 function cloudUI(){
-  const on=!!C.sb; document.body.classList.toggle('ro',readOnly());
-  const acc=$('btnAccount'); if(!acc) return; acc.hidden=!on;
-  acc.classList.toggle('in',!!C.user); acc.title=C.user?('Signed in as '+C.email+' - account & cloud projects'):'Sign in for cloud projects';
-  $('cloudRow').hidden=!on;
+  const on=!!C.sb; document.body.classList.toggle('ro',readOnly()); document.body.classList.toggle('viewer',isViewer());
+  const acc=$('btnAccount'); if(!acc) return; acc.hidden=!on||!C.user;
+  acc.classList.toggle('in',!!C.user); acc.title=C.user?('Signed in as '+C.email+' - account & cloud projects'):'';
+  $('cloudRow').hidden=!on||!C.user;
   const chip=$('cloudChip'), info=$('cloudInfo');
   let chipTxt='', cls='';
   if(S.cloud){
     if(!S.cloud.own) { chipTxt='View only'; cls='ro'; }
-    else if(!C.user) { chipTxt='Signed out'; cls='warn'; }
     else if(C.status==='saving') chipTxt='Saving...';
     else if(C.status==='offline'||(S.cloud.dirty&&navigator.onLine===false)) { chipTxt='Offline - will sync'; cls='warn'; }
     else if(C.status==='error') { chipTxt='Not saved'; cls='warn'; }
     else chipTxt=S.cloud.dirty?'Unsaved':'Saved';
     info.innerHTML=`Cloud project <b>${esc(S.cloud.name)}</b>`+(S.cloud.own?'':` &middot; shared by ${esc(S.cloud.ownerEmail)}, view only`)+(C.status==='error'&&C.err?`<br><span class="w">${esc(C.err)}</span>`:'');
-  } else info.textContent=on?(C.user?'This project is only on this device.':'Sign in to keep projects in the cloud and share them with your crew.'):'';
+  } else info.textContent=!on||!C.user?'':isViewer()?'Open a project shared with you from Cloud projects.':'This project is only on this device.';
   chip.hidden=!chipTxt; chip.textContent=chipTxt; chip.className='cchip'+(cls?' '+cls:'');
   $('btnCloudSave').hidden=!(on&&canAuthor()&&!S.cloud);
 }
@@ -2017,57 +2034,74 @@ async function cloudSync(){
   if(!S.cloud||!C.user) { cloudUI(); return; }
   const {data:row,error}=await C.sb.from('projects').select('updated_at,owner').eq('id',S.cloud.id).maybeSingle();
   if(error){ setStatus(navigator.onLine===false?'offline':'error',error.message); return; }
-  if(!row){ toast('"'+S.cloud.name+'" is no longer available to you in the cloud. Your copy on this device is kept.'); cloudDetach(); return; }
+  if(!row){ const nm=S.cloud.name; cloudDetach(); if(isViewer()){ asOff=true; clearProject(true); asOff=false; } toast('"'+nm+'" is no longer shared with you.'); return; }
   S.cloud.own=row.owner===C.user.id;
   if(S.cloud.own&&S.cloud.dirty){ C.lastSent=''; cloudSave(); return; }
   if(row.updated_at!==S.cloud.updatedAt){ if(await cloudOpen(S.cloud.id,true)) toast('Updated "'+S.cloud.name+'" to the latest version.'); return; }
   C.lastSent=JSON.stringify(cloudPayload()); setStatus('saved');
 }
+// Role from the server, cached per user so the app still opens offline
 async function loadRole(){
-  C.role='viewer'; if(!C.user) return;
-  const {data}=await C.sb.from('profiles').select('role').eq('id',C.user.id).maybeSingle(); if(data&&data.role) C.role=data.role;
+  let cached=''; try{ const j=JSON.parse(localStorage.getItem(CLOUD_USER_KEY)||'null'); if(j&&j.id===C.user.id) cached=j.role; }catch(e){}
+  let role=cached;
+  try{ const {data,error}=await C.sb.from('profiles').select('role').eq('id',C.user.id).maybeSingle(); if(!error) role=(data&&data.role)||'disabled'; }catch(e){}
+  C.role=role||'disabled';
+  try{ localStorage.setItem(CLOUD_USER_KEY,JSON.stringify({id:C.user.id,role:C.role})); }catch(e){}
 }
 
-/* ---- cloud dialogs */
+/* ---- sign-in screen (covers the whole app until signed in) */
+const GOOGLE_SVG='<svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.2l7.9 6.1C12.5 13.5 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 2.9-2.2 5.4-4.7 7.1l7.6 5.9c4.4-4.1 6.9-10.1 6.9-17.5z"/><path fill="#FBBC05" d="M10.6 28.7c-.5-1.4-.8-3-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.2 0-11.5-4-13.4-9.6l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>';
+function gateShow(on){ const g=$('gate'); if(!g) return; g.hidden=!on; if(!on) $('gateBody').innerHTML=''; }
+function gMsg(t,err){ const m=$('cMsg'); if(m){ m.textContent=t||''; m.className='cmsg'+(err?' err':''); } }
+function showGate(mode,msg,err){
+  mode=mode||'in'; gateShow(true);
+  const head={in:['Sign in','Sign in to use DATUM.'],setup:['Set up your account','First time here? Use the email address you were invited with and choose a password.'],reset:['Reset password','We will email you a link to set a new password.'],
+    wait:['DATUM','Checking your sign-in...'],off:['Access removed','Your access to DATUM has been removed. Ask your admin if this is a mistake.']}[mode];
+  let body='';
+  if(mode==='wait') body='';
+  else if(mode==='off') body=`<div class="cform"><div class="cmsg">Signed in as ${esc(C.email)}.</div><button class="btn" type="button" id="cOut2">Sign out</button></div>`;
+  else body=`<form class="cform" id="cForm">
+    <label>Email<input type="email" id="cEmail" autocomplete="email" required></label>
+    ${mode==='reset'?'':`<label>${mode==='setup'?'Choose a password':'Password'}<input type="password" id="cPass" autocomplete="${mode==='setup'?'new-password':'current-password'}" minlength="8" required></label>`}
+    ${mode==='setup'?'<label>Confirm password<input type="password" id="cPass2" autocomplete="new-password" minlength="8" required></label>':''}
+    <div class="cmsg" id="cMsg"></div>
+    <button class="btn solid" type="submit" id="cGo">${mode==='in'?'Sign in':mode==='setup'?'Create my account':'Send reset link'}</button>
+    ${mode==='reset'?'':`<div class="cor"><span>or</span></div><button class="btn gbtn" type="button" id="cGoogle">${GOOGLE_SVG}Continue with Google</button>`}
+    <div class="clinks">${mode==='in'?'<a href="#" data-m="setup">First time? Set up your account</a><a href="#" data-m="reset">Forgot password?</a>':'<a href="#" data-m="in">Back to sign in</a>'}</div>
+  </form>`;
+  $('gateBody').innerHTML=`<h3>${head[0]}</h3><div class="msub">${head[1]}</div>${body}`;
+  if(msg) gMsg(msg,err);
+  $('gateBody').querySelectorAll('[data-m]').forEach(a=>a.onclick=e=>{ e.preventDefault(); showGate(a.dataset.m); });
+  if($('cOut2')) $('cOut2').onclick=()=>C.sb.auth.signOut();
+  if($('cGoogle')) $('cGoogle').onclick=async()=>{ const {error}=await C.sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:redirectUrl()}}); if(error) gMsg(authErr(error),true); };
+  const f=$('cForm'); if(!f) return; const em=$('cEmail'); if(em) em.focus();
+  f.onsubmit=async e=>{ e.preventDefault(); const email=$('cEmail').value.trim().toLowerCase(), pw=$('cPass')?$('cPass').value:''; const b=$('cGo'); b.disabled=true; gMsg('');
+    try{
+      if(mode==='in'){ const {error}=await C.sb.auth.signInWithPassword({email,password:pw}); if(error) throw error; }
+      else if(mode==='setup'){ if(pw!==$('cPass2').value) throw new Error('The two passwords do not match.');
+        const {data,error}=await C.sb.auth.signUp({email,password:pw,options:{emailRedirectTo:redirectUrl()}}); if(error) throw error;
+        if(!(data&&data.session)){ showGate('in','Almost done: check your email for a confirmation link from DATUM, click it, then sign in here.'); return; } }
+      else { const {error}=await C.sb.auth.resetPasswordForEmail(email,{redirectTo:redirectUrl()}); if(error) throw error; gMsg('If that email has an account, a reset link is on its way.'); }
+    }catch(err){ gMsg(authErr(err),true); }
+    if($('cGo')) $('cGo').disabled=false; };
+}
+
+/* ---- dialogs */
 function mOpen(html){ $('cloudBox').innerHTML=html; $('cloudModal').hidden=false; const f=$('cloudBox').querySelector('input:not([type=checkbox]),button.solid'); if(f) f.focus(); }
 function mClose(){ $('cloudModal').hidden=true; }
-function mMsg(t,err){ const m=$('cMsg'); if(m){ m.textContent=t; m.className='cmsg'+(err?' err':''); } }
-function busyBtn(b,on){ if(!b) return; b.disabled=on; }
-const GOOGLE_SVG='<svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.2l7.9 6.1C12.5 13.5 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 2.9-2.2 5.4-4.7 7.1l7.6 5.9c4.4-4.1 6.9-10.1 6.9-17.5z"/><path fill="#FBBC05" d="M10.6 28.7c-.5-1.4-.8-3-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.2 0-11.5-4-13.4-9.6l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>';
-function showSignIn(mode){
-  mode=mode||'in';
-  const t={in:'Sign in',up:'Create account',reset:'Reset password'}[mode];
-  mOpen(`<h3>${t}</h3><div class="msub">${mode==='reset'?'We will email you a link to set a new password.':'Cloud projects are saved to your account and can be shared with your crew.'}</div>
-  <form class="mbody cform" id="cForm">
-    <label>Email<input type="email" id="cEmail" autocomplete="email" required></label>
-    ${mode==='reset'?'':`<label>Password<input type="password" id="cPass" autocomplete="${mode==='up'?'new-password':'current-password'}" minlength="6" required></label>`}
-    <div class="cmsg" id="cMsg"></div>
-    <button class="btn solid" type="submit" id="cGo">${mode==='in'?'Sign in':mode==='up'?'Create account':'Send reset link'}</button>
-    ${mode==='reset'?'':`<div class="cor"><span>or</span></div><button class="btn gbtn" type="button" id="cGoogle">${GOOGLE_SVG}Continue with Google</button>`}
-    <div class="clinks">${mode!=='in'?'<a href="#" data-m="in">Have an account? Sign in</a>':'<a href="#" data-m="up">New here? Create an account</a><a href="#" data-m="reset">Forgot password?</a>'}</div>
-  </form><div class="mfoot"><button class="btn" data-close>Close</button></div>`);
-  $('cloudBox').querySelectorAll('[data-m]').forEach(a=>a.onclick=e=>{ e.preventDefault(); showSignIn(a.dataset.m); });
-  if($('cGoogle')) $('cGoogle').onclick=async()=>{ const {error}=await C.sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:redirectUrl()}}); if(error) mMsg(error.message,true); };
-  $('cForm').onsubmit=async e=>{ e.preventDefault(); const email=$('cEmail').value.trim(), pw=$('cPass')?$('cPass').value:''; const b=$('cGo'); busyBtn(b,true); mMsg('');
-    try{
-      if(mode==='in'){ const {error}=await C.sb.auth.signInWithPassword({email,password:pw}); if(error) throw error; mClose(); }
-      else if(mode==='up'){ const {data,error}=await C.sb.auth.signUp({email,password:pw,options:{emailRedirectTo:redirectUrl()}}); if(error) throw error;
-        if(data&&data.session) mClose(); else mMsg('Check your email and click the link to confirm your account, then sign in.'); }
-      else { const {error}=await C.sb.auth.resetPasswordForEmail(email,{redirectTo:redirectUrl()}); if(error) throw error; mMsg('If that email has an account, a reset link is on its way.'); }
-    }catch(err){ mMsg(err.message||String(err),true); }
-    busyBtn(b,false); };
-}
+function mMsg(t,err){ const m=$('cloudBox').querySelector('.cmsg#cMsg'); if(m){ m.textContent=t; m.className='cmsg'+(err?' err':''); } }
+function busyBtn(b,on){ if(b) b.disabled=on; }
 function showNewPassword(){
   mOpen(`<h3>Set a new password</h3><div class="msub">Signed in as ${esc(C.email)}.</div>
-  <form class="mbody cform" id="cForm"><label>New password<input type="password" id="cPass" autocomplete="new-password" minlength="6" required></label><div class="cmsg" id="cMsg"></div><button class="btn solid" type="submit" id="cGo">Save password</button></form>
+  <form class="mbody cform" id="cPwForm"><label>New password<input type="password" id="cNewPass" autocomplete="new-password" minlength="8" required></label><div class="cmsg" id="cMsg"></div><button class="btn solid" type="submit">Save password</button></form>
   <div class="mfoot"><button class="btn" data-close>Close</button></div>`);
-  $('cForm').onsubmit=async e=>{ e.preventDefault(); const {error}=await C.sb.auth.updateUser({password:$('cPass').value}); if(error) mMsg(error.message,true); else { mClose(); toast('Password updated.'); } };
+  $('cPwForm').onsubmit=async e=>{ e.preventDefault(); const {error}=await C.sb.auth.updateUser({password:$('cNewPass').value}); if(error) mMsg(error.message,true); else { mClose(); toast('Password updated.'); } };
 }
 async function showProjects(){
-  if(!C.user){ showSignIn('in'); return; }
+  if(!C.user) return;
   mOpen(`<h3>Cloud projects</h3><div class="msub">${esc(C.email)} &middot; ${ROLE_NAME[C.role]||C.role}</div><div class="mbody" id="cList"><div class="cmsg">Loading...</div></div>
   <div class="mfoot">${C.role==='admin'?'<button class="btn" id="cTeam">Team</button>':''}<button class="btn" id="cOut">Sign out</button><span style="flex:1"></span><button class="btn" data-close>Close</button></div>`);
-  $('cOut').onclick=async()=>{ await C.sb.auth.signOut(); mClose(); };
+  $('cOut').onclick=async()=>{ mClose(); await C.sb.auth.signOut(); };
   if($('cTeam')) $('cTeam').onclick=showTeam;
   const {data,error}=await C.sb.from('projects').select('id,name,owner,owner_email,updated_at').order('updated_at',{ascending:false});
   const box=$('cList'); if(!box) return;
@@ -2075,16 +2109,17 @@ async function showProjects(){
   const mine=data.filter(p=>p.owner===C.user.id), shared=data.filter(p=>p.owner!==C.user.id);
   const cur=S.cloud&&S.cloud.id;
   const row=(p,own)=>`<div class="citem${p.id===cur?' cur':''}"><div class="cname"><b>${esc(p.name)}</b><small>${own?'':esc(p.owner_email)+' &middot; '}${when(p.updated_at)}${p.id===cur?' &middot; open now':''}</small></div>
-    <div class="cacts"><button class="btn solid" data-open="${p.id}">Open</button>${own?`<button class="btn" data-share="${p.id}">Share</button><button class="btn" data-ren="${p.id}">Rename</button><button class="btn danger" data-del="${p.id}">Delete</button>`:`<button class="btn" data-leave="${p.id}" title="Remove from your list">Remove</button>`}</div></div>`;
+    <div class="cacts"><button class="btn solid" data-open="${esc(p.id)}">Open</button>${own?`<button class="btn" data-share="${esc(p.id)}">Share</button><button class="btn" data-ren="${esc(p.id)}">Rename</button><button class="btn danger" data-del="${esc(p.id)}">Delete</button>`:`<button class="btn" data-leave="${esc(p.id)}" title="Remove from your list">Remove</button>`}</div></div>`;
   let h='';
   if(canAuthor()){
     h+=`<div class="chead">My projects</div>`+(mine.length?mine.map(p=>row(p,true)).join(''):'<div class="cmsg">No cloud projects yet.</div>');
     if(!S.cloud&&S.raw.rows.length) h+=`<div class="cnew"><input type="text" id="cNewName" value="${esc(defaultCloudName())}" aria-label="Project name"><button class="btn solid" id="cNewGo">Save current project to cloud</button></div>`;
-  } else h+=`<div class="cmsg">You can open projects shared with you, tick off rows and export PDFs. To create your own cloud projects, ask an admin for editor access.</div>`;
+  } else h+=`<div class="cmsg">You have view-only access: open a project shared with you, tick off rows and export PDFs.</div>`;
   h+=`<div class="chead">Shared with me</div>`+(shared.length?shared.map(p=>row(p,false)).join(''):'<div class="cmsg">Nothing has been shared with you yet.</div>');
   box.innerHTML=h;
   const byId=id=>data.find(p=>p.id===id);
-  box.querySelectorAll('[data-open]').forEach(b=>b.onclick=async()=>{ if(!S.cloud&&S.raw.rows.length&&!confirm('Replace the project on screen? It is only on this device, so use Save project first if you want to keep it.')) return; if(S.cloud&&S.cloud.own&&S.cloud.dirty) await cloudSave(); busyBtn(b,true); if(await cloudOpen(b.dataset.open)) mClose(); else busyBtn(b,false); });
+  box.querySelectorAll('[data-open]').forEach(b=>b.onclick=async()=>{ if(!S.cloud&&S.raw.rows.length&&canAuthor()&&!confirm('Replace the project on screen? It is only on this device, so use Save project first if you want to keep it.')) return;
+    if(S.cloud&&S.cloud.own&&S.cloud.dirty) await cloudSave(); busyBtn(b,true); if(await cloudOpen(b.dataset.open)) mClose(); else busyBtn(b,false); });
   box.querySelectorAll('[data-share]').forEach(b=>b.onclick=()=>showShare(b.dataset.share,byId(b.dataset.share).name));
   box.querySelectorAll('[data-ren]').forEach(b=>b.onclick=async()=>{ const p=byId(b.dataset.ren), n=prompt('Rename project',p.name); if(!n||!n.trim()||n.trim()===p.name) return;
     const {error}=await C.sb.from('projects').update({name:n.trim()}).eq('id',p.id); if(error) toast(error.message); else { if(S.cloud&&S.cloud.id===p.id){ S.cloud.name=n.trim(); saveLink(); cloudUI(); } showProjects(); } });
@@ -2092,12 +2127,12 @@ async function showProjects(){
     const {error}=await C.sb.from('projects').delete().eq('id',b.dataset.del); if(error){ toast(error.message); return; }
     if(S.cloud&&S.cloud.id===b.dataset.del){ cloudDetach(); toast('Deleted from the cloud. Your copy on this device is kept.'); } showProjects(); }; });
   box.querySelectorAll('[data-leave]').forEach(b=>b.onclick=async()=>{ const {error}=await C.sb.from('project_shares').delete().eq('project_id',b.dataset.leave).eq('email',C.email); if(error){ toast(error.message); return; }
-    if(S.cloud&&S.cloud.id===b.dataset.leave) cloudDetach(); showProjects(); });
+    if(S.cloud&&S.cloud.id===b.dataset.leave){ cloudDetach(); if(isViewer()) clearProject(true); } showProjects(); });
   if($('cNewGo')) $('cNewGo').onclick=async()=>{ const n=$('cNewName').value.trim()||defaultCloudName(); busyBtn($('cNewGo'),true); if(await cloudCreate(n)) showProjects(); else busyBtn($('cNewGo'),false); };
 }
 function defaultCloudName(){ return ((S.sheet.show||'').trim()||(S.raw.name||'').replace(/\.csv$/i,'')||'Markout').slice(0,80); }
 async function showShare(id,name){
-  mOpen(`<h3>Share "${esc(name)}"</h3><div class="msub">People you add can open this project, tick off rows and export PDFs. They cannot change it. They need to sign in with this email address; it works even if they have not signed up yet.</div>
+  mOpen(`<h3>Share "${esc(name)}"</h3><div class="msub">People you add can open this project, tick off rows and export PDFs. They cannot change it. They sign in with this email address.</div>
   <div class="mbody"><form class="cnew" id="cShareForm"><input type="email" id="cShareEmail" placeholder="crew@example.com" aria-label="Email to share with" required><button class="btn solid" type="submit">Share</button></form><div class="cmsg" id="cMsg"></div><div id="cShares"><div class="cmsg">Loading...</div></div></div>
   <div class="mfoot"><button class="btn" id="cBack">Back to projects</button><span style="flex:1"></span><button class="btn" data-close>Close</button></div>`);
   $('cBack').onclick=showProjects;
@@ -2108,38 +2143,79 @@ async function showShare(id,name){
   $('cShareForm').onsubmit=async e=>{ e.preventDefault(); const em=$('cShareEmail').value.trim().toLowerCase(); if(!em) return;
     if(em===C.email){ mMsg('That is your own email.',true); return; }
     const {error}=await C.sb.from('project_shares').insert({project_id:id,email:em});
-    if(error) mMsg(/duplicate|23505/.test(error.message+error.code)?'Already shared with '+em+'.':error.message,true); else { mMsg('Shared with '+em+'.'); $('cShareEmail').value=''; load(); } };
+    if(error){ mMsg(/duplicate|23505/.test(error.message+error.code)?'Already shared with '+em+'.':error.message,true); return; }
+    const inv=await C.sb.rpc('is_invited',{e:em});
+    mMsg('Shared with '+em+'.'+(inv&&inv.data===false?(C.role==='admin'?' They have not been invited to DATUM yet: invite them from Team so they can sign in.':' They have not been invited to DATUM yet, so ask your admin to invite them.'):''), !!(inv&&inv.data===false));
+    $('cShareEmail').value=''; load(); };
   load();
 }
+function inviteMail(email){
+  const url=redirectUrl();
+  return 'mailto:'+encodeURIComponent(email)+'?subject='+encodeURIComponent('You are invited to DATUM')+'&body='+encodeURIComponent('You have been invited to DATUM, the production markout tool.\n\n1. Open '+url+'\n2. Choose "First time? Set up your account", enter this email address ('+email+') and choose a password (or use "Continue with Google" if this is a Google account).\n3. Confirm your email from the message DATUM sends you, then sign in.\n');
+}
 async function showTeam(){
-  mOpen(`<h3>Team</h3><div class="msub">Everyone who has signed up. Viewers only see projects shared with them; editors can create and share projects; admins can also change roles here.</div><div class="mbody" id="cTeamList"><div class="cmsg">Loading...</div></div>
+  mOpen(`<h3>Team</h3><div class="msub">Only invited emails can create an account. Viewers see projects shared with them; editors can also create and share projects; admins can also invite people and change roles.</div>
+  <div class="mbody"><form class="cnew" id="cInvForm"><input type="email" id="cInvEmail" placeholder="crew@example.com" aria-label="Email to invite" required><select id="cInvRole" aria-label="Role"><option value="viewer">Viewer</option><option value="editor">Editor</option><option value="admin">Admin</option></select><button class="btn solid" type="submit">Invite</button></form>
+  <div class="cmsg" id="cMsg"></div><div id="cTeamList"><div class="cmsg">Loading...</div></div></div>
   <div class="mfoot"><button class="btn" id="cBack">Back to projects</button><span style="flex:1"></span><button class="btn" data-close>Close</button></div>`);
   $('cBack').onclick=showProjects;
-  const {data,error}=await C.sb.from('profiles').select('id,email,role').order('email'); const box=$('cTeamList'); if(!box) return;
-  if(error){ box.innerHTML=`<div class="cmsg err">${esc(error.message)}</div>`; return; }
-  box.innerHTML=data.map(p=>`<div class="citem"><div class="cname"><b>${esc(p.email)}</b>${p.id===C.user.id?'<small>you</small>':''}</div><div class="cacts"><select data-uid="${p.id}" aria-label="Role for ${esc(p.email)}"${p.id===C.user.id?' disabled title="Ask another admin to change your own role"':''}>${['viewer','editor','admin'].map(r=>`<option value="${r}"${r===p.role?' selected':''}>${ROLE_NAME[r]}</option>`).join('')}</select></div></div>`).join('');
-  box.querySelectorAll('select[data-uid]').forEach(s=>s.onchange=async()=>{ const {error}=await C.sb.from('profiles').update({role:s.value}).eq('id',s.dataset.uid); toast(error?error.message:'Role updated.'); });
+  const load=async()=>{
+    const [pr,iv]=await Promise.all([C.sb.from('profiles').select('id,email,role').order('email'), C.sb.from('invites').select('email,role,created_at').order('email')]);
+    const box=$('cTeamList'); if(!box) return;
+    if(pr.error||iv.error){ box.innerHTML=`<div class="cmsg err">${esc((pr.error||iv.error).message)}</div>`; return; }
+    const users=new Map(pr.data.map(p=>[p.email,p])), inv=new Set(iv.data.map(i=>i.email));
+    const pending=iv.data.filter(i=>!users.has(i.email));
+    const opts=(cur,extra)=>['viewer','editor','admin'].concat(extra||[]).map(r=>`<option value="${r}"${r===cur?' selected':''}>${ROLE_NAME[r]}</option>`).join('');
+    let h='<div class="chead">People</div>'+pr.data.map(p=>{ const me=p.id===C.user.id, off=p.role==='disabled';
+      return `<div class="citem"><div class="cname"><b>${esc(p.email)}</b><small>${me?'you':off?'access removed':'signed up'}</small></div><div class="cacts">`+
+        (off?`<button class="btn" data-restore="${esc(p.id)}" data-em="${esc(p.email)}">Restore as viewer</button>`:
+        `<select data-uid="${esc(p.id)}" aria-label="Role for ${esc(p.email)}"${me?' disabled title="Ask another admin to change your own role"':''}>${opts(p.role)}</select>`+(me?'':`<button class="btn danger" data-off="${esc(p.id)}" data-em="${esc(p.email)}">Remove access</button>`))+'</div></div>'; }).join('');
+    h+='<div class="chead">Invited, not signed up yet</div>'+(pending.length?pending.map(i=>`<div class="citem"><div class="cname"><b>${esc(i.email)}</b><small>invited ${when(i.created_at)}</small></div><div class="cacts"><select data-inv="${esc(i.email)}" aria-label="Role for ${esc(i.email)}">${opts(i.role)}</select><a class="btn" href="${esc(inviteMail(i.email))}">Email invite</a><button class="btn danger" data-uninv="${esc(i.email)}">Cancel</button></div></div>`).join(''):'<div class="cmsg">No pending invites.</div>');
+    box.innerHTML=h;
+    box.querySelectorAll('select[data-uid]').forEach(s=>s.onchange=async()=>{ const {error}=await C.sb.from('profiles').update({role:s.value}).eq('id',s.dataset.uid); mMsg(error?error.message:'Role updated.',!!error); });
+    box.querySelectorAll('select[data-inv]').forEach(s=>s.onchange=async()=>{ const {error}=await C.sb.from('invites').update({role:s.value}).eq('email',s.dataset.inv); mMsg(error?error.message:'Invite updated.',!!error); });
+    box.querySelectorAll('[data-off]').forEach(b=>{ let armed=false; b.onclick=async()=>{ if(!armed){ armed=true; b.textContent='Tap to confirm'; setTimeout(()=>{ armed=false; b.textContent='Remove access'; },3000); return; }
+      const {error}=await C.sb.from('profiles').update({role:'disabled'}).eq('id',b.dataset.off); if(!error) await C.sb.from('invites').delete().eq('email',b.dataset.em); mMsg(error?error.message:'Access removed for '+b.dataset.em+'.',!!error); load(); }; });
+    box.querySelectorAll('[data-restore]').forEach(b=>b.onclick=async()=>{ await C.sb.from('invites').insert({email:b.dataset.em,role:'viewer'}); const {error}=await C.sb.from('profiles').update({role:'viewer'}).eq('id',b.dataset.restore); mMsg(error?error.message:'Access restored.',!!error); load(); });
+    box.querySelectorAll('[data-uninv]').forEach(b=>b.onclick=async()=>{ const {error}=await C.sb.from('invites').delete().eq('email',b.dataset.uninv); mMsg(error?error.message:'Invite cancelled.',!!error); load(); });
+  };
+  $('cInvForm').onsubmit=async e=>{ e.preventDefault(); const em=$('cInvEmail').value.trim().toLowerCase(), role=$('cInvRole').value; if(!em) return;
+    const {error}=await C.sb.from('invites').insert({email:em,role,invited_by:C.user.id});
+    if(error){ mMsg(/duplicate|23505/.test(error.message+error.code)?em+' is already invited.':error.message,true); return; }
+    $('cInvEmail').value=''; mMsg('Invited '+em+'. Use "Email invite" to send them the sign-up steps.'); load(); };
+  load();
 }
 
 async function onAuth(session){
   const prev=C.user&&C.user.id; C.user=session?session.user:null; C.email=C.user?String(C.user.email||'').toLowerCase():'';
-  if(!C.user){ C.role='viewer'; if(prev&&S.cloud) cloudDetach(); cloudUI(); return; }
+  if(!C.user){ C.role=''; mClose(); if(S.cloud) cloudDetach(); cloudUI(); if($('gate').hidden||!$('cForm')) showGate('in'); return; }
   if(prev===C.user.id){ cloudUI(); return; }
-  await loadRole(); cloudUI(); cloudSync();
+  await loadRole();
+  // a different person on this device: start them with a clean slate
+  let last=''; try{ last=localStorage.getItem('markoutTool.lastUser')||''; localStorage.setItem('markoutTool.lastUser',C.user.id); }catch(e){}
+  if(last&&last!==C.user.id){ S.cloud=null; saveLink(); try{ localStorage.removeItem(CLOUD_DONE_KEY); }catch(e){} asOff=true; clearProject(true); asOff=false; }
+  if(C.role==='disabled'){ S.cloud=null; saveLink(); cloudUI(); showGate('off'); return; }
+  if(isViewer()&&!S.cloud&&S.raw.rows.length){ asOff=true; clearProject(true); asOff=false; }
+  gateShow(false); cloudUI(); renderAll(); cloudSync();
+  if(isViewer()&&!S.cloud) showProjects();
 }
 function cloudInit(){
   try{ S.cloud=JSON.parse(localStorage.getItem(CLOUD_LINK_KEY)||'null'); }catch(e){ S.cloud=null; }
   const cfg=window.DATUM_CLOUD, make=window.__datumSupabase||(window.supabase&&window.supabase.createClient);
   if(cfg&&make){ try{ C.sb=make(cfg.url,cfg.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}); }catch(e){ C.sb=null; } }
-  if(!C.sb){ S.cloud=null; cloudUI(); return; }
-  $('btnAccount').onclick=()=>C.user?showProjects():showSignIn('in');
-  $('btnCloudProj').onclick=()=>C.user?showProjects():showSignIn('in');
-  $('btnCloudSave').onclick=()=>showProjects();
+  if(!C.sb){ S.cloud=null; gateShow(false); cloudUI(); return; }
+  // errors handed back in the URL (e.g. Google sign-in for an email that was not invited)
+  const q=new URLSearchParams(location.search+'&'+location.hash.replace(/^#/,'')), urlErr=q.get('error_description');
+  showGate('wait');
+  $('btnAccount').onclick=showProjects; $('btnCloudProj').onclick=showProjects; $('btnCloudSave').onclick=showProjects;
+  $('btnViewerOpen').onclick=showProjects;
   $('cloudModal').addEventListener('click',e=>{ if(e.target.id==='cloudModal'||e.target.closest('[data-close]')) mClose(); });
   document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!$('cloudModal').hidden) mClose(); });
   window.addEventListener('online',()=>{ if(S.cloud&&C.user){ if(S.cloud.own&&S.cloud.dirty) cloudSave(); else cloudSync(); } });
   window.addEventListener('offline',cloudUI);
-  C.sb.auth.onAuthStateChange((ev,session)=>{ setTimeout(()=>{ onAuth(session); if(ev==='PASSWORD_RECOVERY') showNewPassword(); },0); });
+  C.sb.auth.onAuthStateChange((ev,session)=>{ setTimeout(async()=>{ await onAuth(session);
+    if(!session&&urlErr){ showGate('in',authErr({message:urlErr}),true); history.replaceState(null,'',redirectUrl()); }
+    if(ev==='PASSWORD_RECOVERY') showNewPassword(); },0); });
   cloudUI();
 }
 
