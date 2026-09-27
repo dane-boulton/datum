@@ -95,7 +95,7 @@
     async function rpc(fn, args) { const db = load();
       if (fn === 'team') return { data: role(db) === 'admin' ? db.profiles.map(p => ({ id: p.id, email: p.email, role: p.role, signed_in: !!(Object.values(db.users).find(u => u.id === p.id) || {}).signedIn })).sort((a, b2) => a.email < b2.email ? -1 : 1) : [], error: null };
       if (fn === 'my_email') return { data: me() ? me().email : '', error: null };
-      if (fn === 'my_role') return { data: role(db), error: null };
+      if (fn === 'my_role') return window.__mock.failTable === 'profiles' ? { data: null, error: { message: 'relation "public.profiles" does not exist' } } : { data: role(db), error: null };
       if (fn === 'is_invited') return { data: access(db) && db.invites.some(i => i.email === String(args.e).toLowerCase()), error: null }; return { data: null, error: { message: 'unknown rpc' } }; }
     return { auth, from, rpc };
   }
