@@ -2,6 +2,24 @@
 
 All notable changes to DATUM. Newest first.
 
+## 28 September 2026 (later)
+
+### Hoist Type and Position from the CSV
+- **Hoist Symbol sets the Hoist Type.** The Hoist Symbol text fills two fields on import: **Hoist Type** and **Hoist Automation**. Both are shown and edited in the Data tab. Type mapping:
+  - 1/4 Ton → 250kg, 1/3 Ton → 320kg, 1/2 Ton → 500kg, 1 Ton, 2 Ton, 2.5 Ton, 3 Ton.
+  - Block and Fall or Chain Block → Chain Block.
+  - Fall Arrest, Floor Mark.
+  - USR (or USR Mark), USL, DSL, DSR.
+- **Capacity fallback.** If the Hoist Symbol doesn't name a type, it comes from the Capacity column. A bare number is read as kg (1000 → 1 Ton), or as tonnes when it is 10 or less (0.25 → 250kg).
+- **New Position column.** It's collected for every row.
+  - For **floor marks and USR/USL/DSR/DSL** it describes what's being marked (for example "Main Stage" or "Camera Riser"). It's shown instead of the load on Markout Rows cards, under the mark's ID on the plot, in the hoist card and in the PDF.
+  - For hoists it's stored but not used yet.
+- **Up / Down.** The Hoist Position (Up/Down) column is labelled "Up / Down" in the app so it isn't confused with Position.
+- **Columns panel** lists Hoist Symbol first ("sets Type + Automation"), then Hoist Type, Hoist Automation, Function, ID, Up / Down, Position, X, Y, Load. Changing the Hoist Symbol column re-reads it.
+- **Legend** capacity labels now match the type names (250kg, 1 Ton).
+- **Samples and template** now look like the export software's output: numeric Capacity, Hoist Symbol such as "1/2 Ton", "1 Ton TAIT Nav" or "USR Mark", and Position for the marks.
+- **Older CSVs** that already have a Hoist Type column (e.g. "1000.00 kg") still work as before.
+
 ## 28 September 2026
 
 ### Automation types (new Hoist Symbol column)

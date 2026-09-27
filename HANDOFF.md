@@ -89,6 +89,25 @@ The script is organised by comment banners `/* ===== … ===== */`. Search for t
 - Cloud: `markoutTool.cloudLink.v1` (S.cloud), `markoutTool.cloudDone.v1` (done marks per cloud project id), `markoutTool.cloudUser.v1` (cached role, used offline), `markoutTool.lastUser`.
 - Project file: `Name.datum.json`, from `projectData(withLogos)`; `applyProject()` loads it.
 
+### CSV columns (`autoMap`, `deriveColumns`)
+- **Map keys:**
+  - `type`: Hoist Type.
+  - `auto`: Hoist Automation.
+  - `func`: Hoist Function.
+  - `id`: Hoist ID.
+  - `pos`: Up / Down, from the "Hoist Position" header.
+  - `place`: the **Position** header, which describes a mark.
+  - `x` / `y`: Origin X / Y.
+  - `load`: Load (kg).
+  - `hsym`: Hoist Symbol.
+- **`deriveColumns()`** runs on import, and when the Hoist Symbol mapping changes. It writes derived **Hoist Type** and **Hoist Automation** columns into `S.raw`:
+  - `symbolType()` turns the Hoist Symbol text into a type (1/4 Ton → 250kg … USR Mark → USR);
+  - `capacityType()` handles a numeric Capacity column (a bare number is kg, or tonnes when it's 10 or less);
+  - `autoKind()` gives the automation, and `AUTO_VALUES` holds the text written to the Hoist Automation column.
+  - After that, the app reads `type` and `auto` like any other column.
+- **Type names** (`TYPE_SUGGEST`): 250kg, 320kg, 500kg, 1 Ton, 2 Ton, 2.5 Ton, 3 Ton, Chain Block, Fall Arrest, Floor Mark, USR, USL, DSR, DSL. `guessSymbol()` maps them to symbols.
+- **Marks show Position:** `isMarker(h)` (floor mark or corner) makes `subTxt(h)` return `h.place` instead of the load. It's used by the cards, the PDF, the info card, and the plot's sub-label.
+
 ### Features and where they live
 - **Symbols and colours** (decisions already made):
   - Capacity symbols: 250 kg diamond, 320 pentagon, 500 triangle, 1000 circle, 2000 square, 2500 hexagon, 3000 octagon, all with a crosshair. lb values snap to the nearest kg. Also floor mark, corner marks, Chain Block ("Block and Fall"), Fall Arrest (heart).
