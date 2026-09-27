@@ -253,6 +253,20 @@ table.dt input[data-k=x],table.dt input[data-k=y]{min-width:132px}
 table.dt input[data-k=load]{min-width:64px;width:72px}
 button.btn:disabled,button.primary:disabled{opacity:.42;cursor:not-allowed;filter:saturate(.6)}
 table.dt td.pend input,table.dt td.pend select{border-color:var(--warn);background:var(--warnbg)}
+table.dt tr.skip td{opacity:.45} table.dt tr.skip td.skc{opacity:1}
+table.dt td.skc{text-align:center} table.dt td.skc input{width:16px;height:16px;cursor:pointer}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:30;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal-bg[hidden]{display:none}
+.modal{background:var(--panel);border:1px solid var(--line3);border-radius:14px;width:100%;max-width:680px;max-height:86vh;display:flex;flex-direction:column;box-shadow:0 20px 60px var(--shadow)}
+.modal h3{margin:0;padding:16px 18px 4px;font-size:16px}
+.modal .msub{padding:0 18px 12px;color:var(--muted);font-size:12.5px;border-bottom:1px solid var(--line)}
+.modal .mbody{overflow:auto;padding:6px 18px 12px}
+.modal .mfoot{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;padding:12px 18px;border-top:1px solid var(--line)}
+table.al{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:10px}
+table.al th{text-align:left;font-weight:600;color:var(--muted);font-size:11px;letter-spacing:.04em;padding:4px 8px}
+table.al td{padding:5px 8px;border-top:1px solid var(--line);white-space:nowrap;font-variant-numeric:tabular-nums}
+table.al .gh td{border-top:1px solid var(--line3);padding-top:10px;font-weight:650;color:var(--ink2)}
+table.al .same{color:var(--faint)} table.al .chg{color:var(--warn);font-weight:600}
 table.dt td.num{color:var(--muted)}
 .act{display:flex;gap:6px}
 .iconb{width:30px;height:30px;border-radius:8px;border:1px solid var(--line2);background:var(--raised);cursor:pointer;display:grid;place-items:center;color:var(--ink2);padding:0}
@@ -640,6 +654,11 @@ table.dt td.num{color:var(--muted)}
     </section>
   </main>
 </div>
+<div class="modal-bg" id="alignModal" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="alignTitle">
+  <h3 id="alignTitle">Align X - proposed changes</h3><div class="msub" id="alignSub"></div>
+  <div class="mbody" id="alignBody"></div>
+  <div class="mfoot"><button class="btn" id="alignDiscard">Discard</button><button class="btn" id="alignReview">Review in table</button><button class="btn solid" id="alignApply">Apply changes</button></div>
+</div></div>
 <div class="toast" id="toast"></div>
 
 <script>/*__JSPDF__*/</script>
@@ -723,7 +742,7 @@ const S = {
   hoists:[], rows:[], warnings:0,
   typeMap:{}, funcMap:{}, funcRing:{},
   opt:{inUnit:'auto',disp:'ftin',den:1,tol:50,cth:1,rot:0,rowOrder:'top',sideNeg:'left',sideSort:'center',flipX:false,flipY:false,datX:0,datY:0,topL:'UPSTAGE',botL:'DOWNSTAGE',leftL:'SR',rightL:'SL',upStyle:'fill',alignTol:25.4,alignMode:'both',alignKeep:'first'},
-  logoShow:null, logoUser:null, _imgShow:null, _imgUser:null,
+  skip:new Set(), logoShow:null, logoUser:null, _imgShow:null, _imgUser:null,
   mo:{cur:0,focus:'both',hideDone:false,auto:false}, done:new Set(), doneName:'', pending:{}, orig:null,
   sheet:{sheetType:'FLOOR MARKOUT',show:'',venue:'',datum:'',date:'',rev:'',by:'',footer:'',title:true,page:'a4',orient:'portrait',margin:10,rowH:11,fit:'fixed',capN:4,minPt:5,centreMm:0,textPct:100,yPct:100,symPct:100,linePct:100,font:'helvetica',load:true,tick:'none',mode:'colour',cText:'#1b2440',cMuted:'#5d6b8a',cBorder:'#8d9bbd',cCentre:'#5c6b8f',cBand:'#f3f6fb',cBandText:'#1b2440',centreTint:false,cCentreFill:'#eef2fb',zebra:false,cZebra:'#f3f6fb',logoHShow:14,logoHUser:14,logoAll:false,legend:true,onlyTodo:false,bands:true,zoom:'fit'},
   plot:{labels:true,coords:false,grid:true,legend:true,size:9},
@@ -964,7 +983,7 @@ function rebuild(){
   const seen=new Map(), seenPos=new Map();
   rows.forEach((r,i)=>{
     const g=k=> (map[k]>=0 && r[map[k]]!==undefined) ? String(r[map[k]]).trim() : '';
-    const h={row:i+2, id:g('id'), type:g('type')||'(none)', func:g('func')||'(none)', posRaw:g('pos'), xRaw:g('x'), yRaw:g('y'), loadRaw:g('load'), issues:[]};
+    const h={row:i+2, skip:S.skip.has(i), id:g('id'), type:g('type')||'(none)', func:g('func')||'(none)', posRaw:g('pos'), xRaw:g('x'), yRaw:g('y'), loadRaw:g('load'), issues:[]};
     h.upRaw=/\bup\b/i.test(h.posRaw) && !/down/i.test(h.posRaw); h.up=h.upRaw;
     h.datum=/^datum$/i.test(h.id)||/^datum$/i.test(h.type);
     h.auto=isAutoFunc(h.func);
@@ -973,6 +992,7 @@ function rebuild(){
     if(h.id==='') { h.issues.push('No ID'); h.id='?'+(i+1); }
     if(isNaN(h.x)) h.issues.push('Bad Origin X'+(h.xRaw?' ("'+h.xRaw+'")':'')); if(isNaN(h.y)) h.issues.push('Bad Origin Y'+(h.yRaw?' ("'+h.yRaw+'")':''));
     h.ok = !isNaN(h.x) && !isNaN(h.y);
+    if(h.skip){ h.ok=false; h.issues=[]; hs.push(h); return; }
     if(h.ok){
       const key=Math.round(h.x)+'|'+Math.round(h.y);
       if(seenPos.has(key)) h.issues.push('Same position as '+seenPos.get(key)); else seenPos.set(key,h.id);
@@ -1090,6 +1110,9 @@ function ensureCol(key){
   S.raw.rows.forEach(r=>{ while(r.length<S.raw.headers.length) r.push(''); }); renderMapUI(); return S.map[key];
 }
 function setRaw(row,key,val){ const ci=ensureCol(key); while(row.length<=ci) row.push(''); row[ci]=val; }
+// Keep skipped-row indices in step when rows are inserted (d>0) or removed (d<0) at index `at`
+function shiftSkip(at,d){ const n=new Set(); for(const i of S.skip){ if(i<at) n.add(i); else if(d<0&&i===at) continue; else n.add(i+d); } S.skip=n; }
+function toggleSkip(i,on){ if(on) S.skip.add(i); else S.skip.delete(i); if(S.sel&&S.hoists[i]&&S.hoists[i].id===S.sel) S.sel=null; refresh(); }
 function applyPending(silent){
   const n=pendingCount(); if(!n) return 0;
   for(const i in S.pending){ const row=S.raw.rows[+i]; if(!row) continue; for(const k in S.pending[i]) setRaw(row,k,S.pending[i][k]); }
@@ -1109,7 +1132,7 @@ function alignX(){
   if(S.map.x<0||!S.hoists.length){ toast('Import a CSV first.'); return 0; }
   applyPending(true);
   const tol=Math.max(0.1,S.opt.alignTol), rowTol=Math.max(1,S.opt.tol||50), mode=S.opt.alignMode, keep=S.opt.alignKeep;
-  const pts=S.hoists.filter(h=>!h.datum&&isFinite(h.x)&&isFinite(h.y)).map((h,k)=>({h,ri:h.row-2,x:h.x,y:h.y,o:h.x,k}));
+  const pts=S.hoists.filter(h=>!h.skip&&!h.datum&&isFinite(h.x)&&isFinite(h.y)).map((h,k)=>({h,ri:h.row-2,x:h.x,y:h.y,o:h.x,k}));
   const groups=[]; const target=(mem,key)=>{ const v=mem.map(key); if(keep==='avg') return v.reduce((a,b)=>a+b,0)/v.length; if(keep==='big') return v.reduce((a,b)=>Math.abs(b)>Math.abs(a)?b:a); return v[0]; };
   const cluster=(arr,val)=>{ const s=arr.slice().sort((a,b)=>val(a)-val(b)), out=[]; let cur=null; for(const p of s){ if(cur&&val(p)-val(cur[0])<=tol) cur.push(p); else { cur=[p]; out.push(cur); } } return out; };
   if(mode==='both'||mode==='mirror'){
@@ -1125,27 +1148,47 @@ function alignX(){
         const ys=c.slice().sort((a,b)=>a.y-b.y); let clash=false; for(let i=1;i<ys.length;i++) if(ys[i].y-ys[i-1].y<=rowTol) clash=true; if(clash) continue;
         const mem=c.slice().sort((p,q)=>p.k-q.k), tv=target(mem,p=>p.x); for(const p of mem) p.x=tv; groups.push({kind:'column',mem}); } } }
   let n=0; const lines=[];
-  for(const p of pts){ if(Math.abs(p.x-p.o)<0.05) continue; (S.pending[p.ri]=S.pending[p.ri]||{}).x=rawFromMm(p.x); n++; lines.push(p.h.id); }
+  for(const p of pts){ p.was=storedVal(p.ri,'x'); if(Math.abs(p.x-p.o)<0.05) continue; (S.pending[p.ri]=S.pending[p.ri]||{}).x=p.now=rawFromMm(p.x); n++; lines.push(p.h.id); }
   renderData(); updateDataBar && updateDataBar();
   if(!n) toast('No near-miss matches found within '+fmtField(tol)+'.');
-  else { toast('Proposed '+n+' X change'+(n>1?'s':'')+' in '+groups.length+' group'+(groups.length>1?'s':'')+' - check the highlighted cells, then Apply changes.'); $('dInfo').textContent='Align X: '+lines.slice(0,12).join(', ')+(lines.length>12?' +'+(lines.length-12)+' more':''); }
+  else { $('dInfo').textContent='Align X: '+lines.slice(0,12).join(', ')+(lines.length>12?' +'+(lines.length-12)+' more':''); showAlignSummary(groups,n,tol); }
   return n;
 }
+// Pop-up listing each aligned group: old X, new X and how far each point moves (in = toward centre line, out = away)
+function showAlignSummary(groups,n,tol){
+  const id=new Map(); groups.forEach((g,i)=>g.mem.forEach(p=>{ if(!id.has(p)) id.set(p,i); })); // merge groups that share a point (mirror + column)
+  const par=groups.map((g,i)=>i), root=i=>par[i]===i?i:(par[i]=root(par[i]));
+  groups.forEach((g,i)=>g.mem.forEach(p=>{ par[root(i)]=root(id.get(p)); }));
+  const merged=new Map(); groups.forEach((g,i)=>{ const r=root(i); if(!merged.has(r)) merged.set(r,{kinds:new Set(),mem:new Set()}); const m=merged.get(r); m.kinds.add(g.kind); g.mem.forEach(p=>m.mem.add(p)); });
+  const side=p=>p.x<0?S.opt.leftL:p.x>0?S.opt.rightL:'CL';
+  let maxD=0, html='<table class="al"><thead><tr><th>Hoist</th><th>Side</th><th>Origin X was</th><th>Now</th><th>Change</th></tr></thead><tbody>';
+  for(const m of merged.values()){
+    const mem=[...m.mem].sort((a,b)=>a.k-b.k), kind=[...m.kinds].map(k=>k==='mirror'?'Mirrored pair':'Column').join(' + ');
+    html+=`<tr class="gh"><td colspan="5">${kind} &middot; ${mem.map(p=>esc(p.h.id)).join(', ')}</td></tr>`;
+    for(const p of mem){ const d=Math.abs(p.x)-Math.abs(p.o), moved=Math.abs(p.x-p.o)>=0.05; if(moved) maxD=Math.max(maxD,Math.abs(p.x-p.o));
+      html+=`<tr><td><b>${esc(p.h.id)}</b></td><td>${esc(side(p))}</td><td>${esc(p.was)}</td>`+(moved?`<td>${esc(p.now)}</td><td class="chg">${d>0?'out':'in'} ${fmtMove(p.x-p.o)}</td>`:`<td class="same">no change</td><td class="same">-</td>`)+'</tr>'; }
+  }
+  $('alignBody').innerHTML=html+'</tbody></table>';
+  $('alignSub').textContent=n+' X value'+(n>1?'s':'')+' change in '+merged.size+' group'+(merged.size>1?'s':'')+' · largest move '+fmtMove(maxD)+' · tolerance '+fmtField(tol)+'. "In" moves toward the centre line, "out" away from it.';
+  $('alignModal').hidden=false; $('alignApply').focus();
+}
+function fmtMove(mm){ return fmtDist(mm).replace(/^0' - /,''); } // small moves read as just inches
+function closeAlign(){ $('alignModal').hidden=true; }
 function addRow(after){
   applyPending(true);
   const src=S.raw.rows[after>=0?after:S.raw.rows.length-1]; const row=Array(S.raw.headers.length).fill('');
   const g=k=>{ const ci=S.map[k]; return src&&ci>=0?(src[ci]||''):''; };
   setRaw(row,'id','NEW'); setRaw(row,'type',g('type')); setRaw(row,'func',g('func')); setRaw(row,'x','0'); setRaw(row,'y','0');
-  const at=after>=0?after+1:S.raw.rows.length; S.raw.rows.splice(at,0,row); refresh(); setTimeout(()=>focusRow(at),30);
+  const at=after>=0?after+1:S.raw.rows.length; shiftSkip(at,1); S.raw.rows.splice(at,0,row); refresh(); setTimeout(()=>focusRow(at),30);
 }
 function duplicateRow(i){
   applyPending(true); const src=S.raw.rows[i]; if(!src) return; const copy=src.slice(); const ci=S.map.id;
-  if(ci>=0) copy[ci]=uniqueId(src[ci]); S.raw.rows.splice(i+1,0,copy); refresh(); setTimeout(()=>focusRow(i+1),30); toast('Row duplicated.');
+  if(ci>=0) copy[ci]=uniqueId(src[ci]); shiftSkip(i+1,1); S.raw.rows.splice(i+1,0,copy); refresh(); setTimeout(()=>focusRow(i+1),30); toast('Row duplicated.');
 }
-function deleteRow(i){ applyPending(true); S.raw.rows.splice(i,1); refresh(); toast('Row deleted. Use "Revert to imported CSV" to undo.'); }
+function deleteRow(i){ applyPending(true); shiftSkip(i,-1); S.raw.rows.splice(i,1); refresh(); toast('Row deleted. Use "Revert to imported CSV" to undo.'); }
 function revertData(){
   if(!S.orig) return; S.raw={headers:S.orig.headers.slice(),rows:S.orig.rows.map(r=>r.slice()),name:S.raw.name}; S.map=Object.assign({},S.orig.map);
-  S.pending={}; renderMapUI(); refresh(); toast('Reverted to the imported CSV.');
+  S.pending={}; S.skip=new Set(); renderMapUI(); refresh(); toast('Reverted to the imported CSV.');
 }
 function exportEditedCSV(){
   applyPending(true); const rows=[S.raw.headers].concat(S.raw.rows);
@@ -1155,7 +1198,7 @@ function updateDataBar(){
   const n=pendingCount(); const a=$('dApply'), d=$('dDiscard');
   a.disabled=!n; d.disabled=!n; a.textContent=n?('Apply changes ('+n+')'):'Apply changes';
   const edited = S.orig && JSON.stringify(S.orig.rows)!==JSON.stringify(S.raw.rows);
-  $('dRevert').disabled=!S.orig; $('dInfo').textContent=S.raw.rows.length+' rows'+(edited?' · edited since import':'')+(n?' · unsaved changes':'');
+  $('dRevert').disabled=!S.orig; $('dInfo').textContent=S.raw.rows.length+' rows'+(S.skip.size?' · '+S.skip.size+' skipped':'')+(edited?' · edited since import':'')+(n?' · unsaved changes':'');
 }
 function renderData(){
   const hs=S.hoists; const types=[...new Set(hs.map(h=>h.type))], funcs=[...new Set(hs.map(h=>h.func))];
@@ -1163,12 +1206,12 @@ function renderData(){
   const inp=(i,k)=>{ const pend=S.pending[i]&&k in S.pending[i]; return `<td class="${pend?'pend':''}"><input type="text" data-ri="${i}" data-k="${k}" value="${esc(rawVal(i,k))}"${k==='type'?' list="dl-type"':k==='func'?' list="dl-func"':''} spellcheck="false" autocomplete="off"></td>`; };
   const pos=i=>{ const v=rawVal(i,'pos'), pend=S.pending[i]&&'pos' in S.pending[i]; const o=['','Hoist Down','Hoist Up']; if(v&&!o.includes(v)) o.push(v);
     return `<td class="${pend?'pend':''}"><select data-ri="${i}" data-k="pos">${o.map(x=>`<option value="${esc(x)}"${x===v?' selected':''}>${x||'(blank)'}</option>`).join('')}</select></td>`; };
-  let html=dl('dl-type',types)+dl('dl-func',funcs)+`<table class="dt"><thead><tr><th>#</th><th></th><th>ID</th><th>Type</th><th>Function</th><th>Position</th><th>Origin X</th><th>Origin Y</th><th>Load</th><th>Side / X</th><th>Row Y</th><th>Status</th><th></th></tr></thead><tbody>`;
+  let html=dl('dl-type',types)+dl('dl-func',funcs)+`<table class="dt"><thead><tr><th>#</th><th title="Skipped rows are left off the plot, markout rows and PDF">Skip</th><th></th><th>ID</th><th>Type</th><th>Function</th><th>Position</th><th>Origin X</th><th>Origin Y</th><th>Load</th><th>Side / X</th><th>Row Y</th><th>Status</th><th></th></tr></thead><tbody>`;
   hs.forEach((h,i)=>{
     let sx='',sy='';
     if(h.ok){ const q=tf(h); const th=Math.max(0,S.opt.cth||0); sx=(Math.abs(q.xs)<=th?'CL':q.xs>0?S.opt.rightL:S.opt.leftL)+' '+fmtDist(q.xs); const yi=yInfo(q.yu); sy=yi.key==='datum'?'DATUM':abbr(yi.dir)+' '+yi.txt; }
-    const st=h.datum?'<span class="pill">Datum row</span>':(h.issues.length?h.issues.map(x=>`<span class="pill${/Bad/.test(x)?' err':''}">${esc(x)}</span>`).join(' '):'OK');
-    html+=`<tr class="${h.issues.length?'bad':''}${S.sel===h.id?' sel':''}" data-ri="${i}" data-id="${esc(h.id)}"><td class="num">${h.row}</td><td>${hoistSVG(h,16)}</td>${inp(i,'id')}${inp(i,'type')}${inp(i,'func')}${pos(i)}${inp(i,'x')}${inp(i,'y')}${inp(i,'load')}<td>${sx}</td><td>${sy}</td><td>${st}</td>
+    const st=h.skip?'<span class="pill">Skipped</span>':h.datum?'<span class="pill">Datum row</span>':(h.issues.length?h.issues.map(x=>`<span class="pill${/Bad/.test(x)?' err':''}">${esc(x)}</span>`).join(' '):'OK');
+    html+=`<tr class="${h.issues.length?'bad':''}${h.skip?' skip':''}${S.sel===h.id?' sel':''}" data-ri="${i}" data-id="${esc(h.id)}"><td class="num">${h.row}</td><td class="skc"><input type="checkbox" data-skip="${i}"${h.skip?' checked':''} title="Skip this row" aria-label="Skip row ${h.row}"></td><td>${hoistSVG(h,16)}</td>${inp(i,'id')}${inp(i,'type')}${inp(i,'func')}${pos(i)}${inp(i,'x')}${inp(i,'y')}${inp(i,'load')}<td>${sx}</td><td>${sy}</td><td>${st}</td>
       <td><div class="act"><button class="iconb" data-act="dup" data-ri="${i}" title="Duplicate row"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button>
       <button class="iconb danger" data-act="del" data-ri="${i}" title="Delete row (tap twice)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg></button></div></td></tr>`;
   });
@@ -1383,7 +1426,7 @@ function loadCSVText(text,name,isSample){
   if(t.length<2){ toast('That file has no data rows.'); return; }
   S.raw={headers:t[0].map(s=>s.trim()),rows:t.slice(1),name};
   S.map=autoMap(S.raw.headers); S.sample=!!isSample; S.sel=null;
-  S.orig={headers:S.raw.headers.slice(),rows:S.raw.rows.map(r=>r.slice()),map:Object.assign({},S.map)}; S.pending={}; S.mo.cur=0;
+  S.orig={headers:S.raw.headers.slice(),rows:S.raw.rows.map(r=>r.slice()),map:Object.assign({},S.map)}; S.pending={}; S.skip=new Set(); S.mo.cur=0;
   if(S.doneName!==name){ S.done=new Set(); S.doneName=name; saveDone(); }
   if(isSample){ S.typeMap={}; S.funcMap={}; S.funcRing={}; }
   else if(S.sampleLoaded){ S.typeMap={}; S.funcMap={}; S.funcRing={}; loadStoreMaps(); }
@@ -1770,7 +1813,7 @@ function projectData(withLogos){
   const o={app:'datum',v:1,saved:new Date().toISOString(),
     raw:S.raw, map:S.map, orig:S.orig, sample:S.sample, sampleLoaded:!!S.sampleLoaded,
     opt:S.opt, sheet:S.sheet, plot:S.plot, mo:{cur:S.mo.cur,focus:S.mo.focus,hideDone:S.mo.hideDone,auto:S.mo.auto},
-    typeMap:S.typeMap, funcMap:S.funcMap, funcRing:S.funcRing, done:[...S.done], doneName:S.doneName};
+    typeMap:S.typeMap, funcMap:S.funcMap, funcRing:S.funcRing, done:[...S.done], doneName:S.doneName, skip:[...S.skip]};
   if(withLogos) o.logos={show:S.logoShow,user:S.logoUser};
   return o;
 }
@@ -1779,7 +1822,7 @@ function applyProject(o){
   S.raw={headers:o.raw.headers||[],rows:o.raw.rows,name:o.raw.name||''};
   S.map=Object.assign({type:-1,func:-1,id:-1,pos:-1,x:-1,y:-1,load:-1},o.map||{});
   S.orig=o.orig||{headers:S.raw.headers.slice(),rows:S.raw.rows.map(r=>r.slice()),map:Object.assign({},S.map)};
-  S.sample=!!o.sample; S.sampleLoaded=!!o.sampleLoaded; S.sel=null; S.pending={};
+  S.sample=!!o.sample; S.sampleLoaded=!!o.sampleLoaded; S.sel=null; S.pending={}; S.skip=new Set((o.skip||[]).filter(i=>i>=0&&i<S.raw.rows.length));
   Object.assign(S.opt,o.opt||{}); Object.assign(S.sheet,o.sheet||{}); Object.assign(S.plot,o.plot||{});
   if(o.mo) Object.assign(S.mo,{cur:o.mo.cur||0,focus:o.mo.focus||'both',hideDone:!!o.mo.hideDone,auto:!!o.mo.auto});
   S.typeMap=o.typeMap||{}; S.funcMap=o.funcMap||{}; S.funcRing=o.funcRing||{};
@@ -1802,7 +1845,7 @@ function loadProjectFile(f){
   fr.readAsText(f);
 }
 function clearProject(){
-  S.raw={headers:[],rows:[],name:''}; S.map={type:-1,func:-1,id:-1,pos:-1,x:-1,y:-1,load:-1}; S.orig=null; S.sample=false; S.sampleLoaded=false; S.sel=null; S.pending={};
+  S.raw={headers:[],rows:[],name:''}; S.map={type:-1,func:-1,id:-1,pos:-1,x:-1,y:-1,load:-1}; S.orig=null; S.sample=false; S.sampleLoaded=false; S.sel=null; S.pending={}; S.skip=new Set();
   S.done=new Set(); S.doneName=''; S.mo.cur=0; S.typeMap={}; S.funcMap={}; S.funcRing={}; S.logoShow=S.logoUser=S._imgShow=S._imgUser=null; saveLogo(); syncLogoUI();
   try{ localStorage.removeItem(PROJ_KEY); }catch(e){}
   $('fileInfo').textContent='No file loaded.'; saveDone(); renderMapUI(); refresh(); schedulePreview(true); toast('Started a new project.');
@@ -1912,6 +1955,7 @@ function init(){
     if(t.value===orig){ if(S.pending[ri]){ delete S.pending[ri][k]; if(!Object.keys(S.pending[ri]).length) delete S.pending[ri]; } } else (S.pending[ri]=S.pending[ri]||{})[k]=t.value;
     t.closest('td').classList.toggle('pend',t.value!==orig); updateDataBar(); });
   dw.addEventListener('keydown',e=>{ if(e.key==='Enter' && e.target.dataset && e.target.dataset.k) applyPending(); });
+  dw.addEventListener('change',e=>{ const t=e.target; if(t.dataset && t.dataset.skip!==undefined) toggleSkip(+t.dataset.skip,t.checked); });
   dw.addEventListener('click',e=>{
     const b=e.target.closest('[data-act]');
     if(b){ const ri=+b.dataset.ri; if(b.dataset.act==='dup') duplicateRow(ri);
@@ -1921,7 +1965,11 @@ function init(){
     tolEl.addEventListener('change',commit); tolEl.addEventListener('keydown',e=>{ if(e.key==='Enter') commit(); });
     $('dAlignMode').value=S.opt.alignMode; $('dAlignMode').onchange=e=>{ S.opt.alignMode=e.target.value; saveStore(); };
     $('dAlignKeep').value=S.opt.alignKeep; $('dAlignKeep').onchange=e=>{ S.opt.alignKeep=e.target.value; saveStore(); };
-    $('dAlign').onclick=()=>{ commit(); alignX(); }; }
+    $('dAlign').onclick=()=>{ commit(); alignX(); };
+    $('alignApply').onclick=()=>{ closeAlign(); applyPending(); }; $('alignDiscard').onclick=()=>{ closeAlign(); discardPending(); toast('Align X changes discarded.'); };
+    $('alignReview').onclick=()=>{ closeAlign(); toast('Changes are highlighted in the table - Apply or Discard when ready.'); };
+    $('alignModal').addEventListener('click',e=>{ if(e.target.id==='alignModal') $('alignReview').click(); });
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape' && !$('alignModal').hidden) $('alignReview').click(); }); }
   $('dApply').onclick=()=>applyPending(); $('dDiscard').onclick=discardPending;
   $('dAdd').onclick=()=>{ const sel=S.hoists.findIndex(h=>h.id===S.sel); addRow(sel); };
   $('dExport').onclick=exportEditedCSV;
