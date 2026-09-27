@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DATUM - Production Markout Tool</title>
-<meta name="theme-color" content="#10141c">
+<meta name="theme-color" content="#141415">
 <meta name="description" content="DATUM - Production Markout Tool: chain motor locations, markout rows and PDF sheets.">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
@@ -17,23 +17,23 @@
 <style>
 :root{
   color-scheme:dark;
-  --bg:#0a0d13; --panel:#10141c; --raised:#171c27; --raised2:#1e2532; --line:#212836; --line2:#2d3648; --line3:#3a455c;
-  --ink:#e8ebf3; --ink2:#c3c9d9; --muted:#8892a8; --faint:#5d677d;
-  --accent:#7b9bff; --accent2:#5b7cf0; --accent-soft:rgba(123,155,255,.16); --accent-ink:#0a0d13;
+  --bg:#0e0e0f; --panel:#151617; --raised:#1e1f20; --raised2:#272829; --line:#2a2b2d; --line2:#393a3c; --line3:#494b4d;
+  --ink:#ededee; --ink2:#cdcecf; --muted:#96989a; --faint:#6b6d6f;
+  --accent:#d3d6db; --accent2:#a7abb2; --accent-soft:rgba(211,214,219,.15); --accent-ink:#0e0e0f;
   --warn:#f5b04a; --warnbg:rgba(245,176,74,.12); --err:#ff7b72; --errbg:rgba(255,123,114,.14); --sel:#ffd166;
-  --knock:#0f141d; --focus-a:#4f63e6; --focus-b:#3b49c4; --overlay:rgba(16,20,28,.86); --shadow:rgba(0,0,0,.4);
-  --plot-bg:radial-gradient(circle at 50% 40%,#0f141d,#090c11); --empty-bg:radial-gradient(circle at 50% 35%,#131926,#0a0d13);
+  --knock:#151617; --focus-a:#5b5f66; --focus-b:#3f4247; --overlay:rgba(18,18,20,.86); --shadow:rgba(0,0,0,.4);
+  --plot-bg:radial-gradient(circle at 50% 40%,#151617,#0d0d0d); --empty-bg:radial-gradient(circle at 50% 35%,#1c1c1d,#0e0e0f);
   --radius:10px; --radius-sm:7px; --midw:minmax(120px,200px);
   --font:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
 }
 html[data-theme=light]{
   color-scheme:light;
-  --bg:#eceff5; --panel:#ffffff; --raised:#f3f5fa; --raised2:#e8ecf4; --line:#e1e6f0; --line2:#cdd5e3; --line3:#b4bfd3;
-  --ink:#131a2c; --ink2:#38425c; --muted:#63708c; --faint:#95a0b6;
-  --accent:#3457d5; --accent2:#2946b3; --accent-soft:rgba(52,87,213,.12); --accent-ink:#ffffff;
+  --bg:#f0f0f1; --panel:#ffffff; --raised:#f6f6f7; --raised2:#edeeef; --line:#e8e8e9; --line2:#d7d8d9; --line3:#c2c3c5;
+  --ink:#1e1f21; --ink2:#484a4c; --muted:#75777a; --faint:#a4a5a7;
+  --accent:#3d4148; --accent2:#2a2d32; --accent-soft:rgba(61,65,72,.12); --accent-ink:#ffffff;
   --warn:#9a5a06; --warnbg:#fff1d6; --err:#c0342b; --errbg:#fde4e2; --sel:#e0a100;
-  --knock:#ffffff; --focus-a:#4a5fe3; --focus-b:#3548c4; --overlay:rgba(255,255,255,.88); --shadow:rgba(30,45,90,.16);
-  --plot-bg:radial-gradient(circle at 50% 40%,#ffffff,#f1f4fa); --empty-bg:radial-gradient(circle at 50% 35%,#ffffff,#e9edf5);
+  --knock:#ffffff; --focus-a:#565a61; --focus-b:#383b40; --overlay:rgba(255,255,255,.88); --shadow:rgba(20,20,24,.16);
+  --plot-bg:radial-gradient(circle at 50% 40%,#ffffff,#f5f5f6); --empty-bg:radial-gradient(circle at 50% 35%,#ffffff,#eeeff0);
 }
 *{box-sizing:border-box}
 html,body{margin:0;height:100%}
@@ -45,7 +45,7 @@ button,select,input,textarea{font:inherit;color:inherit}
 .app{display:grid;grid-template-columns:336px 1fr;grid-template-rows:56px 1fr;height:100vh}
 .bar{grid-column:1/-1;display:flex;align-items:center;gap:18px;padding:0 18px;background:var(--panel);border-bottom:1px solid var(--line)}
 .brand{display:flex;align-items:center;gap:11px;font-size:15px;letter-spacing:-.01em}
-.brand .logo{width:30px;height:30px;border-radius:8px;display:block;overflow:hidden;box-shadow:0 4px 14px rgba(56,90,220,.35)}.brand .logo img{width:100%;height:100%;display:block}
+.brand .logo{width:30px;height:30px;border-radius:8px;display:block;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.4)}.brand .logo img{width:100%;height:100%;display:block}
 .brand b{font-weight:650}
 .brand small{color:var(--muted);font-size:12px;font-weight:450}
 .tabs{display:flex;gap:2px;margin-left:14px;padding:3px;background:var(--bg);border:1px solid var(--line);border-radius:10px}
@@ -55,14 +55,14 @@ button,select,input,textarea{font:inherit;color:inherit}
 .tabs .badge{display:inline-block;min-width:18px;padding:0 6px;margin-left:7px;border-radius:9px;background:var(--warn);color:#1a1204;font-size:11px;font-weight:700;text-align:center}
 .tabs .badge[hidden]{display:none}
 .sp{flex:1}
-button.primary{background:var(--accent);color:var(--accent-ink);border:0;padding:8px 16px;border-radius:9px;font-weight:650;cursor:pointer;transition:.15s;box-shadow:0 4px 16px rgba(91,124,240,.3)}
-button.primary:hover{background:#94adff}
+button.primary{background:var(--accent);color:var(--accent-ink);border:0;padding:8px 16px;border-radius:9px;font-weight:650;cursor:pointer;transition:.15s;box-shadow:0 4px 16px rgba(0,0,0,.3)}
+button.primary:hover{background:#eceef1}
 button.primary:disabled{background:var(--raised2);color:var(--faint);box-shadow:none;cursor:not-allowed}
 button.btn{background:var(--raised);border:1px solid var(--line2);padding:6px 12px;border-radius:var(--radius-sm);cursor:pointer;color:var(--ink2);font-weight:520;transition:.15s}
 button.btn:hover{background:var(--raised2);border-color:var(--line3);color:var(--ink)}
 button.btn:active{transform:translateY(1px)}
 button.btn.solid{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:650}
-button.btn.solid:hover{background:#94adff}
+button.btn.solid:hover{background:#c4c8cf}
 :focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .side{overflow:auto;background:var(--panel);border-right:1px solid var(--line);padding:6px 0}
 .side details,.pdfset details{border-bottom:1px solid var(--line);padding:0 18px}
@@ -629,6 +629,11 @@ table.dt td.num{color:var(--muted)}
         <button class="btn" id="dAdd">+ Add row</button>
         <button class="btn" id="dExport">Export CSV</button>
         <button class="btn" id="dRevert">Revert to imported CSV</button>
+        <span class="sep"></span>
+        <button class="btn" id="dAlign" title="Find matching points whose X is a little out and line them up">Align X</button>
+        <label title="Points closer than this are treated as the same mark">Tolerance <input type="text" id="dAlignTol" style="width:74px"></label>
+        <select id="dAlignMode" style="width:auto" title="Which matches to look for"><option value="both">Mirrored + columns</option><option value="mirror">Mirrored pairs (SR/SL)</option><option value="column">Same-X columns</option></select>
+        <select id="dAlignKeep" style="width:auto" title="Which value the group snaps to"><option value="first">Keep first in list</option><option value="big">Keep larger distance</option><option value="avg">Average</option></select>
         <span class="hint" id="dInfo"></span>
       </div>
       <div class="scroll"><div id="dataWrap"></div></div>
@@ -717,7 +722,7 @@ const S = {
   map:{type:-1,func:-1,id:-1,pos:-1,x:-1,y:-1,load:-1},
   hoists:[], rows:[], warnings:0,
   typeMap:{}, funcMap:{}, funcRing:{},
-  opt:{inUnit:'auto',disp:'ftin',den:1,tol:50,cth:1,rot:0,rowOrder:'top',sideNeg:'left',sideSort:'center',flipX:false,flipY:false,datX:0,datY:0,topL:'UPSTAGE',botL:'DOWNSTAGE',leftL:'SR',rightL:'SL',upStyle:'fill'},
+  opt:{inUnit:'auto',disp:'ftin',den:1,tol:50,cth:1,rot:0,rowOrder:'top',sideNeg:'left',sideSort:'center',flipX:false,flipY:false,datX:0,datY:0,topL:'UPSTAGE',botL:'DOWNSTAGE',leftL:'SR',rightL:'SL',upStyle:'fill',alignTol:25.4,alignMode:'both',alignKeep:'first'},
   logoShow:null, logoUser:null, _imgShow:null, _imgUser:null,
   mo:{cur:0,focus:'both',hideDone:false,auto:false}, done:new Set(), doneName:'', pending:{}, orig:null,
   sheet:{sheetType:'FLOOR MARKOUT',show:'',venue:'',datum:'',date:'',rev:'',by:'',footer:'',title:true,page:'a4',orient:'portrait',margin:10,rowH:11,fit:'fixed',capN:4,minPt:5,centreMm:0,textPct:100,yPct:100,symPct:100,linePct:100,font:'helvetica',load:true,tick:'none',mode:'colour',cText:'#1b2440',cMuted:'#5d6b8a',cBorder:'#8d9bbd',cCentre:'#5c6b8f',cBand:'#f3f6fb',cBandText:'#1b2440',centreTint:false,cCentreFill:'#eef2fb',zebra:false,cZebra:'#f3f6fb',logoHShow:14,logoHUser:14,logoAll:false,legend:true,onlyTodo:false,bands:true,zoom:'fit'},
@@ -789,7 +794,7 @@ function autoMap(headers){
     return -1;
   };
   return {
-    type: find(['hoisttype','type'],['hoisttype','type']),
+    type: find(['capacity','hoistcapacity','hoisttype','type'],['hoisttype','capacity','type']),
     func: find(['hoistfunction','function'],['function','funct']),
     id:   find(['hoistid','id','name','label'],['hoistid','hoistname','label']),
     pos:  find(['hoistposition','position','hoistdirection','updown'],['hoistposition','position']),
@@ -814,12 +819,17 @@ function parseLen(str, unit){
   m=s.match(/^\d+(?:\.\d+)?$|^\.\d+$/);
   if(m) return sign*parseFloat(s)*UNIT_MM[unit];
   s=s.replace(/\s*(?:feet|foot|ft)\b\.?/gi,"'").replace(/\s*(?:inches|inch|in)\b\.?/gi,'"').trim();
-  // 64'3.319"  /  64' - 3 1/2"  /  64'3.319 (closing quote missing)
-  m=s.match(/^(?:(\d+(?:\.\d+)?)\s*')?\s*-?\s*(?:(\d+(?:\.\d+)?)?(?:\s*(\d+)\/(\d+))?\s*")?$/);
-  if(m && (m[1]!==undefined || m[2]!==undefined || m[3]!==undefined)){
-    const ft=parseFloat(m[1]||0), inch=parseFloat(m[2]||0), fr=m[3]?parseInt(m[3],10)/parseInt(m[4],10):0;
-    return sign*(ft*MM_PER_FT+(inch+fr)*MM_PER_IN);
-  }
+  // 64'3.319"  /  64' - 3 1/2"  /  12'-.5"  /  12' 6-1/2"  /  0'-1/2"  /  64'3.319 (closing quote missing)
+  s=s.replace(/([\u00bc\u00bd\u00be\u2153\u2154\u215b\u215c\u215d\u215e])/g,c=>' '+({'\u00bc':'1/4','\u00bd':'1/2','\u00be':'3/4','\u2153':'1/3','\u2154':'2/3','\u215b':'1/8','\u215c':'3/8','\u215d':'5/8','\u215e':'7/8'}[c])+' ');
+  s=s.replace(/\s+/g,' ').trim();
+  m=s.match(/^(?:(\d*\.?\d+)\s*')?\s*-?\s*([^']*?)\s*"?$/);
+  if(m){ const ftS=m[1], hasQ=/"\s*$/.test(s), q=m[2].trim();
+    if(ftS!==undefined||hasQ){ let inch=0, ok=false;
+      if(q===''){ ok=ftS!==undefined; }
+      else { let n2=q.match(/^(\d*\.?\d+)(?:[\s-]+(\d+)\/(\d+))?$/);
+        if(n2){ inch=parseFloat(n2[1])+(n2[2]?parseInt(n2[2],10)/parseInt(n2[3],10):0); ok=true; }
+        else { n2=q.match(/^(\d+)\/(\d+)$/); if(n2){ inch=parseInt(n2[1],10)/parseInt(n2[2],10); ok=true; } } }
+      if(ok) return sign*((ftS?parseFloat(ftS):0)*MM_PER_FT+inch*MM_PER_IN); } }
   m=s.match(/^(\d+(?:\.\d+)?)\s*'\s*-?\s*(\d+(?:\.\d+)?)$/);
   if(m) return sign*(parseFloat(m[1])*MM_PER_FT+parseFloat(m[2])*MM_PER_IN);
   return NaN;
@@ -961,7 +971,7 @@ function rebuild(){
     h.x=parseLen(h.xRaw,unit); h.y=parseLen(h.yRaw,unit);
     h.load = h.loadRaw!=='' && !isNaN(parseFloat(h.loadRaw)) ? parseFloat(h.loadRaw) : null;
     if(h.id==='') { h.issues.push('No ID'); h.id='?'+(i+1); }
-    if(isNaN(h.x)) h.issues.push('Bad Origin X'); if(isNaN(h.y)) h.issues.push('Bad Origin Y');
+    if(isNaN(h.x)) h.issues.push('Bad Origin X'+(h.xRaw?' ("'+h.xRaw+'")':'')); if(isNaN(h.y)) h.issues.push('Bad Origin Y'+(h.yRaw?' ("'+h.yRaw+'")':''));
     h.ok = !isNaN(h.x) && !isNaN(h.y);
     if(h.ok){
       const key=Math.round(h.x)+'|'+Math.round(h.y);
@@ -1024,8 +1034,8 @@ function symSVG(key,color,size,inner,mods){
   return `<svg width="${px}" height="${px*vbH/3.4}" viewBox="-1.7 -1.7 3.4 ${vbH}" fill="none" stroke="${color}" stroke-width=".17" stroke-linejoin="round" stroke-linecap="round" style="flex:none;margin:${mg}px;overflow:visible"><g transform="translate(${-vc[0]} ${-vc[1]})">${s}</g></svg>`;
 }
 const THEME_T={
-  dark: {grid:'#161c29',gridTxt:'#5d677d',cl:'#43507a',clTxt:'#8892a8',lab:'#e8ebf3',sub:'#8892a8',halo:'rgba(255,209,102,.16)',haloS:'#ffd166',ink:'#c3c9d9'},
-  light:{grid:'#e4e9f2',gridTxt:'#8391ad',cl:'#8d9bbd',clTxt:'#5d6b8a',lab:'#131a2c',sub:'#63708c',halo:'rgba(224,161,0,.16)',haloS:'#d19a00',ink:'#38425c'}
+  dark: {grid:'#1f1f20',gridTxt:'#6b6d6f',cl:'#5c5e61',clTxt:'#96989a',lab:'#ededee',sub:'#96989a',halo:'rgba(255,209,102,.16)',haloS:'#ffd166',ink:'#cdcecf'},
+  light:{grid:'#eaebec',gridTxt:'#96989a',cl:'#a3a5a7',clTxt:'#717376',lab:'#1e1f21',sub:'#75777a',halo:'rgba(224,161,0,.16)',haloS:'#d19a00',ink:'#484a4c'}
 };
 function themeT(){ return THEME_T[S.theme]||THEME_T.dark; }
 function rgbHex(r,g,b){ return '#'+[r,g,b].map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join(''); }
@@ -1088,6 +1098,39 @@ function applyPending(silent){
 function discardPending(){ S.pending={}; renderData(); }
 function uniqueId(base){ const ids=new Set(S.hoists.map(h=>h.id)); let c=String(base||'NEW')+'-copy', k=2; while(ids.has(c)) c=(base||'NEW')+'-copy'+(k++); return c; }
 function focusRow(ri){ if(S.tab!=='data') return; const el=document.querySelector(`#dataWrap tr[data-ri="${ri}"]`); if(el){ el.scrollIntoView({block:'center'}); const inp=el.querySelector('input[data-k=id]'); if(inp){ inp.focus(); inp.select(); } } }
+function rawFromMm(mm){
+  const u=effUnit(); if(S.detected.kind==='imperial' && S.opt.inUnit==='auto'){
+    const sg=mm<0?'-':''; let a=Math.abs(mm); let ft=Math.floor(a/MM_PER_FT+1e-9), inch=Math.round((a-ft*MM_PER_FT)/MM_PER_IN*1000)/1000; if(inch>=12){ ft++; inch-=12; }
+    return sg+ft+"' "+String(inch).replace(/(\.\d*?)0+$/,'$1').replace(/\.$/,'')+'"'; }
+  const v=mm/UNIT_MM[u]; return String(Math.round(v*10000)/10000);
+}
+// Find matching points (mirrored SR/SL pairs and same-X columns) whose X is only slightly out and propose aligned values
+function alignX(){
+  if(S.map.x<0||!S.hoists.length){ toast('Import a CSV first.'); return 0; }
+  applyPending(true);
+  const tol=Math.max(0.1,S.opt.alignTol), rowTol=Math.max(1,S.opt.tol||50), mode=S.opt.alignMode, keep=S.opt.alignKeep;
+  const pts=S.hoists.filter(h=>!h.datum&&isFinite(h.x)&&isFinite(h.y)).map((h,k)=>({h,ri:h.row-2,x:h.x,y:h.y,o:h.x,k}));
+  const groups=[]; const target=(mem,key)=>{ const v=mem.map(key); if(keep==='avg') return v.reduce((a,b)=>a+b,0)/v.length; if(keep==='big') return v.reduce((a,b)=>Math.abs(b)>Math.abs(a)?b:a); return v[0]; };
+  const cluster=(arr,val)=>{ const s=arr.slice().sort((a,b)=>val(a)-val(b)), out=[]; let cur=null; for(const p of s){ if(cur&&val(p)-val(cur[0])<=tol) cur.push(p); else { cur=[p]; out.push(cur); } } return out; };
+  if(mode==='both'||mode==='mirror'){
+    const rows=[]; let cur=null; for(const p of pts.slice().sort((a,b)=>a.y-b.y)){ if(cur&&p.y-cur[0].y<=rowTol) cur.push(p); else { cur=[p]; rows.push(cur); } }
+    for(const r of rows) for(const c of cluster(r,p=>Math.abs(p.x))){
+      const L=c.filter(p=>p.x<0), R=c.filter(p=>p.x>0); if(L.length!==1||R.length!==1) continue;
+      const a=Math.abs(L[0].x), b=Math.abs(R[0].x); if(Math.abs(a-b)<0.05) continue;
+      const mem=c.slice().sort((p,q)=>p.k-q.k), tv=target(mem,p=>Math.abs(p.x));
+      for(const p of mem) p.x=(p.x<0?-1:1)*tv; groups.push({kind:'mirror',mem}); } }
+  if(mode==='both'||mode==='column'){
+    for(const sg of [-1,1]){ const side=pts.filter(p=>sg<0?p.x<0:p.x>0);
+      for(const c of cluster(side,p=>p.x)){ if(c.length<2) continue; if(c.every(p=>Math.abs(p.x-c[0].x)<0.05)) continue;
+        const ys=c.slice().sort((a,b)=>a.y-b.y); let clash=false; for(let i=1;i<ys.length;i++) if(ys[i].y-ys[i-1].y<=rowTol) clash=true; if(clash) continue;
+        const mem=c.slice().sort((p,q)=>p.k-q.k), tv=target(mem,p=>p.x); for(const p of mem) p.x=tv; groups.push({kind:'column',mem}); } } }
+  let n=0; const lines=[];
+  for(const p of pts){ if(Math.abs(p.x-p.o)<0.05) continue; (S.pending[p.ri]=S.pending[p.ri]||{}).x=rawFromMm(p.x); n++; lines.push(p.h.id); }
+  renderData(); updateDataBar && updateDataBar();
+  if(!n) toast('No near-miss matches found within '+fmtField(tol)+'.');
+  else { toast('Proposed '+n+' X change'+(n>1?'s':'')+' in '+groups.length+' group'+(groups.length>1?'s':'')+' - check the highlighted cells, then Apply changes.'); $('dInfo').textContent='Align X: '+lines.slice(0,12).join(', ')+(lines.length>12?' +'+(lines.length-12)+' more':''); }
+  return n;
+}
 function addRow(after){
   applyPending(true);
   const src=S.raw.rows[after>=0?after:S.raw.rows.length-1]; const row=Array(S.raw.headers.length).fill('');
@@ -1868,6 +1911,11 @@ function init(){
     if(b){ const ri=+b.dataset.ri; if(b.dataset.act==='dup') duplicateRow(ri);
       else { if(!b.classList.contains('armed')){ b.classList.add('armed'); setTimeout(()=>b.classList.remove('armed'),3000); } else deleteRow(ri); } return; }
     if(e.target.closest('input,select')) return; const tr=e.target.closest('tr[data-id]'); if(tr) select(tr.dataset.id,'data'); });
+  { const tolEl=$('dAlignTol'); tolEl.value=fmtField(S.opt.alignTol); const commit=()=>{ const mm=parseLen(tolEl.value.trim(),bareUnit()); if(isNaN(mm)||mm<=0){ toast('Could not read that tolerance.'); tolEl.value=fmtField(S.opt.alignTol); return; } S.opt.alignTol=Math.round(mm*100)/100; tolEl.value=fmtField(S.opt.alignTol); saveStore(); };
+    tolEl.addEventListener('change',commit); tolEl.addEventListener('keydown',e=>{ if(e.key==='Enter') commit(); });
+    $('dAlignMode').value=S.opt.alignMode; $('dAlignMode').onchange=e=>{ S.opt.alignMode=e.target.value; saveStore(); };
+    $('dAlignKeep').value=S.opt.alignKeep; $('dAlignKeep').onchange=e=>{ S.opt.alignKeep=e.target.value; saveStore(); };
+    $('dAlign').onclick=()=>{ commit(); alignX(); }; }
   $('dApply').onclick=()=>applyPending(); $('dDiscard').onclick=discardPending;
   $('dAdd').onclick=()=>{ const sel=S.hoists.findIndex(h=>h.id===S.sel); addRow(sel); };
   $('dExport').onclick=exportEditedCSV;
