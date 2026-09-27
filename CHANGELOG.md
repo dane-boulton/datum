@@ -2,6 +2,26 @@
 
 All notable changes to DATUM. Newest first.
 
+## 28 September 2026 (evening)
+
+### Grid and subhang hoists
+- **Categories.** Hoists, chain blocks and fall arrests with **GRID** or **SUBHANG** in the **Position** column now belong to that category. A blank Position means the hoist is always shown.
+- **New Show option: All hoists / Grid only / Subhang only.** It's one shared setting, with a selector in:
+  - the plot toolbar (in the ⋯ menu on phones);
+  - the Markout Rows bar;
+  - PDF export (Content).
+
+  Floor and corner marks, and hoists with no category, are always shown. The PDF footer notes "Grid only" or "Subhang only" when the filter is on. The selector only appears when the data has categories.
+
+### Markout Rows focus
+- **Renamed options:** focus options are now **Stage Right Only** and **Stage Left Only**. They follow Flip X.
+- **Whole list:** the focus applies to the whole list, not just the open row. Collapsed rows show only that side, rows with nothing on that side or the centre line drop out, and row counts, progress, auto-advance and "next unmarked" all count that side only.
+
+### Columns
+- **Orientation:** the old "Hoist Position" (Hoist Up / Hoist Down) is now called **Orientation** in the app. Both headers are recognised on import.
+- **Capacity:** a Capacity column is imported and stored as its own column (shown and editable in the Data tab), but it's **no longer used to work out the Hoist Type**, not even as a fallback. The type comes only from Hoist Symbol, or from a Hoist Type column in older files.
+- **Samples** now put GRID or SUBHANG in Position for most hoists.
+
 ## 28 September 2026 (later)
 
 ### Hoist Type and Position from the CSV
@@ -10,7 +30,7 @@ All notable changes to DATUM. Newest first.
   - Block and Fall or Chain Block → Chain Block.
   - Fall Arrest, Floor Mark.
   - USR (or USR Mark), USL, DSL, DSR.
-- **Capacity fallback.** If the Hoist Symbol doesn't name a type, it comes from the Capacity column. A bare number is read as kg (1000 → 1 Ton), or as tonnes when it is 10 or less (0.25 → 250kg).
+- (Superseded later the same day: Capacity is no longer used as a fallback for the type.)
 - **New Position column.** It's collected for every row.
   - For **floor marks and USR/USL/DSR/DSL** it describes what's being marked (for example "Main Stage" or "Camera Riser"). It's shown instead of the load on Markout Rows cards, under the mark's ID on the plot, in the hoist card and in the PDF.
   - For hoists it's stored but not used yet.

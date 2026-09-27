@@ -272,6 +272,8 @@ table.dt tr.sel td{background:var(--accent-soft)}
 .mo-row.cur .mo-c .ok{color:#b9f5cf}
 .mo-c .clids{font-size:10.5px;color:var(--muted);margin-top:2px}
 .mo-row.all .mo-ids{opacity:.7}
+.mo-row.fl{grid-template-columns:minmax(0,1fr) var(--midw)}.mo-row.fl .mo-cell.r{display:none}
+.mo-row.fr{grid-template-columns:var(--midw) minmax(0,1fr)}.mo-row.fr .mo-cell.l{display:none}
 .mo-row.hascl .mo-c{background:var(--clhi)}   /* this row has a mark on the centre line */
 .mo-mid.hascl{background:linear-gradient(180deg,var(--clhi-a),var(--clhi-b))}
 .mo-empty{padding:40px 20px;text-align:center;color:var(--muted);font-size:15px}
@@ -611,6 +613,7 @@ table.dt td.num{color:var(--muted)}
         <label><input type="checkbox" id="pCoords"> Coordinates</label>
         <label><input type="checkbox" id="pGrid" checked> Grid</label>
         <label class="wide-only"><input type="checkbox" id="pLegend" checked> Legend</label>
+        <label class="showWrap">Show <select class="showSel" aria-label="Show hoists"><option value="all">All hoists</option><option value="GRID">Grid only</option><option value="SUBHANG">Subhang only</option></select></label>
         <label>Symbol size <input type="range" id="pSize" min="5" max="18" value="9"></label>
         </div>
         <span class="hint">Scroll to zoom &middot; drag to pan &middot; click a hoist to select</span>
@@ -626,11 +629,12 @@ table.dt td.num{color:var(--muted)}
 
     <section class="view" id="v-rows"><div class="mo">
       <div class="mo-bar" id="moBar">
-        <div class="inl"><label for="moFocus">Focus</label><select id="moFocus"><option value="both">Both Sides</option><option value="left">Left Side Only</option><option value="right">Right Side Only</option></select></div>
+        <div class="inl"><label for="moFocus">Focus</label><select id="moFocus"><option value="both">Both Sides</option><option value="left">Stage Right Only</option><option value="right">Stage Left Only</option></select></div>
         <button class="pillb" id="moRowPill" title="Jump to the next unmarked row">Row 1 / 1</button>
         <button class="pillb moMoreBtn" id="moMore" aria-label="More options" title="More options"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
         <div class="mo-prog"><div class="txt"><b id="moProgTxt">0 / 0 marked</b><span id="moProgPct">0%</span></div><div class="track"><i id="moProgBar"></i></div></div>
         <div class="mo-more" id="moMoreBox">
+        <span class="showWrap inl"><select class="showSel" aria-label="Show hoists"><option value="all">All hoists</option><option value="GRID">Grid only</option><option value="SUBHANG">Subhang only</option></select></span>
         <button class="tog" id="moHide" aria-pressed="false"><span class="lg">Hide completed</span><span class="sm">Hide done</span></button>
         <button class="tog" id="moAuto" aria-pressed="false" title="Move to the next row when every mark on this row is ticked"><span class="lg">Auto-advance</span><span class="sm">Auto-next</span></button>
         <button class="btn" id="moReset">Reset completed</button>
@@ -706,6 +710,7 @@ table.dt td.num{color:var(--muted)}
             <div class="field"><label>Legend</label><input type="checkbox" id="sLegend"></div>
             <div class="field"><label>Header bands</label><input type="checkbox" id="sBands"></div>
             <div class="field"><label>Unmarked only</label><input type="checkbox" id="sOnlyTodo"></div>
+            <div class="field showWrap"><label>Show</label><select class="showSel" aria-label="Show hoists"><option value="all">All hoists</option><option value="GRID">Grid only</option><option value="SUBHANG">Subhang only</option></select></div>
             <div class="hint">&ldquo;Unmarked only&rdquo; leaves out hoists you have ticked off in Markout Rows.</div>
           </div></details>
         </aside>
@@ -829,10 +834,10 @@ const STORE_KEY = 'markoutTool.v1', DONE_KEY = 'markoutTool.done.v1', LOGO_KEY =
 /* ============================ state ============================ */
 const S = {
   raw:{headers:[],rows:[],name:''},
-  map:{type:-1,func:-1,id:-1,pos:-1,x:-1,y:-1,load:-1,hsym:-1,auto:-1,place:-1},
+  map:{type:-1,func:-1,id:-1,pos:-1,x:-1,y:-1,load:-1,hsym:-1,auto:-1,place:-1,cap:-1},
   hoists:[], rows:[], warnings:0,
   typeMap:{}, funcMap:{}, funcRing:{},
-  opt:{inUnit:'auto',disp:'ftin',den:1,tol:50,cth:1,rot:0,rowOrder:'top',sideNeg:'left',sideSort:'center',flipX:false,flipY:false,datX:0,datY:0,topL:'UPSTAGE',botL:'DOWNSTAGE',leftL:'SR',rightL:'SL',upStyle:'fill',alignTol:25.4,alignMode:'both',alignKeep:'first'},
+  opt:{inUnit:'auto',disp:'ftin',den:1,tol:50,cth:1,rot:0,rowOrder:'top',sideNeg:'left',sideSort:'center',flipX:false,flipY:false,datX:0,datY:0,topL:'UPSTAGE',botL:'DOWNSTAGE',leftL:'SR',rightL:'SL',upStyle:'fill',show:'all',alignTol:25.4,alignMode:'both',alignKeep:'first'},
   skip:new Set(), cloud:null, logoShow:null, logoUser:null, _imgShow:null, _imgUser:null,
   mo:{cur:0,focus:'both',hideDone:false,auto:false}, done:new Set(), doneName:'', pending:{}, orig:null,
   sheet:{sheetType:'FLOOR MARKOUT',show:'',venue:'',datum:'',date:'',rev:'',by:'',footer:'',title:true,page:'a4',orient:'portrait',margin:10,rowH:11,fit:'fixed',capN:4,minPt:5,centreMm:0,textPct:100,yPct:100,symPct:100,linePct:100,font:'helvetica',load:true,tick:'none',mode:'colour',cText:'#1b2440',cMuted:'#5d6b8a',cBorder:'#8d9bbd',cCentre:'#5c6b8f',cBand:'#f3f6fb',cBandText:'#1b2440',centreTint:false,cCentreFill:'#eef2fb',zebra:false,cZebra:'#f3f6fb',logoHShow:14,logoHUser:14,logoAll:false,onePage:false,legend:true,onlyTodo:false,bands:true,zoom:'fit'},
@@ -904,10 +909,11 @@ function autoMap(headers){
     return -1;
   };
   return {
-    type: find(['capacity','hoistcapacity','hoisttype','type'],['hoisttype','capacity','type']),
+    type: find(['hoisttype','type'],['hoisttype']),
+    cap:  find(['capacity','hoistcapacity','capacitykg','swl'],['capacity']),
     func: find(['hoistfunction','function'],['function','funct']),
     id:   find(['hoistid','id','name','label'],['hoistid','hoistname','label']),
-    pos:  find(['hoistposition','hoistdirection','updown','hoistupdown','direction'],['hoistposition','updown']),
+    pos:  find(['orientation','hoistorientation','hoistposition','hoistdirection','updown','hoistupdown','direction'],['orientation','hoistposition','updown']),
     place:find(['position','location','hoistlocation','description'],[]),
     x:    find(['originx','x','xpos','xposition'],['originx']),
     y:    find(['originy','y','ypos','yposition'],['originy']),
@@ -1073,7 +1079,7 @@ function rebuild(){
     const h={row:i+2, skip:S.skip.has(i), id:g('id'), type:g('type')||'(none)', func:g('func')||'(none)', posRaw:g('pos'), xRaw:g('x'), yRaw:g('y'), loadRaw:g('load'), issues:[]};
     h.upRaw=/\bup\b/i.test(h.posRaw) && !/down/i.test(h.posRaw); h.up=h.upRaw;
     h.datum=/^datum$/i.test(h.id)||/^datum$/i.test(h.type);
-    h.hsym=g('hsym'); h.place=g('place'); h.auto=autoKind(map.auto>=0?g('auto'):h.hsym);
+    h.hsym=g('hsym'); h.place=g('place'); h.cap=g('cap'); h.auto=autoKind(map.auto>=0?g('auto'):h.hsym);
     h.x=parseLen(h.xRaw,unit); h.y=parseLen(h.yRaw,unit);
     h.load = h.loadRaw!=='' && !isNaN(parseFloat(h.loadRaw)) ? parseFloat(h.loadRaw) : null;
     if(h.id==='') { h.issues.push('No ID'); h.id='?'+(i+1); }
@@ -1090,11 +1096,12 @@ function rebuild(){
   });
   S.hoists=hs; S.warnings=warn;
   assignDefaults();
+  for(const h of hs) h.cat=isMarker(h)?'':hoistCat(h.place);
   buildRows();
 }
 function buildRows(){
   const tol=Math.max(0,S.opt.tol||0), th=Math.max(0,S.opt.cth||0);
-  const items=S.hoists.filter(h=>h.ok&&!h.datum).map(h=>{ const q=tf(h); return {h, yu:q.yu, xs:q.xs}; }); // xs<0 = left column
+  const items=S.hoists.filter(h=>h.ok&&!h.datum&&passShow(h)).map(h=>{ const q=tf(h); return {h, yu:q.yu, xs:q.xs}; }); // xs<0 = left column
   items.sort((a,b)=>b.yu-a.yu || a.xs-b.xs);
   const rows=[];
   for(const it of items){
@@ -1189,16 +1196,18 @@ function symbolType(v){
   const f=t.match(/(\d+)\s*\/\s*(\d+)\s*(?:t|tons?|tonnes?)(?![a-z])/); if(f&&+f[2]) return kgLabel(nearCap(+f[1]/+f[2]*1000));
   const cap=parseCapacityKg(t); return cap?kgLabel(nearCap(cap.kg)):'';
 }
-// A Capacity column may hold a bare number: kg, or tonnes when it is 10 or less
-function capacityType(v){ const s=String(v||'').trim(); if(!/^\d+(\.\d+)?$/.test(s)) return ''; const n=parseFloat(s); return n>0?kgLabel(nearCap(n<=10?n*1000:n)):''; }
 // Floor marks and corner marks show their Position text where hoists show their load
+// Hoists, chain blocks and fall arrests whose Position says GRID or SUBHANG belong to that category; blank = always shown
+function hoistCat(v){ const t=String(v||'').toLowerCase(); return /(^|[^a-z])grid([^a-z]|$)/.test(t)?'GRID':/(^|[^a-z])sub\s*-?\s*hang/.test(t)?'SUBHANG':''; }
+function passShow(h){ const f=S.opt.show||'all'; return f==='all'||!h.cat||h.cat===f; }
+function showName(){ return {GRID:'Grid only',SUBHANG:'Subhang only'}[S.opt.show]||''; }
 function isMarker(h){ return /^(floor-mark|corner-)/.test(itemSym(h)); }
 function subTxt(h){ return isMarker(h) ? (h.place||'') : loadTxt(h); }
-// On import: fill the Hoist Type and Hoist Automation columns from Hoist Symbol (and a numeric Capacity column)
+// On import: fill the Hoist Type and Hoist Automation columns from Hoist Symbol. Capacity is stored but never used for the type.
 function deriveColumns(){
   const H=S.raw.headers, rows=S.raw.rows, m=S.map, cell=(r,i)=>i>=0&&r[i]!=null?String(r[i]).trim():'';
   const colFor=name=>{ let i=H.findIndex(h=>norm(h)===norm(name)); if(i<0){ H.push(name); i=H.length-1; } rows.forEach(r=>{ while(r.length<H.length) r.push(''); }); return i; };
-  const types=rows.map(r=>symbolType(cell(r,m.hsym))||capacityType(cell(r,m.type)));
+  const types=m.hsym>=0?rows.map(r=>symbolType(cell(r,m.hsym))):[];
   if(types.some(Boolean)){ const ti=colFor('Hoist Type'), src=m.type;
     rows.forEach((r,k)=>{ if(types[k]) r[ti]=types[k]; else if(src>=0&&src!==ti&&!cell(r,ti)) r[ti]=cell(r,src); }); m.type=ti; }
   if(m.hsym>=0){ const ai=colFor('Hoist Automation'); rows.forEach((r,k)=>{ const a=AUTO_VALUES[autoKind(cell(r,m.hsym))]; if(a) r[ai]=a; }); m.auto=ai; }
@@ -1221,7 +1230,7 @@ function datumNote(){
 }
 
 /* ============================ rendering: data view ============================ */
-const COLKEYS=[['id','Hoist ID'],['type','Hoist Type'],['auto','Hoist Automation'],['func','Hoist Function'],['pos','Hoist Position'],['place','Position'],['x','Origin X'],['y','Origin Y'],['load','Load (kg)'],['hsym','Hoist Symbol']];
+const COLKEYS=[['id','Hoist ID'],['type','Hoist Type'],['auto','Hoist Automation'],['cap','Capacity'],['func','Hoist Function'],['pos','Orientation'],['place','Position'],['x','Origin X'],['y','Origin Y'],['load','Load (kg)'],['hsym','Hoist Symbol']];
 function storedVal(i,key){ const ci=S.map[key], r=S.raw.rows[i]; return (ci>=0 && r && r[ci]!==undefined) ? String(r[ci]) : ''; }
 function rawVal(i,key){ const p=S.pending[i]; return (p && key in p) ? p[key] : storedVal(i,key); }
 function pendingCount(){ let n=0; for(const i in S.pending) n+=Object.keys(S.pending[i]).length; return n; }
@@ -1333,12 +1342,12 @@ function renderData(){
   const pos=i=>{ const v=rawVal(i,'pos'), pend=S.pending[i]&&'pos' in S.pending[i]; const o=['','Hoist Down','Hoist Up']; if(v&&!o.includes(v)) o.push(v);
     return `<td class="${pend?'pend':''}"><select data-ri="${i}" data-k="pos">${o.map(x=>`<option value="${esc(x)}"${x===v?' selected':''}>${x||'(blank)'}</option>`).join('')}</select></td>`; };
   const tsug=[...new Set(TYPE_SUGGEST.concat(types.filter(t=>t&&t!=='(none)')))], asug=Object.values(AUTO_VALUES);
-  let html=dl('dl-type',tsug)+dl('dl-func',funcs)+dl('dl-auto',asug)+`<table class="dt"><thead><tr><th>#</th><th title="Skipped rows are left off the plot, markout rows and PDF">Skip</th><th></th><th>ID</th><th>Hoist Type</th><th title="Automated, TAIT Nav, Kinesys APEX, Kinesys Elevation or Moveket V-Motion">Automation</th><th>Function</th><th title="What a floor mark or corner mark is marking, e.g. Main Stage or Camera Riser. Shown instead of the load for marks.">Position</th><th>Up / Down</th><th>Origin X</th><th>Origin Y</th><th>Load</th><th>Side / X</th><th>Row Y</th><th>Status</th><th></th></tr></thead><tbody>`;
+  let html=dl('dl-type',tsug)+dl('dl-func',funcs)+dl('dl-auto',asug)+`<table class="dt"><thead><tr><th>#</th><th title="Skipped rows are left off the plot, markout rows and PDF">Skip</th><th></th><th>ID</th><th>Hoist Type</th><th>Capacity</th><th title="Automated, TAIT Nav, Kinesys APEX, Kinesys Elevation or Moveket V-Motion">Automation</th><th>Function</th><th title="Floor and corner marks: what is being marked (e.g. Main Stage). Hoists: GRID or SUBHANG.">Position</th><th>Orientation</th><th>Origin X</th><th>Origin Y</th><th>Load</th><th>Side / X</th><th>Row Y</th><th>Status</th><th></th></tr></thead><tbody>`;
   hs.forEach((h,i)=>{
     let sx='',sy='';
     if(h.ok){ const q=tf(h); const th=Math.max(0,S.opt.cth||0); sx=(Math.abs(q.xs)<=th?'CL':q.xs>0?S.opt.rightL:S.opt.leftL)+' '+fmtDist(q.xs); const yi=yInfo(q.yu); sy=yi.key==='datum'?'DATUM':abbr(yi.dir)+' '+yi.txt; }
     const st=h.skip?'<span class="pill">Skipped</span>':h.datum?'<span class="pill">Datum row</span>':(h.issues.length?h.issues.map(x=>`<span class="pill${/Bad/.test(x)?' err':''}">${esc(x)}</span>`).join(' '):'OK');
-    html+=`<tr class="${h.issues.length?'bad':''}${h.skip?' skip':''}${S.sel===h.id?' sel':''}" data-ri="${i}" data-id="${esc(h.id)}"><td class="num">${h.row}</td><td class="skc"><input type="checkbox" data-skip="${i}"${h.skip?' checked':''} title="Skip this row" aria-label="Skip row ${h.row}"></td><td>${hoistSVG(h,16)}</td>${inp(i,'id')}${inp(i,'type')}${inp(i,'auto')}${inp(i,'func')}${inp(i,'place')}${pos(i)}${inp(i,'x')}${inp(i,'y')}${inp(i,'load')}<td>${sx}</td><td>${sy}</td><td>${st}</td>
+    html+=`<tr class="${h.issues.length?'bad':''}${h.skip?' skip':''}${S.sel===h.id?' sel':''}" data-ri="${i}" data-id="${esc(h.id)}"><td class="num">${h.row}</td><td class="skc"><input type="checkbox" data-skip="${i}"${h.skip?' checked':''} title="Skip this row" aria-label="Skip row ${h.row}"></td><td>${hoistSVG(h,16)}</td>${inp(i,'id')}${inp(i,'type')}${inp(i,'cap')}${inp(i,'auto')}${inp(i,'func')}${inp(i,'place')}${pos(i)}${inp(i,'x')}${inp(i,'y')}${inp(i,'load')}<td>${sx}</td><td>${sy}</td><td>${st}</td>
       <td><div class="act"><button class="iconb" data-act="dup" data-ri="${i}" title="Duplicate row"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button>
       <button class="iconb danger" data-act="del" data-ri="${i}" title="Delete row (tap twice)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg></button></div></td></tr>`;
   });
@@ -1348,23 +1357,26 @@ function renderData(){
 /* ============================ markout rows (touch view) ============================ */
 const CHECK_SVG='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 function isDone(id){ return S.done.has(id); }
-function markItems(){ return S.rows.flatMap(r=>r.items); }
+// Focus (Stage Right Only / Stage Left Only) limits the whole Markout list to one side plus the centre line
+function focusItems(r){ const f=S.mo.focus; return f==='left'?r.right.concat(r.centre):f==='right'?r.left.concat(r.centre):r.items; }
+function markItems(){ return S.rows.flatMap(focusItems); }
+function titleCase(s){ return String(s).toLowerCase().replace(/\b[a-z]/g,c=>c.toUpperCase()); }
 function sideLists(r){ // card order for each column, per Side Sort
   const c2o=S.opt.sideSort!=='outside';
   return { L: c2o ? r.right.slice().reverse() : r.right.slice(), R: c2o ? r.left.slice() : r.left.slice().reverse() };
 }
-function visRows(){ return S.rows.map((r,i)=>({r,i})).filter(o=>!S.mo.hideDone || o.i===S.mo.cur || o.r.items.some(it=>!isDone(it.h.id))); }
+function visRows(){ return S.rows.map((r,i)=>({r,i})).filter(o=>{ const its=focusItems(o.r); return its.length && (!S.mo.hideDone || o.i===S.mo.cur || its.some(it=>!isDone(it.h.id))); }); }
 function clampCur(){
   const vis=visRows(); if(!vis.length){ S.mo.cur=0; return vis; }
   if(!vis.some(o=>o.i===S.mo.cur)){ const nx=vis.find(o=>o.i>S.mo.cur)||vis[vis.length-1]; S.mo.cur=nx.i; }
   return vis;
 }
 function moGo(dir){ const vis=clampCur(); const k=vis.findIndex(o=>o.i===S.mo.cur)+dir; if(k<0||k>=vis.length) return; S.mo.cur=vis[k].i; renderMarkout(true); }
-function moNextUnmarked(){ const vis=clampCur(); const from=vis.findIndex(o=>o.i===S.mo.cur); const order=vis.slice(from+1).concat(vis.slice(0,from+1)); const hit=order.find(o=>o.r.items.some(it=>!isDone(it.h.id))); if(hit){ S.mo.cur=hit.i; renderMarkout(true); } else toast('Every mark is complete.'); }
+function moNextUnmarked(){ const vis=clampCur(); const from=vis.findIndex(o=>o.i===S.mo.cur); const order=vis.slice(from+1).concat(vis.slice(0,from+1)); const hit=order.find(o=>focusItems(o.r).some(it=>!isDone(it.h.id))); if(hit){ S.mo.cur=hit.i; renderMarkout(true); } else toast('Every mark is complete.'); }
 function toggleDone(id){
   const was=S.done.has(id); if(was) S.done.delete(id); else S.done.add(id);
   S.sel=id; saveDone(); renderMarkout(); renderPlot();
-  if(!was && S.mo.auto){ const r=S.rows[S.mo.cur]; if(r && r.items.every(it=>isDone(it.h.id))){ clearTimeout(toggleDone._t); toggleDone._t=setTimeout(()=>{ if(S.tab==='rows' && S.rows[S.mo.cur]===r) moGo(1); },450); } }
+  if(!was && S.mo.auto){ const r=S.rows[S.mo.cur]; if(r && focusItems(r).every(it=>isDone(it.h.id))){ clearTimeout(toggleDone._t); toggleDone._t=setTimeout(()=>{ if(S.tab==='rows' && S.rows[S.mo.cur]===r) moGo(1); },450); } }
 }
 function moCard(it){
   const h=it.h, done=isDone(h.id), kg=subTxt(h);
@@ -1379,6 +1391,7 @@ function moUpdateBar(vis){
   $('moRowPill').textContent='Row '+(vis.length?idx+1:0)+' / '+vis.length;
   $('moPrev').disabled=idx<=0; $('moNext').disabled=idx<0||idx>=vis.length-1;
   const r=S.rows[S.mo.cur]; $('moNavMid').innerHTML=r?`<small>${esc(r.yi.dir)}</small><b>${esc(r.yi.txt)}</b>`:'';
+  const fo=$('moFocus').options; fo[1].textContent=titleCase(edgeName(S.opt.leftL))+' Only'; fo[2].textContent=titleCase(edgeName(S.opt.rightL))+' Only';
   $('moFocus').value=S.mo.focus;
   $('moHide').classList.toggle('on',S.mo.hideDone); $('moHide').setAttribute('aria-pressed',S.mo.hideDone);
   $('moAuto').classList.toggle('on',S.mo.auto); $('moAuto').setAttribute('aria-pressed',S.mo.auto);
@@ -1388,9 +1401,9 @@ function expandedHtml(r){
   const vis=list=>hide?list.filter(it=>!isDone(it.h.id)):list;
   const stack=list=>{ const v=vis(list); return v.length ? v.map(moCard).join('') : `<div class="mo-none">${list.length?'All marked':'&ndash;'}</div>`; };
   const hd=(txt,sub)=>sub?`<div class="mo-h lbl"><b class="mo-lbl">${esc(sub)}</b></div>`:`<div class="mo-h">${txt}</div>`;
-  const nd=r.items.filter(it=>isDone(it.h.id)).length, all=nd===r.items.length;
+  const fi=focusItems(r), nd=fi.filter(it=>isDone(it.h.id)).length, all=nd===fi.length;
   const centre=r.centre.length?`<div class="mo-cl">${vis(r.centre).map(moCard).join('')}</div>`:'';
-  const midcol=`<div class="mo-col">${hd('CENTER LINE','')}<div class="mo-mid${r.centre.length?' hascl':''}"><small>${esc(r.yi.dir)}</small><b>${esc(r.yi.txt)}</b><span class="mo-cnt${all?' ok':''}">${all?'Row complete':nd+' / '+r.items.length+' marked'}</span>${centre}</div></div>`;
+  const midcol=`<div class="mo-col">${hd('CENTER LINE','')}<div class="mo-mid${r.centre.length?' hascl':''}"><small>${esc(r.yi.dir)}</small><b>${esc(r.yi.txt)}</b><span class="mo-cnt${all?' ok':''}">${all?'Row complete':nd+' / '+fi.length+' marked'}</span>${centre}</div></div>`;
   const left=`<div class="mo-col">${hd('LEFT SIDE (X '+(negLeft?'&lt;':'&gt;')+' 0)',S.opt.leftL)}<div class="mo-side">${stack(L)}</div></div>`;
   const right=`<div class="mo-col">${hd('RIGHT SIDE (X '+(negLeft?'&gt;':'&lt;')+' 0)',S.opt.rightL)}<div class="mo-side">${stack(R)}</div></div>`;
   const w='var(--midw)';
@@ -1406,9 +1419,9 @@ function renderMoList(vis,scrollList){
     if(!v.length) return `<span class="mo-none" style="padding:0">${items.length?'&#10003;':'&ndash;'}</span>`;
     return v.map(it=>`<span class="mo-idw${isDone(it.h.id)?' d':''}">${esc(it.h.id)}${it.h.up?'<em class="inv">INV</em>':''}${it.h.auto?`<em class="inv auto">${esc(it.h.auto)}</em>`:''}</span>`).join('<span class="sep">&middot;</span>'); };
   list.innerHTML=vis.map(({r,i})=>{ if(i===S.mo.cur) return `<div class="mo-row open cur" data-ri="${i}">${expandedHtml(r)}</div>`;
-    const nd=r.items.filter(it=>isDone(it.h.id)).length, all=nd===r.items.length;
+    const fi=focusItems(r), nd=fi.filter(it=>isDone(it.h.id)).length, all=nd===fi.length, f=S.mo.focus;
     const cl=r.centre.length?`<span class="clids">CL: ${r.centre.map(c=>esc(c.h.id)).join(', ')}</span>`:'';
-    return `<div class="mo-row${i===S.mo.cur?' cur':''}${all?' all':''}${r.centre.length?' hascl':''}" data-ri="${i}">
+    return `<div class="mo-row${i===S.mo.cur?' cur':''}${all?' all':''}${r.centre.length?' hascl':''}${f==='left'?' fl':f==='right'?' fr':''}" data-ri="${i}">
       <div class="mo-cell l"><div class="mo-ids l">${ids(r.right)}</div><span class="dl l"></span></div>
       <div class="mo-c"><small>${esc(r.yi.dir)}</small><b>${esc(r.yi.txt)}</b>${all?'<em class="ok">&#10003; done</em>':''}${cl}</div>
       <div class="mo-cell r"><span class="dl r"></span><div class="mo-ids">${ids(r.left)}</div></div></div>`; }).join('');
@@ -1507,7 +1520,7 @@ function legendTypes(){
     if(seen.has(key)) continue; seen.add(key); out.push({sym,label:kg?capLabel(kg):t}); }
   return out;
 }
-function usedTypes(){ return [...new Set(S.hoists.filter(h=>h.ok).map(h=>h.type))]; }
+function usedTypes(){ return [...new Set(S.hoists.filter(h=>h.ok&&passShow(h)).map(h=>h.type))]; }
 // Functions that share a colour (and ring) are one legend entry
 function legendGroups(){
   const map=new Map();
@@ -1517,11 +1530,11 @@ function legendGroups(){
   }
   return [...map.values()].map(g=>({f:g.f,label:g.names.join(' / ')}));
 }
-function usedFuncs(){ return [...new Set(S.hoists.filter(h=>h.ok).map(h=>h.func))]; }
+function usedFuncs(){ return [...new Set(S.hoists.filter(h=>h.ok&&passShow(h)).map(h=>h.func))]; }
 function renderLegend(){
   const L=$('legend'); if(!S.hoists.length){ L.style.display='none'; return; }
   L.style.display=(S.plot.legend||isCompact())?'block':'none'; const T=themeT();
-  const anyUp=S.hoists.some(h=>h.ok&&h.up), autos=AUTO_KINDS.filter(k=>S.hoists.some(h=>h.ok&&h.auto===k));
+  const anyUp=S.hoists.some(h=>h.ok&&passShow(h)&&h.up), autos=AUTO_KINDS.filter(k=>S.hoists.some(h=>h.ok&&passShow(h)&&h.auto===k));
   const mods=(anyUp?`<div class="it">${symSVG('circle-cross',T.ink,16,false,{up:true})}Hoist Up (invert)</div><div class="it">${symSVG('circle-cross',T.ink,16)}Hoist Down</div>`:'')
     +autos.map(k=>`<div class="it">${symSVG('circle-cross',T.ink,16,false,{auto:k})}${esc(AUTO_NAMES[k])}</div>`).join('');
   L.innerHTML='<button class="kx" type="button" aria-label="Close key">&times;</button><h4>HOIST TYPE</h4>'+legendTypes().map(e=>`<div class="it">${symSVG(e.sym,T.ink,16)}${esc(e.label)}</div>`).join('')
@@ -1541,8 +1554,8 @@ function renderInfo(){
 function renderMapUI(){
   const H=S.raw.headers; const body=$('mapBody');
   if(!H.length){ body.innerHTML='<div class="hint">Columns are matched automatically after import. Change them here if a header was not recognised.</div>'; return; }
-  const defs=[['hsym','Hoist Symbol (sets Type + Automation)'],['type','Hoist Type'],['auto','Hoist Automation (optional)'],['func','Hoist Function'],['id','Hoist ID'],['pos','Hoist Up / Down (optional)'],['place','Position (optional)'],['x','Origin X'],['y','Origin Y'],['load','Load (optional)']];
-  body.innerHTML=defs.map(([k,l])=>`<div class="field"><label>${l}</label><select data-map="${k}"><option value="-1">${(k==='load'||k==='pos'||k==='hsym'||k==='auto'||k==='place')?'- none -':'- not set -'}</option>${H.map((h,i)=>`<option value="${i}"${S.map[k]===i?' selected':''}>${esc(h)}</option>`).join('')}</select></div>`).join('');
+  const defs=[['hsym','Hoist Symbol (sets Type + Automation)'],['type','Hoist Type'],['auto','Hoist Automation (optional)'],['cap','Capacity (optional)'],['func','Hoist Function'],['id','Hoist ID'],['pos','Orientation (optional)'],['place','Position (optional)'],['x','Origin X'],['y','Origin Y'],['load','Load (optional)']];
+  body.innerHTML=defs.map(([k,l])=>`<div class="field"><label>${l}</label><select data-map="${k}"><option value="-1">${(k==='load'||k==='pos'||k==='hsym'||k==='auto'||k==='place'||k==='cap')?'- none -':'- not set -'}</option>${H.map((h,i)=>`<option value="${i}"${S.map[k]===i?' selected':''}>${esc(h)}</option>`).join('')}</select></div>`).join('');
   body.querySelectorAll('select').forEach(sel=>sel.onchange=()=>{ applyPending(true); S.map[sel.dataset.map]=parseInt(sel.value,10); if(sel.dataset.map==='hsym'&&S.map.hsym>=0){ deriveColumns(); renderMapUI(); } refresh(); });
 }
 function renderSymUI(){
@@ -1557,7 +1570,11 @@ function renderSymUI(){
   fb.querySelectorAll('input[type=checkbox]').forEach(i=>i.onchange=()=>{ groups[+i.dataset.gr].members.forEach(m=>{ S.funcRing[m]=i.checked?'#e5484d':''; }); saveStore(); renderAll(); });
 }
 function pdfWarnings(){ schedulePreview(); }
+// The Show filter (All / Grid only / Subhang only) is one setting with a selector in the plot, markout rows and PDF views
+function syncShow(){ const f=S.opt.show||'all', any=S.hoists.some(h=>h.cat);
+  document.querySelectorAll('.showSel').forEach(x=>{ x.value=f; }); document.querySelectorAll('.showWrap').forEach(w=>{ w.hidden=!any&&f==='all'; }); }
 function renderAll(skipData){
+  syncShow();
   const has=S.hoists.some(h=>h.ok);
   $('empty').style.display = S.raw.rows.length ? 'none' : 'flex';
   $('pdfExport').disabled=!has;
@@ -1636,6 +1653,7 @@ const SAMPLE_EXTRA=[["30'",[['WX1',"60'",'R','250.00 kg','Scenery'],['WX2',"52'"
  ["12'",[['QB1',"30'",'R','320.00 kg','Lighting'],['HC1',"30'",'L','3000.00 kg','Lighting'],['LB1',"25'",'R','1100 lb','Audio']]]];
 const SAMPLE_HSYM={TR4:'Automated',TL1:'Varispeed',VX2:'TAIT Nav',VX5:'TAIT Nav',US1:'Apex',US2:'Apex',US3:'Elevation',US4:'Elevation',HC1:'VMK'};
 const SAMPLE_PLACE={USR:'Main Stage',USL:'Main Stage',DSR:'Main Stage',DSL:'Main Stage',FM1:'Centre Line'};
+const SAMPLE_CAT={Lighting:'GRID',Video:'GRID','Pre-Rig':'GRID','Super Grid':'GRID',Audio:'SUBHANG',Scenery:'SUBHANG','Cable Pick':'SUBHANG'};
 // The sample is written like the export software: numeric Capacity, type + automation words in Hoist Symbol
 function sampleSymbol(type){ if(/^(USR|USL|DSR|DSL)$/.test(type)) return [ '', type+' Mark' ]; if(/floor/i.test(type)) return ['','Floor Mark']; if(/chain|block/i.test(type)) return ['','Block and Fall']; if(/arrest/i.test(type)) return ['','Fall Arrest'];
   const c=parseCapacityKg(type), kg=c?nearCap(c.kg):0; return [kg||'', ({250:'1/4 Ton',320:'1/3 Ton',500:'1/2 Ton'})[kg]||(kg/1000)+' Ton']; }
@@ -1647,7 +1665,7 @@ function sampleCSV(){
   for(const [y,items] of SAMPLE.concat(SAMPLE_EXTRA)) for(const [id,x0,side,type,func] of items){
     const x=SAMPLE_X_OVERRIDE[id]||x0, fn=SAMPLE_FUNC_OVERRIDE[id]||func;
     const pos=marker.test(type)?'':(/^(VX|IR|IL|HB|QA)/.test(id)?'Hoist Up':'Hoist Down');
-    const [cap,sym]=sampleSymbol(type); rows.push([cap,fn,id,pos,(side==='R'?'-':'')+x,y,0,(sym+' '+(SAMPLE_HSYM[id]||'')).trim(),SAMPLE_PLACE[id]||'']);
+    const [cap,sym]=sampleSymbol(type); rows.push([cap,fn,id,pos,(side==='R'?'-':'')+x,y,0,(sym+' '+(SAMPLE_HSYM[id]||'')).trim(),SAMPLE_PLACE[id]||(marker.test(type)?'':SAMPLE_CAT[fn]||'')]);
   }
   return rows.map(r=>r.map(csvCell).join(',')).join('\r\n');
 }
@@ -1907,7 +1925,7 @@ function drawSheet(doc,measure){
   function pageFooter(n){
     doc.setFont(fam,'normal'); doc.setFontSize(7); doc.setTextColor(...MUTED);
     const nH=src.reduce((s,o)=>s+o.L.length+o.R.length+o.C.length,0);
-    doc.text(sh.footer || [nH+' hoists',src.length+' rows',(sh.show||'').trim()].filter(Boolean).join('  |  '),M,PH-M+2);
+    doc.text(sh.footer || [nH+' hoists',src.length+' rows',(sh.show||'').trim(),showName()].filter(Boolean).join('  |  '),M,PH-M+2);
     doc.text('Page '+n+' of '+N,M+W,PH-M+2,{align:'right'});
   }
   function fmtDate(v){ const d=new Date(v+'T00:00:00'); return isNaN(d)?v:d.toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'}); }
@@ -2014,7 +2032,7 @@ function projectData(withLogos){
 function applyProject(o){
   if(!o||(o.app!=='datum'&&o.app!=='markout')||!o.raw||!Array.isArray(o.raw.rows)) throw new Error('bad');
   S.raw={headers:o.raw.headers||[],rows:o.raw.rows,name:o.raw.name||''};
-  S.map=Object.assign({type:-1,func:-1,id:-1,pos:-1,x:-1,y:-1,load:-1,hsym:-1,auto:-1,place:-1},o.map||{});
+  S.map=Object.assign({type:-1,func:-1,id:-1,pos:-1,x:-1,y:-1,load:-1,hsym:-1,auto:-1,place:-1,cap:-1},o.map||{});
   S.orig=o.orig||{headers:S.raw.headers.slice(),rows:S.raw.rows.map(r=>r.slice()),map:Object.assign({},S.map)};
   S.sample=!!o.sample; S.sampleLoaded=!!o.sampleLoaded; S.sel=null; S.pending={}; S.skip=new Set((o.skip||[]).filter(i=>i>=0&&i<S.raw.rows.length));
   Object.assign(S.opt,o.opt||{}); Object.assign(S.sheet,o.sheet||{}); Object.assign(S.plot,o.plot||{});
@@ -2041,7 +2059,7 @@ function loadProjectFile(f){
 function clearProject(quiet){
   if(!quiet&&isViewer()) return;
   cloudDetach();
-  S.raw={headers:[],rows:[],name:''}; S.map={type:-1,func:-1,id:-1,pos:-1,x:-1,y:-1,load:-1,hsym:-1,auto:-1,place:-1}; S.orig=null; S.sample=false; S.sampleLoaded=false; S.sel=null; S.pending={}; S.skip=new Set();
+  S.raw={headers:[],rows:[],name:''}; S.map={type:-1,func:-1,id:-1,pos:-1,x:-1,y:-1,load:-1,hsym:-1,auto:-1,place:-1,cap:-1}; S.orig=null; S.sample=false; S.sampleLoaded=false; S.sel=null; S.pending={}; S.skip=new Set();
   S.done=new Set(); S.doneName=''; S.mo.cur=0; S.typeMap={}; S.funcMap={}; S.funcRing={}; S.logoShow=S.logoUser=S._imgShow=S._imgUser=null; saveLogo(); syncLogoUI();
   try{ localStorage.removeItem(PROJ_KEY); }catch(e){}
   $('fileInfo').textContent='No file loaded.'; saveDone(); renderMapUI(); refresh(); schedulePreview(true); if(!quiet) toast('Started a new project.');
@@ -2511,6 +2529,7 @@ function init(){
   const arm=(btn,label,armLabel,fn)=>{ let tm=null; btn.onclick=()=>{ if(!btn.classList.contains('armed')){ btn.classList.add('armed'); btn.textContent=armLabel; tm=setTimeout(()=>{ btn.classList.remove('armed'); btn.textContent=label; },3000); return; } clearTimeout(tm); btn.classList.remove('armed'); btn.textContent=label; fn(); }; };
   arm($('dRevert'),'Revert to imported CSV','Tap again to revert',revertData);
   // ---- markout rows: touch view
+  document.querySelectorAll('.showSel').forEach(sel=>sel.onchange=()=>{ S.opt.show=sel.value; saveStore(); refresh(); toast(sel.value==='all'?'Showing all hoists.':'Showing '+showName().toLowerCase()+' (plus hoists with no category and marks).'); });
   $('moFocus').onchange=e=>{ S.mo.focus=e.target.value; saveStore(); renderMarkout(); };
   $('moHide').onclick=()=>{ S.mo.hideDone=!S.mo.hideDone; saveStore(); renderMarkout(true); };
   $('moAuto').onclick=()=>{ S.mo.auto=!S.mo.auto; saveStore(); renderMarkout(); };

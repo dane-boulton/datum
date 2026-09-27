@@ -92,20 +92,22 @@ The script is organised by comment banners `/* ===== … ===== */`. Search for t
 ### CSV columns (`autoMap`, `deriveColumns`)
 - **Map keys:**
   - `type`: Hoist Type.
+  - `cap`: Capacity (stored, never used for the type).
   - `auto`: Hoist Automation.
   - `func`: Hoist Function.
   - `id`: Hoist ID.
-  - `pos`: Up / Down, from the "Hoist Position" header.
+  - `pos`: **Orientation** (Hoist Up / Hoist Down), from an "Orientation" or "Hoist Position" header.
   - `place`: the **Position** header, which describes a mark.
   - `x` / `y`: Origin X / Y.
   - `load`: Load (kg).
   - `hsym`: Hoist Symbol.
 - **`deriveColumns()`** runs on import, and when the Hoist Symbol mapping changes. It writes derived **Hoist Type** and **Hoist Automation** columns into `S.raw`:
   - `symbolType()` turns the Hoist Symbol text into a type (1/4 Ton → 250kg … USR Mark → USR);
-  - `capacityType()` handles a numeric Capacity column (a bare number is kg, or tonnes when it's 10 or less);
   - `autoKind()` gives the automation, and `AUTO_VALUES` holds the text written to the Hoist Automation column.
   - After that, the app reads `type` and `auto` like any other column.
 - **Type names** (`TYPE_SUGGEST`): 250kg, 320kg, 500kg, 1 Ton, 2 Ton, 2.5 Ton, 3 Ton, Chain Block, Fall Arrest, Floor Mark, USR, USL, DSR, DSL. `guessSymbol()` maps them to symbols.
+- **GRID / SUBHANG:** `hoistCat(h.place)` sets `h.cat` for non-marker items; blank means always shown. `S.opt.show` ('all' / 'GRID' / 'SUBHANG') is filtered by `passShow()` in `buildRows`, `usedTypes`, `usedFuncs` and the legend. The `.showSel` selectors in the plot, Markout Rows and PDF are kept in sync by `syncShow()`.
+- **Markout focus:** `focusItems(r)` (the focused side plus the centre line) drives `visRows`, `markItems`, row counts, auto-advance and next-unmarked. Collapsed rows get `.fl` / `.fr` to hide the other side.
 - **Marks show Position:** `isMarker(h)` (floor mark or corner) makes `subTxt(h)` return `h.place` instead of the load. It's used by the cards, the PDF, the info card, and the plot's sub-label.
 
 ### Features and where they live
