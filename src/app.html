@@ -2062,7 +2062,7 @@ async function signInDiag(){
   add('Project',(window.DATUM_CLOUD&&window.DATUM_CLOUD.url||'').replace(/^https?:\/\//,''));
   add('Signed in as',C.email+' ('+(C.user&&C.user.id)+')');
   try{ const {data}=await C.sb.auth.getSession(); const ss=data&&data.session;
-    add('Browser session',ss?('yes, expires '+new Date(ss.expires_at*1000).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})):'none'); }catch(e){ add('Browser session','error: '+e.message); }
+    add('Browser session',ss?('yes'+(ss.expires_at?', expires '+new Date(ss.expires_at*1000).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}):'')):'none'); }catch(e){ add('Browser session','error: '+e.message); }
   try{ const {data,error}=await C.sb.auth.getUser(); add('Sign-in server',error?('rejected: '+error.message):('accepted ('+(data.user&&data.user.id)+')')); }catch(e){ add('Sign-in server','error: '+e.message); }
   try{ const {data,error}=await C.sb.rpc('my_email'); add('Database sees email',error?('error: '+error.message):(data||'(none - request was anonymous)')); }catch(e){ add('Database sees email','error: '+e.message); }
   try{ const {data,error}=await C.sb.rpc('my_role'); add('Database sees role',error?('error: '+error.message):String(data)); }catch(e){ add('Database sees role','error: '+e.message); }
