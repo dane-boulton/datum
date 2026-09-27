@@ -1643,22 +1643,28 @@ function drawSheet(doc){
     const fitLg=(lg,hk)=>{ if(!lg||!on) return null; let h=clamp(F(sh[hk],14),6,24); if(!full) h=Math.min(h,8); let w=h*lg.w/lg.h; const mx=W*0.3; if(w>mx){ w=mx; h=w*lg.h/lg.w; } return {lg,w,h}; };
     const ds=fitLg(S.logoShow,'logoHShow'), du=fitLg(S.logoUser,'logoHUser');
     const leftX=M+(ds?ds.w+4:0), rightX=right-(du?du.w+4:0);
-    if(ds) doc.addImage(ds.lg.src,'PNG',M,M,ds.w,ds.h,'logoShow');
-    if(du) doc.addImage(du.lg.src,'PNG',right-du.w,M,du.w,du.h,'logoUser');
+    // Centre logos and the text block on one midline; if a logo is taller than the text, move the text down to match.
+    const cap=pt=>pt*0.3528*0.72, meta=[]; if(sh.date) meta.push(fmtDate(sh.date)); if(sh.rev) meta.push('Rev '+sh.rev);
+    const sType=(sh.sheetType||'').trim(), ext=[];
+    if(full){ ext.push([6-cap(17),sh.venue?17.5:12.5]); const rt=sType?5-cap(9):meta.length?10-cap(8):sh.by?14.5-cap(8):null; if(rt!==null) ext.push([rt,sh.by?14.5:meta.length?10:5]); }
+    else ext.push([4-cap(9),4]);
+    const tTop=Math.min(...ext.map(e=>e[0])), tMid=(tTop+Math.max(...ext.map(e=>e[1])))/2;
+    const cy=Math.max(tMid,(ds?ds.h:0)/2,(du?du.h:0)/2), T=M+cy-tMid;
+    if(ds) doc.addImage(ds.lg.src,'PNG',M,M+cy-ds.h/2,ds.w,ds.h,'logoShow');
+    if(du) doc.addImage(du.lg.src,'PNG',right-du.w,M+cy-du.h/2,du.w,du.h,'logoUser');
     doc.setTextColor(...NAVY);
     if(full){
-      doc.setFont(fam,'bold'); doc.setFontSize(17); doc.text(sh.show||'Markout Sheet',leftX,M+6);
+      doc.setFont(fam,'bold'); doc.setFontSize(17); doc.text(sh.show||'Markout Sheet',leftX,T+6);
       doc.setFont(fam,'normal'); doc.setFontSize(9.5); doc.setTextColor(...MUTED);
-      if(sh.venue) doc.text(sh.venue,leftX,M+12);
-      doc.setFontSize(7.5); doc.text(datumNote(),leftX,M+(sh.venue?17.5:12.5));
-      doc.setFont(fam,'bold'); doc.setFontSize(9); doc.setTextColor(...NAVY); if((sh.sheetType||'').trim()) doc.text(sh.sheetType.trim(),rightX,M+5,{align:'right'});
+      if(sh.venue) doc.text(sh.venue,leftX,T+12);
+      doc.setFontSize(7.5); doc.text(datumNote(),leftX,T+(sh.venue?17.5:12.5));
+      doc.setFont(fam,'bold'); doc.setFontSize(9); doc.setTextColor(...NAVY); if(sType) doc.text(sType,rightX,T+5,{align:'right'});
       doc.setFont(fam,'normal'); doc.setFontSize(8); doc.setTextColor(...MUTED);
-      const meta=[]; if(sh.date) meta.push(fmtDate(sh.date)); if(sh.rev) meta.push('Rev '+sh.rev);
-      if(meta.length) doc.text(meta.join('  |  '),rightX,M+10,{align:'right'});
-      if(sh.by) doc.text('Prepared by '+sh.by,rightX,M+14.5,{align:'right'});
+      if(meta.length) doc.text(meta.join('  |  '),rightX,T+10,{align:'right'});
+      if(sh.by) doc.text('Prepared by '+sh.by,rightX,T+14.5,{align:'right'});
     } else {
-      doc.setFont(fam,'bold'); doc.setFontSize(9); doc.text((sh.show||'Markout Sheet')+(sh.venue?'  -  '+sh.venue:''),leftX,M+4);
-      doc.setFont(fam,'normal'); doc.setFontSize(8); doc.setTextColor(...MUTED); doc.text([(sh.sheetType||'').trim(),sh.rev?'Rev '+sh.rev:''].filter(Boolean).join('  |  '),rightX,M+4,{align:'right'});
+      doc.setFont(fam,'bold'); doc.setFontSize(9); doc.text((sh.show||'Markout Sheet')+(sh.venue?'  -  '+sh.venue:''),leftX,T+4);
+      doc.setFont(fam,'normal'); doc.setFontSize(8); doc.setTextColor(...MUTED); doc.text([sType,sh.rev?'Rev '+sh.rev:''].filter(Boolean).join('  |  '),rightX,T+4,{align:'right'});
     }
   }
   function pageFooter(n){
