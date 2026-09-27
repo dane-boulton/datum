@@ -1354,6 +1354,15 @@ function sortTypes(list){
   return list.slice().sort((a,b)=>{ const x=typeSortKey(a), y=typeSortKey(b);
     return (x[0]-y[0]) || (x[1]===y[1]?0:(x[1]<y[1]?-1:1)) || x[2].localeCompare(y[2],undefined,{numeric:true}); });
 }
+// Legend entries for hoist types. Capacity hoists are labelled with the metric rating of their symbol
+// (hoists are stamped in kg / tonnes even when the CSV is in lb), and types sharing a symbol become one entry.
+function capLabel(kg){ return kg>=1000 ? (Math.round(kg/100)/10)+' ton' : Math.round(kg)+' kg'; }
+function legendTypes(){
+  const out=[], seen=new Set();
+  for(const t of sortTypes(usedTypes())){ const sym=S.typeMap[t], kg=SYM_CAP_KG[sym], key=kg?'cap|'+sym:'t|'+t;
+    if(seen.has(key)) continue; seen.add(key); out.push({sym,label:kg?capLabel(kg):t}); }
+  return out;
+}
 function usedTypes(){ return [...new Set(S.hoists.filter(h=>h.ok).map(h=>h.type))]; }
 // Functions that share a colour (and ring) are one legend entry: "Lighting" + "Lighting Automated" -> "Lighting"
 function stripAuto(name){
@@ -1376,7 +1385,7 @@ function renderLegend(){
   const anyUp=S.hoists.some(h=>h.ok&&h.up), anyAuto=S.hoists.some(h=>h.ok&&h.auto&&autoMode());
   const mods=(anyUp?`<div class="it">${symSVG('circle-cross',T.ink,16,false,{up:true})}Hoist Up (invert)</div><div class="it">${symSVG('circle-cross',T.ink,16)}Hoist Down</div>`:'')
     +(anyAuto?`<div class="it">${symSVG('circle-cross',T.ink,16,false,{auto:autoMode()})}Automated</div>`:'');
-  L.innerHTML='<h4>HOIST TYPE</h4>'+sortTypes(usedTypes()).map(t=>`<div class="it">${symSVG(S.typeMap[t],T.ink,16)}${esc(t)}</div>`).join('')
+  L.innerHTML='<h4>HOIST TYPE</h4>'+legendTypes().map(e=>`<div class="it">${symSVG(e.sym,T.ink,16)}${esc(e.label)}</div>`).join('')
     +(mods?'<h4 style="margin-top:6px">MODIFIERS</h4>'+mods:'')
     +'<h4 style="margin-top:6px">FUNCTION</h4>'+legendGroups().map(g=>{ const f=g.f, r=S.funcRing[f]; return `<div class="it"><span class="sw" style="background:${scrCol(S.funcMap[f])}${r?`;box-shadow:0 0 0 2px var(--knock),0 0 0 3.5px ${scrCol(r)}`:''}"></span>${esc(g.label)}</div>`; }).join('');
 }
@@ -1626,10 +1635,10 @@ function drawSheet(doc,measure){
   const pages=[]; for(let i=0;i<prows.length;){ const c=capRows(pages.length); pages.push(prows.slice(i,i+c)); i+=c; }
 
   // ---- legend
-  const types=sortTypes(usedTypes()), funcs=usedFuncs(), anyUp=all.some(it=>it.h.up), anyAuto=all.some(it=>autoOf(it.h));
+  const types=legendTypes(), funcs=usedFuncs(), anyUp=all.some(it=>it.h.up), anyAuto=all.some(it=>autoOf(it.h));
   function legendLayout(){
     const ents=[]; doc.setFont(fam,'normal'); doc.setFontSize(7);
-    types.forEach(tp=>ents.push({k:'t',name:tp,w:6+doc.getTextWidth(tp)+6}));
+    types.forEach(tp=>ents.push({k:'t',name:tp.label,sym:tp.sym,w:6+doc.getTextWidth(tp.label)+6}));
     if(anyUp){ ents.push({k:'u',name:'Hoist Up (invert)',w:6+doc.getTextWidth('Hoist Up (invert)')+6}); ents.push({k:'d',name:'Hoist Down',w:6+doc.getTextWidth('Hoist Down')+6}); }
     const autoLbl='Automated';
     if(anyAuto) ents.push({k:'a',name:autoLbl,w:6+doc.getTextWidth(autoLbl)+6});
@@ -1759,7 +1768,7 @@ function drawSheet(doc,measure){
       let x=M;
       for(const e of line){
         let tx=x+6;
-        if(e.k==='t') pdfSym(S.typeMap[e.name],x+2,yy-1.2,1.7,NAVY,0.28*lwMul);
+        if(e.k==='t') pdfSym(e.sym,x+2,yy-1.2,1.7,NAVY,0.28*lwMul);
         else if(e.k==='u') pdfSym('circle-cross',x+2,yy-1.2,1.7,NAVY,0.28*lwMul,{up:true});
         else if(e.k==='d') pdfSym('circle-cross',x+2,yy-1.2,1.7,NAVY,0.28*lwMul);
         else if(e.k==='a') pdfSym('circle-cross',x+2,autoMode()==='tag'?yy-2.1:yy-1.2,autoMode()==='tag'?1.2:1.7,NAVY,0.25*lwMul,{auto:autoMode()});
