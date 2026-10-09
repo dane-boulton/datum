@@ -284,6 +284,12 @@ table.dt input[data-k=id]{min-width:84px}
 table.dt input[data-k=x],table.dt input[data-k=y]{min-width:132px}
 table.dt input[data-k=load]{min-width:64px;width:72px}
 button.btn:disabled,button.primary:disabled{opacity:.42;cursor:not-allowed;filter:saturate(.6)}
+table.dt input[data-sug]{padding-right:24px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%2396989a' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
+.sugpop{position:fixed;z-index:40;overflow-y:auto;background:var(--raised);border:1px solid var(--line2);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.35);padding:4px;font-size:13px}
+.sugo{padding:7px 10px;border-radius:5px;cursor:pointer;white-space:nowrap;color:var(--ink2)}
+.sugo:hover,.sugo.act{background:var(--raised2);color:var(--ink)}
+.sugo.hit{color:var(--ink);font-weight:600}
+.sugo.cur{background:var(--accent-soft);color:var(--ink);font-weight:600}
 table.dt td.pend input,table.dt td.pend select{border-color:var(--warn);background:var(--warnbg)}
 table.dt tr.skip td{opacity:.45} table.dt tr.skip td.skc{opacity:1}
 table.dt td.skc{text-align:center} table.dt td.skc input{width:16px;height:16px;cursor:pointer}
@@ -1338,13 +1344,14 @@ function updateDataBar(){
   $('dRevert').disabled=!S.orig; $('dInfo').textContent=S.raw.rows.length+' rows'+(S.skip.size?' · '+S.skip.size+' skipped':'')+(edited?' · edited since import':'')+(n?' · unsaved changes':'');
 }
 function renderData(){
+  sugClose();
   const hs=S.hoists; const types=[...new Set(hs.map(h=>h.type))], funcs=[...new Set(hs.map(h=>h.func))];
-  const dl=(id,arr)=>`<datalist id="${id}">${arr.map(v=>`<option value="${esc(v)}">`).join('')}</datalist>`;
-  const inp=(i,k)=>{ const pend=S.pending[i]&&k in S.pending[i]; return `<td class="${pend?'pend':''}"><input type="text" data-ri="${i}" data-k="${k}" value="${esc(rawVal(i,k))}"${k==='type'?' list="dl-type"':k==='auto'?' list="dl-auto"':k==='func'?' list="dl-func"':''} spellcheck="false" autocomplete="off"></td>`; };
+  const inp=(i,k)=>{ const pend=S.pending[i]&&k in S.pending[i]; return `<td class="${pend?'pend':''}"><input type="text" data-ri="${i}" data-k="${k}" value="${esc(rawVal(i,k))}"${k==='type'||k==='auto'||k==='func'?` data-sug="${k}"`:''} spellcheck="false" autocomplete="off"></td>`; };
   const pos=i=>{ const v=rawVal(i,'pos'), pend=S.pending[i]&&'pos' in S.pending[i]; const o=['','Hoist Down','Hoist Up']; if(v&&!o.includes(v)) o.push(v);
     return `<td class="${pend?'pend':''}"><select data-ri="${i}" data-k="pos">${o.map(x=>`<option value="${esc(x)}"${x===v?' selected':''}>${x||'(blank)'}</option>`).join('')}</select></td>`; };
   const tsug=[...new Set(TYPE_SUGGEST.concat(types.filter(t=>t&&t!=='(none)')))], asug=Object.values(AUTO_VALUES);
-  let html=dl('dl-type',tsug)+dl('dl-auto',asug)+dl('dl-func',funcs)+`<table class="dt"><thead><tr><th>#</th><th title="Skipped rows are left off the plot, markout rows and PDF">Skip</th><th></th><th>ID</th><th>Capacity</th><th title="250kg, 320kg, 500kg, 1 Ton, 2 Ton, 2.5 Ton, 3 Ton, Chain Block, Fall Arrest, Floor Mark, USR, USL, DSR, DSL">Mark Type</th><th title="Automated, TAIT Nav, Kinesys APEX, Kinesys Elevation, Moveket V-Motion (blank = not automated)">Automation</th><th>Function</th><th title="Floor and corner marks: what is being marked (e.g. Main Stage). Hoists: GRID or SUBHANG.">Position</th><th>Orientation</th><th>Origin X</th><th>Origin Y</th><th>Load</th><th>Side / X</th><th>Row Y</th><th>Status</th><th></th></tr></thead><tbody>`;
+  SUG.lists={type:tsug,auto:asug,func:funcs.filter(Boolean).sort((a,b)=>a.localeCompare(b))};
+  let html=`<table class="dt"><thead><tr><th>#</th><th title="Skipped rows are left off the plot, markout rows and PDF">Skip</th><th></th><th>ID</th><th>Capacity</th><th title="250kg, 320kg, 500kg, 1 Ton, 2 Ton, 2.5 Ton, 3 Ton, Chain Block, Fall Arrest, Floor Mark, USR, USL, DSR, DSL">Mark Type</th><th title="Automated, TAIT Nav, Kinesys APEX, Kinesys Elevation, Moveket V-Motion (blank = not automated)">Automation</th><th>Function</th><th title="Floor and corner marks: what is being marked (e.g. Main Stage). Hoists: GRID or SUBHANG.">Position</th><th>Orientation</th><th>Origin X</th><th>Origin Y</th><th>Load</th><th>Side / X</th><th>Row Y</th><th>Status</th><th></th></tr></thead><tbody>`;
   hs.forEach((h,i)=>{
     let sx='',sy='';
     if(h.ok){ const q=tf(h); const th=Math.max(0,S.opt.cth||0); sx=(Math.abs(q.xs)<=th?'CL':q.xs>0?S.opt.rightL:S.opt.leftL)+' '+fmtDist(q.xs); const yi=yInfo(q.yu); sy=yi.key==='datum'?'DATUM':abbr(yi.dir)+' '+yi.txt; }
@@ -1354,6 +1361,36 @@ function renderData(){
       <button class="iconb danger" data-act="del" data-ri="${i}" title="Delete row (tap twice)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg></button></div></td></tr>`;
   });
   $('dataWrap').innerHTML=html+'</tbody></table>'; updateDataBar();
+}
+
+// Suggestion list for Mark Type / Automation / Function: always lists every option (a datalist only shows ones matching the typed text)
+const SUG={lists:{},inp:null,el:null,k:-1};
+function sugOpen(inp){
+  const list=SUG.lists[inp.dataset.sug]||[]; if(!list.length){ sugClose(); return; }
+  if(!SUG.el){ SUG.el=document.createElement('div'); SUG.el.className='sugpop'; SUG.el.setAttribute('role','listbox'); document.body.appendChild(SUG.el);
+    SUG.el.addEventListener('mousedown',e=>e.preventDefault());
+    SUG.el.addEventListener('click',e=>{ const o=e.target.closest('[data-v]'); if(o) sugPick(o.dataset.v); }); }
+  SUG.inp=inp; const v=inp.value.trim().toLowerCase();
+  SUG.el.innerHTML=list.map(x=>{ const lx=x.toLowerCase(); return `<div class="sugo${lx===v?' cur':v&&lx.includes(v)?' hit':''}" role="option" data-v="${esc(x)}">${esc(x)}</div>`; }).join('');
+  SUG.k=-1; SUG.el.hidden=false; sugPlace();
+  const cur=SUG.el.querySelector('.cur')||SUG.el.querySelector('.hit'); if(cur) cur.scrollIntoView({block:'nearest'});
+}
+function sugPlace(){
+  if(!SUG.inp||!SUG.el||SUG.el.hidden) return; const r=SUG.inp.getBoundingClientRect();
+  if(!r.width){ sugClose(); return; }
+  const below=innerHeight-r.bottom-8, above=r.top-8, up=below<160&&above>below, h=Math.min(260,up?above:below);
+  Object.assign(SUG.el.style,{left:Math.max(4,Math.min(r.left,innerWidth-Math.max(r.width,170)-4))+'px',minWidth:r.width+'px',maxHeight:h+'px',top:(up?r.top-Math.min(h,SUG.el.scrollHeight)-2:r.bottom+2)+'px'});
+}
+function sugClose(){ if(SUG.el) SUG.el.hidden=true; SUG.inp=null; SUG.k=-1; }
+function sugPick(v){ const inp=SUG.inp; if(!inp) return; inp.value=v; inp.dispatchEvent(new Event('input',{bubbles:true})); sugClose(); }
+function sugKey(e){
+  if(!SUG.el||SUG.el.hidden||SUG.inp!==e.target) { if(e.key==='ArrowDown'&&e.target.dataset.sug){ sugOpen(e.target); e.preventDefault(); } return false; }
+  const os=[...SUG.el.querySelectorAll('.sugo')];
+  if(e.key==='ArrowDown'||e.key==='ArrowUp'){ e.preventDefault(); if(SUG.k<0){ const c=os.findIndex(o=>o.classList.contains('cur')); SUG.k=c; }
+    SUG.k=(SUG.k+(e.key==='ArrowDown'?1:-1)+os.length)%os.length; os.forEach((o,j)=>o.classList.toggle('act',j===SUG.k)); os[SUG.k].scrollIntoView({block:'nearest'}); return true; }
+  if(e.key==='Enter'&&SUG.k>=0){ e.preventDefault(); sugPick(os[SUG.k].dataset.v); return true; }
+  if(e.key==='Escape'||e.key==='Tab'){ sugClose(); return e.key==='Escape'; }
+  return false;
 }
 
 /* ============================ markout rows (touch view) ============================ */
@@ -2506,8 +2543,12 @@ function init(){
   const dw=$('dataWrap');
   dw.addEventListener('input',e=>{ const t=e.target; if(!t.dataset||!t.dataset.k) return; const ri=t.dataset.ri, k=t.dataset.k, orig=storedVal(+ri,k);
     if(t.value===orig){ if(S.pending[ri]){ delete S.pending[ri][k]; if(!Object.keys(S.pending[ri]).length) delete S.pending[ri]; } } else (S.pending[ri]=S.pending[ri]||{})[k]=t.value;
-    t.closest('td').classList.toggle('pend',t.value!==orig); updateDataBar(); });
-  dw.addEventListener('keydown',e=>{ if(e.key==='Enter' && e.target.dataset && e.target.dataset.k) applyPending(); });
+    t.closest('td').classList.toggle('pend',t.value!==orig); updateDataBar(); if(t.dataset.sug && e.isTrusted && document.activeElement===t) sugOpen(t); });
+  dw.addEventListener('keydown',e=>{ if(e.target.dataset && e.target.dataset.sug && sugKey(e)) return; if(e.key==='Enter' && e.target.dataset && e.target.dataset.k){ sugClose(); applyPending(); } });
+  dw.addEventListener('focusin',e=>{ if(e.target.dataset && e.target.dataset.sug) sugOpen(e.target); });
+  dw.addEventListener('mousedown',e=>{ const t=e.target; if(t.dataset && t.dataset.sug && SUG.inp===t && document.activeElement===t){ if(SUG.el.hidden) sugOpen(t); } });
+  dw.addEventListener('focusout',e=>{ if(SUG.inp===e.target) sugClose(); });
+  dw.addEventListener('scroll',sugPlace,true); window.addEventListener('resize',sugPlace);
   dw.addEventListener('change',e=>{ const t=e.target; if(t.dataset && t.dataset.skip!==undefined) toggleSkip(+t.dataset.skip,t.checked); });
   dw.addEventListener('click',e=>{
     const b=e.target.closest('[data-act]');

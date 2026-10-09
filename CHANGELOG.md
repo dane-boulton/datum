@@ -2,6 +2,12 @@
 
 All notable changes to DATUM. Newest first.
 
+## 9 October 2026
+
+### Full suggestion lists in the Data tab
+- **Every option, every time.** The Mark Type, Automation and Function boxes now open a list of all their options when you tap or click them, instead of only showing options that match what is already typed. The current value is highlighted, and options that match what you type are shown in bold. You can still type any value.
+- **Keyboard.** Arrow keys move through the list, Enter picks, Escape closes.
+
 ## 29 September 2026
 
 ### Clearer Position and Load notes
