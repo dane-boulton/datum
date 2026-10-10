@@ -4,7 +4,7 @@
 > *"Read HANDOFF.md, README.md and CHANGELOG.md in the datum repo before doing anything, then tell me you're ready."*
 
 Owner: **Dane** (stage designer, live events, Australia), dane@vektorprojects.com.
-Repo: `dane-boulton/datum` (GitHub, private). Live site: **https://vektordatum.netlify.app** (Netlify builds from `main`).
+Repo: `dane-boulton/datum` (GitHub, private). Live site: **https://datum.vektorprojects.com** (custom domain, set up October 2026; also still at https://vektordatum.netlify.app). Netlify builds from `main`.
 
 ---
 
@@ -164,7 +164,7 @@ The script is organised by comment banners `/* ===== … ===== */`. Search for t
 
 ### 6.1 Live setup (as of 27 Sep 2026)
 - **Supabase project ref:** `wonxsqykinhlhtqlxhfv` (https://wonxsqykinhlhtqlxhfv.supabase.co).
-- **Site URL and Redirect URL:** `https://vektordatum.netlify.app` (it must include `https://`).
+- **Site URL:** `https://datum.vektorprojects.com`; **Redirect URLs:** that and `https://vektordatum.netlify.app` (each must include `https://`). See "Using your own address" in `docs/CLOUD_SETUP.md`. Dane confirmed the domain is set up; whether the Supabase and Google settings have been changed is not confirmed.
 - **Google sign-in:** configured and working. Dane (account id `8127d106-e798-49da-ad1d-61a736360669`) signs in as **admin**.
 - **Netlify env:** `SUPABASE_URL` and `SUPABASE_ANON_KEY` are set. `SUPABASE_SERVICE_ROLE_KEY` (functions scope) is needed for invite emails; check it's there.
 - **Email:** Gmail SMTP as datum@vektorprojects.com (guide Part 2). Unconfirmed whether Dane has finished this.

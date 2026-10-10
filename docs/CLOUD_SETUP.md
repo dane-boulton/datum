@@ -127,6 +127,18 @@ Supabase's built-in email is for testing only: it sends to very few addresses an
 - In Supabase, check **Authentication > Emails > SMTP Settings**, then look at **Logs > Auth** for the error.
 - **Email invite** on the Team screen still opens your own mail app with the sign-up steps written out, as a backup.
 
+## Using your own address (datum.vektorprojects.com)
+
+The app builds every sign-in, reset and invite link from the address it is opened on, so no code changes are needed. Supabase and Google only need to know the new address.
+
+1. **Supabase.** Open **Authentication > URL Configuration**.
+   - **Site URL:** `https://datum.vektorprojects.com`
+   - **Redirect URLs:** add `https://datum.vektorprojects.com`. Keep `https://vektordatum.netlify.app` too, so old links and bookmarks still work.
+   - Click **Save**. Without this, Supabase sends people back to the old address after Google sign-in, invites and password resets.
+2. **Google sign-in.** In **console.cloud.google.com > APIs & Services > Credentials**, open the DATUM OAuth client and add `https://datum.vektorprojects.com` under **Authorized JavaScript origins**. Leave the redirect URI (the Supabase callback) as it is.
+3. **Netlify (optional).** Under **Domain management**, set `datum.vektorprojects.com` as the **primary domain**, so the netlify.app address forwards to it.
+4. **Test.** Open the new address in a private window. Sign in with email, then with Google, and send yourself a password reset; each should come back to datum.vektorprojects.com.
+
 ## Day to day
 
 - **Editors:** import a CSV, then **Save to cloud...** in the side panel. From then on, changes save automatically; the top bar shows **Saved**, **Saving...** or **Offline - will sync**. To share, go to **person icon > Share**.
