@@ -4,6 +4,10 @@ All notable changes to DATUM. Newest first.
 
 ## 9 October 2026
 
+### Help: built-in user manual
+- **Help button.** A **?** button in the top bar (and a "User manual" link on the sign-in screen) opens the DATUM User Manual inside the app, with a contents bar to jump between sections. It works offline and for every user.
+- The manual covers the Vectorworks CSV fields and how each is read, every option, each tab, projects and sharing, and troubleshooting.
+
 ### Load in kg or lb
 - **Pounds supported.** Low Hook Weight Equivalent can now be exported in kg or lb. Loads are shown in the unit they came in, e.g. "450 kg" or "1000 lb".
 - **How the unit is chosen.** A unit written in the cell ("1,250 lbs") always wins. Otherwise the new **Load values are in** setting (Orientation & units) applies; on Auto-detect a header such as "(lbs)" or any cell written in lb means pounds, else kilograms.

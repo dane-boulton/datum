@@ -40,6 +40,7 @@ Optional cloud features run on Supabase: an invite-only sign-in wall, roles, clo
 | `supabase/schema.sql` | All database tables, functions, triggers and RLS policies. Idempotent; run it whole in the Supabase SQL Editor. |
 | `supabase/test/` | `auth_stub.sql` (stands in for Supabase's `auth` schema) and `rls_test.sql` (35 access-rule checks). |
 | `tests/` | `cloud.test.mjs` (56 UI checks, Playwright), `mock-supabase.js` (in-browser fake Supabase), `invite-fn.test.mjs` (17 checks of the function). |
+| `docs/MANUAL.md` | The user manual. `scripts/md.mjs` turns it into HTML at build time and it is shown in the app's Help panel (the ? button, and "User manual" on the sign-in screen). Dane also has a copy as a Claude doc ("DATUM User Manual"); if he edits that one, export it as Markdown over this file. Keep it in step with app changes. |
 | `docs/CLOUD_SETUP.md` | Dane's step-by-step setup guide: Supabase, Gmail SMTP, Google sign-in, Netlify. Update it whenever setup changes. |
 | `samples/` | Sample CSVs (imperial and metric). |
 | `CHANGELOG.md`, `README.md` | User-facing change notes; quick start. |
@@ -55,7 +56,8 @@ Dependencies: `jspdf` 4.2.1 and `@supabase/supabase-js` 2.117.2, pinned. Playwri
   - The config is injected as `window.DATUM_CLOUD={url,key}`, or `null` when cloud is off.
 - **Cloud off** means no sign-in wall, no account button, and the app works fully locally. Handy for local work and screenshots.
 - The netlify env var `SUPABASE_SERVICE_ROLE_KEY` is read **only** by the invite function. The build never touches it.
-- Size is about 840 KB, because jsPDF and supabase-js are inlined so the app works offline.
+- The build also renders `docs/MANUAL.md` into the page (replacing `<!--__MANUAL__-->`), so Help works offline.
+- Size is about 880 KB, because jsPDF and supabase-js are inlined so the app works offline.
 
 ## 5. App architecture (`src/app.html`)
 

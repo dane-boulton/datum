@@ -2,6 +2,7 @@
 // Cloud sign-in is switched on when a Supabase URL and anon key are available, from the environment
 // (SUPABASE_URL, SUPABASE_ANON_KEY - set these in Netlify) or from datum.config.json.
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { md } from './md.mjs';
 const read = p => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const write = (p, s) => writeFileSync(new URL('../' + p, import.meta.url), s);
 const lib = read('node_modules/jspdf/dist/jspdf.umd.min.js').replace('//# sourceMappingURL=jspdf.umd.min.js.map', '');
@@ -12,8 +13,12 @@ const file = existsSync(new URL('../datum.config.json', import.meta.url)) ? JSON
 const origin = u => { try { return u ? new URL(u.trim()).origin : ''; } catch { console.warn('SUPABASE_URL is not a valid URL: ' + u); return ''; } };
 const cloud = { url: origin(process.env.SUPABASE_URL || file.supabaseUrl || ''), key: (process.env.SUPABASE_ANON_KEY || file.supabaseAnonKey || '').trim() };
 const cloudJs = 'window.DATUM_CLOUD=' + JSON.stringify(cloud.url && cloud.key ? cloud : null).replace(/</g, '\\u003c') + ';';
+// The user manual (docs/MANUAL.md) is built into the page as the Help panel, so it works offline
+const man = md(read('docs/MANUAL.md').replace(/^# .*\n+(?:Production Markout Tool\n+)?/, ''));
+const manualHtml = '<nav class="mtoc">' + man.toc.map(([id, t]) => `<a href="#${id}">${t.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</a>`).join('') + '</nav>' + man.html;
 const html = read('src/app.html').replace('/*__JSPDF__*/', () => lib).replace('/*__SUPABASE__*/', () => sb)
-  .replace('/*__CLOUD_CONFIG__*/', () => cloudJs).replaceAll('__BRAND_ICON__', () => brand);
+  .replace('/*__CLOUD_CONFIG__*/', () => cloudJs).replaceAll('__BRAND_ICON__', () => brand)
+  .replace('<!--__MANUAL__-->', () => manualHtml);
 write('site/index.html', html);
 const stamp = new Date().toISOString().replace(/\D/g, '').slice(0, 14);
 write('site/sw.js', read('src/sw.js.tpl').replace('__BUILD__', stamp));
