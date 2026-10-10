@@ -4,7 +4,7 @@ Production Markout Tool
 
 ## Quick start
 
-DATUM turns a Vectorworks hoist export into a floor markout: a plot, a row-by-row checklist for marking the floor, and a printable PDF. It runs in a web browser at vektordatum.netlify.app and works on a laptop, iPad or phone.
+DATUM turns a Vectorworks hoist export into a floor markout: a plot, a row-by-row checklist for marking the floor, and a printable PDF. It runs in a web browser at datum.vektorprojects.com and works on a laptop, iPad or phone.
 
 1. **Export from Vectorworks.** Export the hoist worksheet as a CSV with the nine columns listed in the next section. Keep the header row; column order does not matter.
 2. **Import.** Open DATUM, sign in, and drop the CSV on **1. Import CSV** (or click to choose it). The file name and row count appear under the box.
