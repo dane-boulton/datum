@@ -78,8 +78,6 @@ So "1 Ton TAIT Nav" becomes a 1 Ton symbol with a NAV badge, and "1/2 Ton Varisp
 
 Function sets the colour of the symbol. Common functions get a standard colour: Lighting red, Audio yellow, Video purple, Scenery light blue, Cable Pick orange, Super Grid pink, Generic light grey, Other green, and Pre-Rig dark grey with a red ring. Any other function gets the next free colour. Change colours and rings in **3. Symbols & colours**.
 
-Older function names that include automation, such as "Lighting Automated", are cleaned to "Lighting" and the row is marked Automated.
-
 ### Hoist Position
 
 Set to **Hoist Up** for motors rigged upside down (body up, hook down to the truss). These draw an inverted symbol with an INVERT badge; the style is set in **Hoist Up marker**. Floor marks, corner marks, fall arrests and chain blocks ignore this field.
@@ -94,8 +92,6 @@ This field means different things for the two kinds of row.
 
 - **Hoists, chain blocks and fall arrests:** enter **GRID** or **SUBHANG**. The **Show** filter (All hoists / Grid only / Subhang only) on the Plot, Markout Rows and PDF then shows one level at a time. A blank Position is always shown.
 - **Floor marks and corner marks (USR, USL, DSR, DSL):** describe what is being marked, such as "Main Stage" or "Centre Line". This text is printed under the mark where a hoist shows its load. Marks are always shown, whatever the filter.
-
-A Position that is only a weight, such as "1,000kg", is cleared on import, because some exports fill it from the capacity.
 
 ### Low Hook Weight Equivalent
 
