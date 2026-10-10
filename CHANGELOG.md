@@ -4,6 +4,12 @@ All notable changes to DATUM. Newest first.
 
 ## 9 October 2026
 
+### Load in kg or lb
+- **Pounds supported.** Low Hook Weight Equivalent can now be exported in kg or lb. Loads are shown in the unit they came in, e.g. "450 kg" or "1000 lb".
+- **How the unit is chosen.** A unit written in the cell ("1,250 lbs") always wins. Otherwise the new **Load values are in** setting (Orientation & units) applies; on Auto-detect a header such as "(lbs)" or any cell written in lb means pounds, else kilograms.
+- **Thousands separators.** Loads written as "1,250" are now read as 1250 (they were read as 1).
+- The PDF option is now just **Show load**, and the Symbols & colours note now reads "Mark Type sets the symbol. Function sets the colour."
+
 ### Full suggestion lists in the Data tab
 - **Every option, every time.** The Mark Type, Automation and Function boxes now open a list of all their options when you tap or click them, instead of only showing options that match what is already typed. The current value is highlighted, and options that match what you type are shown in bold. You can still type any value.
 - **Keyboard.** Arrow keys move through the list, Enter picks, Escape closes.

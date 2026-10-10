@@ -556,6 +556,8 @@ table.dt input[data-k=auto]{min-width:150px}
             <select id="dispUnit"><option value="ftin">Feet &amp; Inches</option><option value="ftdec">Feet &amp; decimal in</option><option value="mm">Millimetres</option><option value="m">Metres</option></select></div>
           <div class="fld" id="precField"><label>Round to</label>
             <select id="prec"><option value="1">1"</option><option value="2">1/2"</option><option value="4">1/4"</option><option value="8">1/8"</option><option value="16">1/16"</option></select></div>
+          <div class="fld"><label title="Unit of the Low Hook Weight Equivalent column. Values written with kg or lb always use that unit.">Load values are in</label>
+            <select id="loadUnit"><option value="auto">Auto-detect</option><option value="kg">Kilograms (kg)</option><option value="lb">Pounds (lb)</option></select></div>
           <div class="fld"><label>Row Tolerance (mm)</label><input type="number" id="tol" min="0" step="1"></div>
           <div class="fld"><label>Center Threshold (mm)</label><input type="number" id="cth" min="0" step="1"></div>
           <div class="fld"><label>Rotation</label><select id="rot"><option value="0">0&deg;</option><option value="90">90&deg;</option><option value="180">180&deg;</option><option value="270">270&deg;</option></select></div>
@@ -586,7 +588,7 @@ table.dt input[data-k=auto]{min-width:150px}
     <details>
       <summary>3. Symbols &amp; colours</summary>
       <div class="body">
-        <div class="hint">Hoist Type sets the symbol. Hoist Function sets the colour.</div>
+        <div class="hint">Mark Type sets the symbol. Function sets the colour.</div>
         <div class="field"><label>Hoist Up marker</label><select id="upStyle"><option value="fill">Solid fill</option><option value="arrow">Up-arrow badge</option><option value="both">Fill + up-arrow</option></select></div>
         <div class="row2"><button class="btn" id="btnAutoSym">Auto-detect symbols from type names</button></div>
         <div id="typeMapBody" class="body"></div>
@@ -694,7 +696,7 @@ table.dt input[data-k=auto]{min-width:150px}
             <div class="field"><label>Y value size <b id="sYPctV"></b></label><input type="range" id="sYPct" min="60" max="200" step="5"></div>
             <div class="field"><label>Symbol size <b id="sSymPctV"></b></label><input type="range" id="sSymPct" min="60" max="180" step="5"></div>
             <div class="field"><label>Line weight <b id="sLinePctV"></b></label><input type="range" id="sLinePct" min="50" max="250" step="10"></div>
-            <div class="field"><label>Show load (kg)</label><input type="checkbox" id="sLoad"></div>
+            <div class="field"><label>Show load</label><input type="checkbox" id="sLoad"></div>
             <div class="field"><label>Tick boxes</label><select id="sTick"><option value="none">None</option><option value="empty">Empty boxes</option><option value="status">Ticked if marked</option></select></div>
           </div></details>
           <details><summary>Colours</summary><div class="body">
@@ -840,7 +842,7 @@ const S = {
   map:{id:-1,cap:-1,hsym:-1,type:-1,auto:-1,func:-1,pos:-1,place:-1,x:-1,y:-1,load:-1},
   hoists:[], rows:[], warnings:0,
   typeMap:{}, funcMap:{}, funcRing:{},
-  opt:{inUnit:'auto',disp:'ftin',den:1,tol:50,cth:1,rot:0,rowOrder:'top',sideNeg:'left',sideSort:'center',flipX:false,flipY:false,datX:0,datY:0,topL:'UPSTAGE',botL:'DOWNSTAGE',leftL:'SR',rightL:'SL',upStyle:'fill',show:'all',alignTol:25.4,alignMode:'both',alignKeep:'first'},
+  opt:{inUnit:'auto',disp:'ftin',den:1,tol:50,cth:1,rot:0,rowOrder:'top',sideNeg:'left',sideSort:'center',flipX:false,flipY:false,datX:0,datY:0,topL:'UPSTAGE',botL:'DOWNSTAGE',leftL:'SR',rightL:'SL',upStyle:'fill',show:'all',alignTol:25.4,alignMode:'both',alignKeep:'first',loadUnit:'auto'},
   skip:new Set(), cloud:null, logoShow:null, logoUser:null, _imgShow:null, _imgUser:null,
   mo:{cur:0,focus:'both',hideDone:false,auto:false}, done:new Set(), doneName:'', pending:{}, orig:null,
   sheet:{sheetType:'FLOOR MARKOUT',show:'',venue:'',datum:'',date:'',rev:'',by:'',footer:'',title:true,page:'a4',orient:'portrait',margin:10,rowH:11,fit:'fixed',capN:4,minPt:5,centreMm:0,textPct:100,yPct:100,symPct:100,linePct:100,font:'helvetica',load:true,tick:'none',mode:'colour',cText:'#1b2440',cMuted:'#5d6b8a',cBorder:'#8d9bbd',cCentre:'#5c6b8f',cBand:'#f3f6fb',cBandText:'#1b2440',centreTint:false,cCentreFill:'#eef2fb',zebra:false,cZebra:'#f3f6fb',logoHShow:14,logoHUser:14,logoAll:false,onePage:false,legend:true,onlyTodo:false,bands:true,zoom:'fit'},
@@ -1077,7 +1079,7 @@ function funcGroups(){ return [...new Set(S.hoists.map(h=>h.func))].map(f=>({lab
 function rebuild(){
   const rows=S.raw.rows, map=S.map, hs=[]; let warn=0;
   if(S.opt.inUnit==='auto') S.detected=detectUnits();
-  const unit=effUnit();
+  const unit=effUnit(), lu=loadUnit();
   const seen=new Map(), seenPos=new Map();
   rows.forEach((r,i)=>{
     const g=k=> (map[k]>=0 && r[map[k]]!==undefined) ? String(r[map[k]]).trim() : '';
@@ -1086,7 +1088,7 @@ function rebuild(){
     h.datum=/^datum$/i.test(h.id)||/^datum$/i.test(h.type);
     h.hsym=g('hsym'); h.place=g('place'); h.cap=g('cap'); h.auto=autoKind(g('auto'));
     h.x=parseLen(h.xRaw,unit); h.y=parseLen(h.yRaw,unit);
-    h.load = h.loadRaw!=='' && !isNaN(parseFloat(h.loadRaw)) ? parseFloat(h.loadRaw) : null;
+    { const L=parseLoad(h.loadRaw,lu); h.load=L?L.v:null; h.loadU=L?L.u:lu; }
     if(h.id==='') { h.issues.push('No ID'); h.id='?'+(i+1); }
     if(isNaN(h.x)) h.issues.push('Bad Origin X'+(h.xRaw?' ("'+h.xRaw+'")':'')); if(isNaN(h.y)) h.issues.push('Bad Origin Y'+(h.yRaw?' ("'+h.yRaw+'")':''));
     h.ok = !isNaN(h.x) && !isNaN(h.y);
@@ -1224,7 +1226,15 @@ function autoLabel(a){ return (a===true||a==='tag')?'AUTO':String(a); }
 function hoistSVG(h,size){ return symSVG(itemSym(h),scr(h),size,false,{up:h.up,ring:ringCol(h),auto:autoOf(h)}); }
 function itemColor(h){ return S.funcMap[h.func]||'#1a1a1a'; }
 function itemSym(h){ return S.typeMap[h.type]||'circle'; }
-function loadTxt(h){ return (S.sheet.load && S.map.load>=0 && h.load!=null) ? (h.load%1?h.load.toFixed(1):h.load)+' kg' : ''; }
+function loadTxt(h){ return (S.sheet.load && S.map.load>=0 && h.load!=null) ? (h.load%1?h.load.toFixed(1):h.load)+' '+(h.loadU||'kg') : ''; }
+// Low Hook Weight Equivalent can be exported in kg or lb. A unit written in the cell wins; plain numbers use the
+// Load values setting, which on Auto-detect follows the column header ("(lbs)") or any cell written in lb, else kg.
+const LB_RE=/(?:^|[\d\s(])(?:lbs?|pounds?|#)\.?\s*\)?\s*$/i, KG_RE=/(?:^|[\d\s(])(?:kgs?|kilograms?)\.?\s*\)?\s*$/i;
+function parseLoad(raw,def){ const t=String(raw||'').trim(); if(!t) return null; const n=parseFloat(t.replace(/,/g,'')); if(isNaN(n)) return null;
+  return {v:n, u:LB_RE.test(t)?'lb':KG_RE.test(t)?'kg':def}; }
+function loadUnit(){ const o=S.opt.loadUnit||'auto'; if(o!=='auto') return o; const i=S.map.load; if(!(i>=0)) return 'kg';
+  const hd=String(S.raw.headers[i]||''); if(/(?:^|[^a-z])(?:lbs?|pounds?)(?:[^a-z]|$)/i.test(hd)) return 'lb'; if(/(?:^|[^a-z])(?:kgs?|kilograms?)(?:[^a-z]|$)/i.test(hd)) return 'kg';
+  return S.raw.rows.some(r=>LB_RE.test(String(r[i]||'').trim()))?'lb':'kg'; }
 function sideOf(it){ const th=Math.max(0,S.opt.cth||0); return it.xs>th?S.opt.rightL:it.xs<-th?S.opt.leftL:'CL'; }
 
 /* ============================ rendering: rows view ============================ */
@@ -2077,7 +2087,7 @@ function applyProject(o){
   S.typeMap=o.typeMap||{}; S.funcMap=o.funcMap||{}; S.funcRing=o.funcRing||{};
   S.done=new Set(o.done||[]); S.doneName=o.doneName||S.raw.name;
   if(o.logos){ S.logoShow=(o.logos.show&&o.logos.show.src)?o.logos.show:null; S.logoUser=(o.logos.user&&o.logos.user.src)?o.logos.user:null; prepLogoImg('show'); prepLogoImg('user'); saveLogo(); syncLogoUI(); }
-  syncAllInputs(); $('inUnit').value=S.opt.inUnit; $('dispUnit').value=S.opt.disp; $('prec').value=String(S.opt.den); $('upStyle').value=S.opt.upStyle; $('moFocus').value=S.mo.focus;
+  syncAllInputs(); $('inUnit').value=S.opt.inUnit; $('loadUnit').value=S.opt.loadUnit||'auto'; $('dispUnit').value=S.opt.disp; $('prec').value=String(S.opt.den); $('upStyle').value=S.opt.upStyle; $('moFocus').value=S.mo.focus;
   ['sTextPct','sYPct','sSymPct','sLinePct'].forEach(id=>{ const k={sTextPct:'textPct',sYPct:'yPct',sSymPct:'symPct',sLinePct:'linePct'}[id]; $(id+'V').textContent=S.sheet[k]+'%'; });
   fixedVis(); saveDone(); syncOrient();
   $('fileInfo').textContent=S.raw.name?`${S.raw.name} - ${S.raw.rows.length} rows loaded.`:'No file loaded.';
@@ -2458,6 +2468,7 @@ function init(){
   $('inUnit').value=S.opt.inUnit; $('inUnit').onchange=e=>{S.opt.inUnit=e.target.value; applyAutoDisplay(); refresh(); fitPlot();};
   $('dispUnit').value=S.opt.disp; $('dispUnit').onchange=e=>{S.opt.disp=e.target.value; refresh(); syncOrient();};
   $('prec').value=String(S.opt.den); $('prec').onchange=e=>{S.opt.den=parseInt(e.target.value,10); refresh();};
+  $('loadUnit').value=S.opt.loadUnit||'auto'; $('loadUnit').onchange=e=>{S.opt.loadUnit=e.target.value; saveStore(); refresh();};
   const reorient=()=>{ refresh(); fitPlot(); };
   [['tol','tol','num',refresh],['cth','cth','num',refresh],['rot','rot','int',reorient],['rowOrder','rowOrder','str',refresh],['sideSort','sideSort','str',refresh],
    ['flipX','flipX',null,reorient],['flipY','flipY',null,reorient],['topL','topL','str',refresh],['botL','botL','str',refresh],['leftL','leftL','str',refresh],['rightL','rightL','str',refresh]].forEach(([id,k,ty,fn])=>bindInput(id,S.opt,k,ty,fn));
