@@ -229,5 +229,4 @@ DATUM is invite-only. An admin invites people from the **Team** screen, which em
 | Two marks that should share a row are split | Raise **Row Tolerance**, or line them up with Align X. |
 | A mark shows the wrong symbol | Change its **Mark Type** in the Data tab, or the symbol for that type in Symbols & colours. |
 | A hoist is missing from Markout Rows | Check the **Show** filter (Grid only / Subhang only), **Focus**, **Hide completed** and the Skip box. |
-| Position shows a weight | Weight-only values are cleared on import; re-import the CSV or clear the cell. |
 | Can't edit or save | Your account is a Viewer. Ask an admin for Editor access. |
